@@ -10,27 +10,7 @@
 //                                              *
 //***********************************************
 //                                              *
-//  Version 0.1 pushed by David Coleman III on  *
-//      01 - 18 - 23                            *
-//                                              *
-//  0.1 added Features:                         *
-//  - Input function added - allows user to     *
-//     use an integer as an argument for their  *
-//     current test iteration                   *
-//                                              *
-//  - Print function added - allows user to     *
-//     print the integer member variable that   *
-//     stands for the current test iteration    *
-//                                              *
-//  - InputPrint function added - performs the  *
-//     task of both Input and Print to save the *
-//     client time and screen real estate       *
-//                                              *
-//***********************************************
-//                                              *
-//***********************************************
-//                                              *
-//  Version 0.1 pushed by David Coleman III on  *
+//  Version 0.0.1 pushed by David Coleman III on*
 //      01 - 18 - 23                            *
 //***********************************************
 
