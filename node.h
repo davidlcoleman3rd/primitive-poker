@@ -10,7 +10,7 @@
 //                                              *
 //***********************************************
 //                                              *
-//  Version 0.0.1 pushed by David Coleman III on*
+//  Version 0.0.2 pushed by David Coleman III on*
 //      01 - 18 - 23                            *
 //***********************************************
 
@@ -31,43 +31,38 @@ public:
     }
 
 //******
-    void SetNext(Node<Type> nInput) {
-        nInput.SetNext(next);
+    void SetNext(Node<Type> nInput) {   //Sets the node's next pointer to the next node
         next = nInput;
-        nInput.SetPrev(*this);
-        if (nInput.GetNext() == this) {
-            SetPrev(nInput);
-        }
     }
 
 //******
-    void SetPrev(Node<Type> nInput) {
+    void SetPrev(Node<Type> nInput) {   //Sets the node's prev pointer to the prev node
         prev = nInput;
     }
 
 //******
-    Node<Type>* GetPrev() {
+    Node<Type>* GetPrev() {             //Gets the node's prev pointer
         return prev;
     }
 
 //******
-    Node<Type>* GetNext() {
+    Node<Type>* GetNext() {             //Gets the node's next pointer
         return next;
     }
 
 //******
-    Type GetData() {
+    Type GetData() {                    //Gets the actual data stored by the node
         return data;
     }
 
 //******
-    ~Node() {   }
+    ~Node() {   }                       //Destructor - currently does nothing
 
 
 private:
-    Type data;
-    Node<Type>* next;
-    Node<Type>* prev;
+    Type data;                          //Holds data for the node (in this context, holds the player whose turn it is)
+    Node<Type>* next;                   //Holds the next node in the list (in this context, the next player)
+    Node<Type>* prev;                   //Holds the prev node in the list (in this context, the previous player)
 
 };
 
