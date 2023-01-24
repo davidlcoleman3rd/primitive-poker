@@ -9,8 +9,8 @@
 //  when playing the game.                      *
 //                                              *
 //***********************************************
-//  Version 0.0.1 pushed by David Coleman III on*
-//      01 - 18 - 23                            *
+//  Version 0.0.4.1 pushed by David Coleman III *
+//  on  01 - 24 - 23                            *
 //***********************************************
 
 
@@ -25,7 +25,9 @@
 
 //***********************************************
 
-const int DECK_SIZE = 52;       //The total number of cards in a deck
+const int MAX_SUITS = 4;                        //The total number of suits in a deck
+const int MAX_RANKS = 13;                       //The total number of number values in a deck
+const int DECK_SIZE = MAX_SUITS + MAX_RANKS;    //The total number of cards in a deck
 
 //***********************************************
 
@@ -37,10 +39,17 @@ public:
     Deck(int/*in*/);    //Alternative constructor - Generates a deck made of X decks of cards (TO BE IMPLEMENTED LATER);
 
 //******
+    void Shuffle();     //Shuffles the deck
+
+//******
+    Card DealCard();    //Peeks a card from the top of the deck and distributes it to a player
+
+//******
+    ~Deck();            //Destructor - currently does nothing
 
 
 private:
-    stack<Card> stDeck;
+    std::stack<Card> stDeck;
 };
 
 #endif // DECK_H

@@ -8,8 +8,8 @@
 //  a linked list data structure.               *
 //                                              *
 //***********************************************
-//  Version 0.0.2 pushed by David Coleman III on*
-//      01 - 22 - 23                            *
+//  Version 0.0.4.1 pushed by David Coleman III *
+//  on  01 - 24 - 23                            *
 //***********************************************
 
 

@@ -9,7 +9,7 @@
 	"circularlList.h"
 	<iostream>
 
-1674522772 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/circularlList.h
+1674524862 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/circularlList.h
 	"node.h"
 
 1674522729 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/node.h
@@ -17,4 +17,12 @@
 1674434974 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/player.cpp
 
 1674434974 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/river.cpp
+
+1674601172 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/card.cpp
+	"card.h"
+
+1674601043 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/card.h
+	<iostream>
+	<iomanip>
+	<string>
 

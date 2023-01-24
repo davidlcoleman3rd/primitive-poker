@@ -10,16 +10,22 @@
 //  enums related to cards in a card game       *
 //                                              *
 //***********************************************
-//                                              *
-//  Version 0.0.1 pushed by David Coleman III on*
-//      01 - 18 - 23                            *
+//  Version 0.0.4.1 pushed by David Coleman III *
+//  on  01 - 24 - 23                            *
 //***********************************************
 
-
+    #include "card.h"
 
 //***********************************************
 
-    Card::Card() { }                //Default constructor - Does nothing as of yet
+    Card::Card() { }                    //Default constructor - Does nothing as of yet
+
+//******
+    Card::Card(const Card& cOther) {    //Copy constructor - Creates a new object by copying the cOther
+        SetSuit(cOther.GetSuit());
+        SetNum(cOther.GetNum());
+        SetState(cOther.GetState());
+    }
 
 //******
     Card::Card(int iSuitIn, int iNumIn) {   //Non-default constructor - Creates the card, uses the input parameter
@@ -29,33 +35,44 @@
         state = IN_DECK;
     }
 //******
-    CardSuit GetSuit(){             //Returns the card's suit to the calling function
+    CardSuit Card::GetSuit(){             //Returns the card's suit to the calling function
         return suit;
     }
 //******
-    CardNum GetNum(){               //Returns the card's num to the calling function
+    CardNum Card::GetNum(){               //Returns the card's num to the calling function
         return num;
     }
 //******
-    std::string GetSuitStr(){       //Returns a str version of suit to calling function
+    std::string Card::GetSuitStr(){       //Returns a str version of suit to calling function
         return suitStr;
     }
 //******
-    std::string GetNumStr(){        //Returns a str version of rank to the calling function
+    std::string Card::GetNumStr(){        //Returns a str version of rank to the calling function
         return numStr;
     }
 //******
-    void SetSuit(int iSuitIn) {         //Sets the suit to the input parameter
+    void Card::SetSuit(int iSuitIn) {         //Sets the suit to the input parameter
         suit = CardSuit(iSuitIn);
         suitStr = SUIT_STR[iSuitIn];
     }
 //******
-    void SetNum(int iNumIn) {           //Sets the rank to the input parameter
-        num = CardNum(iSuitIn);
+    void Card::SetNum(int iNumIn) {           //Sets the rank to the input parameter
+        num = CardNum(iNumIn);
         numStr = NUM_STR[iNumIn];
     }
+
 //******
-    ~Card();
+    void Card::SetState(CardState inState) {    //Sets the current card state
+        state = inState;
+    }
+
+//******
+    CardState Card::GetState() {                //Gets the current card state
+        return state;
+    }
+
+//******
+    Card::~Card() {  }
 
 /*
     CardSuit suit;

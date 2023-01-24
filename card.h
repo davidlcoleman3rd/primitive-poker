@@ -10,8 +10,8 @@
 //  enums related to cards in a card game       *
 //                                              *
 //***********************************************
-//  Version 0.0.1 pushed by David Coleman III on*
-//      01 - 18 - 23                            *
+//  Version 0.0.4.1 pushed by David Coleman III *
+//  on  01 - 24 - 23                            *
 //***********************************************
 
 #ifndef CARD_H
@@ -33,7 +33,7 @@ const std::string NUM_STR[13] = {" 2 ", " 3 ", " 4 ", " 5 ", " 6 ",     //...and
                                  " 7 ", " 8 ", " 9 ", " 10", "JAC",
                                  "QUE", "KNG", "ACE"};
 
-const int SUIT_COUNT = (sizeof(SUIT_STR) / sizeof(SUIT_STR[0]);         //Holds total number of suits for each card
+const int SUIT_COUNT = (sizeof(SUIT_STR) / sizeof(SUIT_STR[0]));         //Holds total number of suits for each card
 const int NUM_COUNT = (sizeof(NUM_STR) / sizeof(NUM_STR[0]));           //Holds total number of possible ranks for each card
 
 //***********************************************
@@ -41,6 +41,9 @@ const int NUM_COUNT = (sizeof(NUM_STR) / sizeof(NUM_STR[0]));           //Holds 
 class Card {
 public:
     Card();                         //Default constructor - Does nothing as of yet
+
+//******
+    Card(const Card& cOther);       //Copy constructor - Creates a new object by copying the cOther
 
 //******
     Card(int /*in*/, int/*in*/);    //Non-default constructor - Creates the card, uses the input parameter
@@ -63,6 +66,12 @@ public:
 
 //******
     void SetNum(int/*in*/);         //Sets the rank to the input parameter
+
+//******
+    void SetState(CardState/*in*/); //Sets the state of the card
+
+//******
+    CardState GetState();           //Gets the state of the card
 
 //******
     ~Card();
