@@ -136,6 +136,18 @@ public:
             return false;
     }
 
+//******
+    ~CircularList() {
+        next = last;
+        head->SetPrev(nullptr);
+        while (curr != nullptr) {
+            curr = last->GetPrev();
+            delete next;
+            next = curr;
+            last = next;
+        }
+    }
+
 private:
     Node<Type>* head;               //Head pointer - holds the list's structure
     Node<Type>* curr;               //Curr pointer - serves as the iterator for the list
