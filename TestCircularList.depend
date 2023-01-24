@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1674523135 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/TestCircularList/main.cpp
+	"circularlList.h"
+	"test.h"
+	<iostream>
+
+1674523228 /home/dave/Documents/Code - Projects/C++/Primitive Poker/TestCircularList/circularlList.h
+	"node.h"
+
+1674522729 /home/dave/Documents/Code - Projects/C++/Primitive Poker/TestCircularList/node.h
+
+1674091319 /home/dave/Documents/Code - Projects/C++/Primitive Poker/TestCircularList/test.h
+	<iostream>
+
+1674090643 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/TestCircularList/test.cpp
+
