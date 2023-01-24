@@ -22,21 +22,21 @@
 //************************************************
 
 template <class Type>
-class Node() {
+class Node {
 public:
     Node(Type tInput) {             //Constructor - Sets data to parameter
         data = tInput;
-        next = tInput;
-        prev = tInput;
+        next = nullptr;
+        prev = nullptr;
     }
 
 //******
-    void SetNext(Node<Type> nInput) {   //Sets the node's next pointer to the next node
+    void SetNext(Node<Type>* nInput) {   //Sets the node's next pointer to the next node
         next = nInput;
     }
 
 //******
-    void SetPrev(Node<Type> nInput) {   //Sets the node's prev pointer to the prev node
+    void SetPrev(Node<Type>* nInput) {   //Sets the node's prev pointer to the prev node
         prev = nInput;
     }
 

@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1674434974 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/deck.cpp
+
+1674434974 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/game.cpp
+
+1674434974 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/hand.cpp
+
+1674522538 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/main.cpp
+	"circularlList.h"
+	<iostream>
+
+1674522772 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/circularlList.h
+	"node.h"
+
+1674522729 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/node.h
+
+1674434974 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/player.cpp
+
+1674434974 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/river.cpp
+

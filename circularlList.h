@@ -23,9 +23,11 @@
 
 template <class Type>
 class CircularList {
-private:
+public:
     CircularList(Type tInput) {                             //Constructor - Generates a circular list with one node
         head = new Node<Type>(tInput);
+        head->SetNext(head);
+        head->SetPrev(head);
         curr = head;
         next = head;
         prev = head;
@@ -61,7 +63,7 @@ private:
         curr = next;
         last = curr;
         prev = head;
-        iLenght = 3;
+        iLength = 3;
     }
 
 //******
@@ -112,6 +114,21 @@ private:
     }
 
 //******
+    Node<Type>* GetHead() {
+        return head;
+    }
+
+//******
+    Node<Type>* GetLast() {
+        return last;
+    }
+
+//******
+    Node<Type>* GetCurr() {
+        return curr;
+    }
+
+//******
     bool TraverseEnd() {                                //Checks to see if the last player has taken their turn
         if (curr->GetNext() == head)                        //If yes, then returns true to the calling function
             return true;
@@ -119,7 +136,19 @@ private:
             return false;
     }
 
-public:
+//******
+    ~CircularList() {
+        next = last;
+        head->SetPrev(nullptr);
+        while (curr != nullptr) {
+            curr = last->GetPrev();
+            delete next;
+            next = curr;
+            last = next;
+        }
+    }
+
+private:
     Node<Type>* head;               //Head pointer - holds the list's structure
     Node<Type>* curr;               //Curr pointer - serves as the iterator for the list
     Node<Type>* next;               //Next pointer - serves as a means for curr to iterate upon the list
