@@ -24,6 +24,7 @@
 
 //const int DECK_SIZE = 52;       //The total number of cards in a deck
 
+
 //***********************************************
 
     Deck::Deck() {
@@ -34,6 +35,7 @@
                 stDeck.push(*(tempPtr));
             }
         }
+        delete tempPtr;
     }
 
 //******

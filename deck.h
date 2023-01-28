@@ -28,6 +28,7 @@
 const int MAX_SUITS = 4;                        //The total number of suits in a deck
 const int MAX_RANKS = 13;                       //The total number of number values in a deck
 const int DECK_SIZE = MAX_SUITS + MAX_RANKS;    //The total number of cards in a deck
+const int DECK_STATE = 1;                       //The int version of the enumerated CARD_STATE value IN_DECK
 
 //***********************************************
 
@@ -39,10 +40,10 @@ public:
     Deck(int/*in*/);    //Alternative constructor - Generates a deck made of X decks of cards (TO BE IMPLEMENTED LATER);
 
 //******
-    void Shuffle();     //Shuffles the deck
+    void Shuffle(int/*in*/);     //Shuffles the deck
 
 //******
-    Card DealCard();    //Peeks a card from the top of the deck and distributes it to a player
+    Card DealCard(int/*in*/);    //Peeks a card from the top of the deck and distributes it to a player/river
 
 //******
     ~Deck();            //Destructor - currently does nothing

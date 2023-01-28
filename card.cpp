@@ -22,9 +22,10 @@
 
 //******
     Card::Card(const Card& cOther) {    //Copy constructor - Creates a new object by copying the cOther
-        SetSuit(cOther.GetSuit());
-        SetNum(cOther.GetNum());
-        SetState(cOther.GetState());
+        Card& temp = const_cast <Card&>(cOther);
+        SetSuit(int(temp.GetSuit()));
+        SetNum(int(temp.GetNum()));
+        SetState(temp.GetState());
     }
 
 //******
