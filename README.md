@@ -1,6 +1,11 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.0.6**
+
+- Began to define and implement various functionality of the Player class, including connecting its functionality with
+   the Hand and Card class
+
 **Version 0.0.5**
 - Began to define and implement various functionality of the Hand
    class and its interactions with Deck and Card classes
