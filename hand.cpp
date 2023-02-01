@@ -13,7 +13,6 @@
 //  on  01 - 24 - 23                            *
 //***********************************************
 
-
 //***********************************************
 
 #include "hand.h"
@@ -37,15 +36,12 @@
     }
 
 //******
-    void Hand::Discard(std::vector<Card> vDiscard, Deck& dInput) {
-        std::vector<Card>::iterator iter;
+    void Hand::Discard(std::vector<int> vDiscard, Deck& dInput) {
+        int iSize = 0;
+        std::vector<int>::iterator iter;
         for (iter = vDiscard.begin(); iter < vDiscard.end(); iter++) {
-            std::vector<Card>::iterator discarder
-            for (int iSelect = 0; iSelect < vCard.size(); iSelect++) {
-                if (vCard.at(iSelect) == *iter) {
-                    vCard.erase(iter);
-                }
-            }
+            vCards.erase(vCards.begin() + *iter);
+            iSize++;
         }
         DrawCard(iSize, dInput);
     }
@@ -54,8 +50,3 @@
     Hand::~Hand() {
 
     }
-
-public:
-    std::vector<Card> vCards;
-
-};
