@@ -3,6 +3,11 @@ A simple text-based poker game WIP.
 
 **Version 0.0.6**
 
+- Began to layout the structure of the Game class, which connects the bulk of classes together in one single 
+   "playspace" for the gameplay
+
+**Version 0.0.6**
+
 - Began to define and implement various functionality of the Player class, including connecting its functionality with
    the Hand and Card class
 
