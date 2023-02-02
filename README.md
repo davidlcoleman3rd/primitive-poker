@@ -1,7 +1,7 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
-**Version 0.0.6**
+**Version 0.0.7**
 
 - Began to layout the structure of the Game class, which connects the bulk of classes together in one single 
    "playspace" for the gameplay
