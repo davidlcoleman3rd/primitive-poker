@@ -67,7 +67,7 @@
             vCards.erase(vCards.begin() + *iter);
             iSize++;
         }
-        DrawCard(iSize, dInput);
+        DrawCard(iSize, dInput);                        //Draws cards for the user
     }
 
 //******
