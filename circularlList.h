@@ -21,6 +21,10 @@
 
 //************************************************
 
+const int PLAYER_COUNT = 4;
+
+//************************************************
+
 template <class Type>
 class CircularList {
 public:

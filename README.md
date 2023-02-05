@@ -1,6 +1,10 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.0.8**
+- Added files for the discard and pot class
+- Began to implement functionality for sorting player hands to estimate the value of the player's hand
+
 **Version 0.0.7**
 
 - Began to layout the structure of the Game class, which connects the bulk of classes together in one single 

@@ -29,6 +29,30 @@
     }
 
 //******
+    void Hand::SortHand() {
+        std::vector<Card> vTempSuit;
+        std::list<Card> vTempRank;
+        for (int iter = 0; iter < 4; iter++) {
+            for (const auto suitCheck : vCards) {
+                if (suitCheck->GetSuit() == CardSuit(iter)) {
+                    vTempSuit.push_back(vCards[iter]);
+                }
+            }
+            for (const auto rankCheck : vTempSuit) {
+                if (vTempRank.size() == 0) {
+                    vTempRank.push_back(vTempSuit[rankCheck]);
+                }
+                else if(vTempSuit[rankCheck] >= vTempRank) {
+                    vTempRank.push_back(vTempSuit[rankCheck]);
+                }
+                else {
+                    vTempRank.push_front(vTempSuit[rankCheck]);
+                }
+            }
+        }
+    }
+
+//******
     void Hand::DrawCard(int iCount, Deck& dInput) {
         for (int iter = 0; iter < iCount; iter++) {
             vCards.push_back(dInput.DealCard(HAND_STATE));

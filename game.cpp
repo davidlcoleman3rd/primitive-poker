@@ -14,7 +14,12 @@
 
 
     Game() {                       //Default constructor - creates the decks, players, and rivers
-
+        Player* pTemp;
+        dDeck = new Deck;
+        lPlayers = new CircularList<Player>;
+        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+            pTemp = new Player;
+        }
     }
 
 //******
@@ -30,7 +35,7 @@
 private:
     Deck* dDeck;                    //The deck being used for the current game
     River* dRiver;                  //The river being used for the current game
-    CircularList* lPlayers;         //The list of players, sorted by turn order
+    CircularList<Player>* lPlayers;         //The list of players, sorted by turn order
 
 };
 */

@@ -45,9 +45,9 @@ public:
     ~Player();                                  //Destructor - currently does nothing
 
 private:
-    Hand hCards(Deck& dInput);
+    Hand* hCards;
     float fCash;
-
+    bool bFolded;
 };
 
 #endif // PLAYER_H

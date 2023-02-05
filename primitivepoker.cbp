@@ -36,6 +36,8 @@
 		<Unit filename="circularlList.h" />
 		<Unit filename="deck.cpp" />
 		<Unit filename="deck.h" />
+		<Unit filename="discard.cpp" />
+		<Unit filename="discard.h" />
 		<Unit filename="game.cpp" />
 		<Unit filename="game.h" />
 		<Unit filename="hand.cpp" />
@@ -44,6 +46,8 @@
 		<Unit filename="node.h" />
 		<Unit filename="player.cpp" />
 		<Unit filename="player.h" />
+		<Unit filename="pot.cpp" />
+		<Unit filename="pot.h" />
 		<Unit filename="river.cpp" />
 		<Unit filename="river.h" />
 		<Extensions>
