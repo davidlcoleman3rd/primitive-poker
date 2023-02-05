@@ -30,26 +30,25 @@
 
 //******
     void Hand::SortHand() {
-        std::vector<Card> vTempSuit;
-        std::list<Card> vTempRank;
-        for (int iter = 0; iter < 4; iter++) {
-            for (const auto suitCheck : vCards) {
-                if (suitCheck->GetSuit() == CardSuit(iter)) {
-                    vTempSuit.push_back(vCards[iter]);
+        std::vector<Card> vTempSort;                                //
+        int iSize = vCards.size();
+        CardNum cnFinal;
+        Card* tempCard;
+        for (int iCount = 0; iCount < iSize; iCount++) {
+            for (const auto iter : vCards) {
+                CardNum cnTemp;
+                cnTemp = vCards.at(iter).GetNum();
+                if (cnTemp > cnFinal) {
+                    cnFinal = cnTemp;
+                    tempCard = vCards.at(iter);
                 }
             }
-            for (const auto rankCheck : vTempSuit) {
-                if (vTempRank.size() == 0) {
-                    vTempRank.push_back(vTempSuit[rankCheck]);
-                }
-                else if(vTempSuit[rankCheck] >= vTempRank) {
-                    vTempRank.push_back(vTempSuit[rankCheck]);
-                }
-                else {
-                    vTempRank.push_front(vTempSuit[rankCheck]);
-                }
-            }
+            vTempSort.push_back(tempCard);
+            vCards.pop_back();
         }
+        vCards = vTempSort;
+        tempCard = nullptr;
+        delete tempCard;
     }
 
 //******
