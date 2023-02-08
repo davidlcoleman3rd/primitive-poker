@@ -1,6 +1,10 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**VERSION 0.0.9**
+- Began to perform isolated tests on hand and deck.
+- While dealing cards to a hand and displaying the hand works, shuffling the deck currently has bugs
+
 **Version 0.0.8.1**
 - Defined and implemented a sorting algorithm for sorting hands
 
