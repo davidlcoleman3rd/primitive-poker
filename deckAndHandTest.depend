@@ -1,0 +1,31 @@
+# depslib dependency file v1.0
+1674876327 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/deckAndHandTest/card.cpp
+	"card.h"
+
+1674874355 /home/dave/Documents/Code - Projects/C++/Primitive Poker/deckAndHandTest/card.h
+	<iostream>
+	<iomanip>
+	<string>
+
+1675823554 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/deckAndHandTest/deck.cpp
+	"deck.h"
+
+1675820669 /home/dave/Documents/Code - Projects/C++/Primitive Poker/deckAndHandTest/deck.h
+	"card.h"
+	<stack>
+	<random>
+
+1675820618 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/deckAndHandTest/main.cpp
+	<iostream>
+	"card.h"
+	"deck.h"
+	"hand.h"
+
+1675817528 /home/dave/Documents/Code - Projects/C++/Primitive Poker/deckAndHandTest/hand.h
+	"card.h"
+	"deck.h"
+	<vector>
+
+1675818104 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/deckAndHandTest/hand.cpp
+	"hand.h"
+
