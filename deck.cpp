@@ -47,44 +47,27 @@
     void Deck::Shuffle() {                                  //Shuffles the deck x times, where x is the argument passed to the function - REMOVED X TIMES PARAMETER FOR TESTING PURPOSES
         std::random_device shuffler;                        //Random device
         std::mt19937 seedMake(shuffler());                  //Random device seed
-        std::vector<Card*> vTemp(100, nullptr);              //Vector to hold the card values
+        std::vector<Card*> vTemp(52, nullptr);               //Vector to hold the card values
         std::uniform_int_distribution<int> randInt(0,51);   //The object that produces our random number
-       // std::cout << "\ntest 01\n";
         Card* tempPtr = nullptr;
         while (stDeck.size() > 0) {
             int iTemp = randInt(seedMake);
-           // std::cout << "\ntest 02\n";
             if (vTemp.at(iTemp) == nullptr) {
-               // std::cout << "\ntest 03\n";
-                tempPtr = vTemp.at(iTemp);
-               // std::cout << "\ntest 05\n";
-               //std::cout << "\ntop = " << stDeck.top().GetNumStr() << "\n";
-               //std::cout << "\niter " << stDeck.size() << "\n";
-               //std::cout << "itemp = " << iTemp << "\n";
-               Card cTemp(stDeck.top());
-               //std::cout << "\nTest again\n";
-                vTemp.at(iTemp) = &cTemp;
-              //std::cout << "\ntest 06\n";
-             //vTemp.at(iTemp) = tempPtr;
-               // std::cout << "\ntest 07\n";
-             tempPtr = nullptr;
-               //std::cout << "\ntest 04\n";
-                stDeck.pop();
-             //  std::cout << "\ntest 05\n";
+               tempPtr = new Card(stDeck.top());
+               vTemp.at(iTemp) = tempPtr;
+               stDeck.pop();
+               tempPtr = nullptr;
             }
         }
- //       int iTemp = vTemp.size();
-        for (int iter = 51; iter >= 0; iter--) {
-           // std::cout << "new test " << iter << '\n';
-            tempPtr = vTemp.at(iter);
-            std::cout << "new top is " << tempPtr->GetNumStr() << '\n';
-            stDeck.push(*(tempPtr));
-            std::cout << "new card is " << stDeck.top().GetNumStr() << '\n';
-           // std::cout << "new test 03" << '\n';
-         //   std::cout << "new test 04" << '\n';
-       //     std::cout << "new test 05" << '\n';
+        for (int iter = 0; iter < 52; iter++) {
+            std::stack<Card> stTemp;
+            Card cTemp(*(vTemp.at(iter)));
+            stDeck.push(cTemp);
         }
-        vTemp = std::vector<Card*>();
+        for (auto p : vTemp) {
+            delete p;
+        }
+        vTemp.clear();
     }
 
 //******

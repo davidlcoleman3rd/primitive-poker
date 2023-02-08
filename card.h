@@ -50,16 +50,16 @@ public:
                                     //...to generate suit and rank value.
 
 //******
-    CardSuit GetSuit();             //Returns the card's suit to the calling function
+    CardSuit GetSuit() const;             //Returns the card's suit to the calling function
 
 //******
-    CardNum GetNum();               //Returns the card's num to the calling function
+    CardNum GetNum() const;               //Returns the card's num to the calling function
 
 //******
-    std::string GetSuitStr();       //Returns a str version of suit to calling function
+    std::string GetSuitStr() const;       //Returns a str version of suit to calling function
 
 //******
-    std::string GetNumStr();        //Returns a str version of rank to the calling function
+    std::string GetNumStr() const;        //Returns a str version of rank to the calling function
 
 //******
     void SetSuit(int/*in*/);        //Sets the suit to the input parameter
@@ -71,7 +71,7 @@ public:
     void SetState(CardState/*in*/); //Sets the state of the card
 
 //******
-    CardState GetState();           //Gets the state of the card
+    CardState GetState() const;           //Gets the state of the card
 
 //******
     ~Card();
