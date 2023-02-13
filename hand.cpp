@@ -46,9 +46,7 @@
                         tempCard = nullptr;
                     }
                     cnFinal = cnTemp;
-                    std::cout << "\nTest 01\n";
                     tempCard =  new Card(cardTemp);
-                    std::cout << "\nTest 02\n";
                 }
             }
             vTempSort.push_back(*(tempCard));
@@ -82,12 +80,178 @@
     }
 
 //******
-    void Hand::PrintHand() {
+    void Hand::PrintHand() const {
         std::cout << "Your hand:\n\n";
         for (auto& iter : vCards) {
-            std::cout << iter.GetNumStr() << " of " << iter.GetSuitStr() << '\n';
+            std::cout << " ,,,,,,, ";
         }
-        std::cout << '\n';
+        std::cout << "\n";
+
+
+        for (auto& iter : vCards) {
+            std::cout << " |" << iter.GetSuitSym() << "  " << iter.GetNumStr() << "| ";
+        }
+        std::cout << "\n";
+
+        for (auto& iter : vCards) {
+            std::cout << " |     | ";
+        }
+        std::cout << "\n";
+
+        for (auto& iter : vCards) {
+            std::cout << " |" << iter.GetSuitStr() << "| ";
+        }
+        std::cout << "\n";
+
+        for (auto& iter : vCards) {
+            std::cout << " |     | ";
+        }
+        std::cout << "\n";
+
+        for (auto& iter : vCards) {
+            std::cout << " |" << iter.GetNumStr() << "  " << iter.GetSuitSym() << "| ";
+        }
+        std::cout << "\n";
+
+         for (auto& iter : vCards) {
+            std::cout << " ``````` ";
+        }
+        std::cout << "\n";
+    }
+
+    int Hand::CountPoints() {
+        SortHand();
+        int totalScore = 0;
+        int outputScore = 0;
+        int iteration = 0;
+        CardSuit csTemp;
+        CardNum cnTemp;
+
+
+        for (auto& iter : vCards) {
+            totalScore += int(iter.GetNum());
+        }
+
+        int streak = 0;
+        bool hasPair = false;
+        bool hasTrips = false;
+        bool hasQuads = false;
+        bool twoPair = false;
+        bool fullHouse = false;
+        for (auto& iter : vCards) {
+            if (iteration > 0) {
+                if (cnTemp == iter.GetNum()) {
+                    if (hasPair && streak == 1) {
+                        hasTrips = true;
+                        streak++;
+                    }
+                    else if (hasTrips && streak == 2) {
+                        hasQuads = true;
+                        streak++;
+                    }
+                    else if (hasTrips && streak == 0) {
+                        fullHouse = true;
+                        hasPair = true;
+                        streak++;
+                    }
+                    else if (hasPair && streak == 0) {
+                        twoPair = true;
+                        streak++;
+                    }
+                    else if (twoPair) {
+                        hasTrips = true;
+                        hasPair = true;
+                        fullHouse = true;
+                        twoPair = false;
+                        streak++;
+                    }
+                    else {
+                        hasPair = true;
+                        streak++;
+                    }
+                }
+                else {
+                    streak = 0;
+                }
+            }
+            cnTemp = iter.GetNum();
+            iteration++;
+        }
+
+        if (hasPair) {
+            if (hasTrips) {
+                if (hasQuads) {
+                    totalScore += 800;
+                    outputScore += 800;
+                }
+                else if (fullHouse) {
+                    totalScore += 600;
+                    outputScore += 600;
+                }
+                else {
+                    totalScore += 300;
+                    outputScore += 300;
+                }
+            }
+            else if (twoPair) {
+                totalScore += 200;
+                outputScore += 200;
+            }
+            else {
+                totalScore += 100;
+                outputScore += 100;
+            }
+            ShowScore(outputScore, totalScore);
+            return totalScore;
+        }
+
+        bool isStraight = true;
+        bool isFlush = true;
+        iteration = 0;
+        for (auto& iter : vCards) {
+            if (iteration > 0) {
+                if (iter.GetSuit() != csTemp) {
+                    isFlush = false;
+                }
+                if (iter.GetNum() != (cnTemp - 1)) {
+                    isStraight = false;
+                }
+            }
+            csTemp = iter.GetSuit();
+            cnTemp = iter.GetNum();
+            iteration++;
+        }
+        if (isStraight) {
+            totalScore += 400;
+            outputScore += 400;
+        }
+        if (isFlush) {
+            totalScore += 500;
+            outputScore += 500;
+        }
+        ShowScore(outputScore, totalScore);
+        return totalScore;
+    }
+
+//******
+    void Hand::ShowScore(int iOutput, int iTotal) const {
+        switch (iOutput) {
+            case 100 : std::cout << "\nOne pair!\n"; break;
+            case 200 : std::cout << "\nTwo pair!\n"; break;
+            case 300 : std::cout << "\nThree of a kind!\n"; break;
+            case 400 : std::cout << "\nStraight!\n"; break;
+            case 500 : std::cout << "\nFlush!\n"; break;
+            case 600 : std::cout << "\nFull House!!\n"; break;
+            case 800 : std::cout << "\nFour of a Kind!!\n"; break;
+            case 900 : {
+                if (iTotal == 955)
+                    std::cout << "\nHoly moly... ROYAL FLUSH!!!!!\n";
+                else
+                    std::cout << "\nStraight Flush!!!\n"; break;
+                break;
+            }
+            default : std::cout << "\nNo hand.\n";
+        }
     }
 
 //******

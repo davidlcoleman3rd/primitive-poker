@@ -43,7 +43,13 @@ public:
     void Discard(std::vector<int>,/*in*/ Deck&/*in&out*/);  //Passes a list of all cards to be discarded and discards them before drawing more
 
 //******
-    void PrintHand();                                       //Prints every card in the players hand based on str values - FOR TESTING PURPOSES
+    void PrintHand() const;                                 //Prints every card in the players hand based on str values - FOR TESTING PURPOSES
+
+//******
+    int CountPoints();                                      //Iterates multiple times through a sorted hand to determine how strong that hand is vs other players
+
+//******
+    void ShowScore(int, int) const;                         //Prints out the specific hand the player has
 
 //******
     ~Hand();

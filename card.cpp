@@ -55,6 +55,7 @@
     void Card::SetSuit(int iSuitIn) {         //Sets the suit to the input parameter
         suit = CardSuit(iSuitIn);
         suitStr = SUIT_STR[iSuitIn];
+        suitSym = SUIT_SYM[iSuitIn];
     }
 //******
     void Card::SetNum(int iNumIn) {           //Sets the rank to the input parameter
@@ -70,6 +71,11 @@
 //******
     CardState Card::GetState() const {                //Gets the current card state
         return state;
+    }
+
+//******
+    std::string Card::GetSuitSym() const {
+        return suitSym;
     }
 
 //******
