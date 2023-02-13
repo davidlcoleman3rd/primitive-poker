@@ -15,6 +15,7 @@ int main() {
     Deck myDeck;
     myDeck.Shuffle();
     Hand myHand(myDeck);
+    myHand.SortHand();
     myHand.PrintHand();
 
     return 0;

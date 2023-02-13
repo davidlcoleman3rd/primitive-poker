@@ -32,24 +32,35 @@
     void Hand::SortHand() {
         std::vector<Card> vTempSort;                                //
         int iSize = vCards.size();
-        CardNum cnFinal;
         Card* tempCard = nullptr;
-        int vCardSize = vCards.size();
         for (int iCount = 0; iCount < iSize; iCount++) {
+            int vCardSize = vCards.size();
             for (int iter = 0; iter < vCardSize; iter++) {
+                CardNum cnFinal;
                 CardNum cnTemp;
                 cnTemp = vCards.at(iter).GetNum();
-                if (cnTemp > cnFinal) {
+                Card cardTemp(vCards.at(iter));
+                if (cnTemp > cnFinal || iter == 0) {
+                    if (tempCard != nullptr) {
+                        delete tempCard;
+                        tempCard = nullptr;
+                    }
                     cnFinal = cnTemp;
-                    *(tempCard) = vCards.at(iter);
+                    std::cout << "\nTest 01\n";
+                    tempCard =  new Card(cardTemp);
+                    std::cout << "\nTest 02\n";
                 }
             }
             vTempSort.push_back(*(tempCard));
-            vCards.pop_back();
+            for (int iter = 0; iter < int(vCards.size()); iter++) {
+                if (vCards.at(iter) == *(tempCard)) {
+                    vCards.erase(vCards.begin() + iter);
+                }
+            }
+            delete tempCard;
+            tempCard = nullptr;
         }
         vCards = vTempSort;
-        tempCard = nullptr;
-        delete tempCard;
     }
 
 //******

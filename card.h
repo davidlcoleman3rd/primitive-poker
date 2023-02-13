@@ -74,7 +74,11 @@ public:
     CardState GetState() const;           //Gets the state of the card
 
 //******
+    bool operator==(const Card& cOther) const;
+
+//******
     ~Card();
+
 
 private:
     CardSuit suit;

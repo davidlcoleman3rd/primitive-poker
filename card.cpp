@@ -73,6 +73,18 @@
     }
 
 //******
+    bool Card::operator==(const Card& cOther) const {
+        CardNum cnTemp = cOther.GetNum();
+        CardSuit csTemp = cOther.GetSuit();
+        if (suit == csTemp) {
+            if (num == cnTemp) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+//******
     Card::~Card() {  }
 
 /*
