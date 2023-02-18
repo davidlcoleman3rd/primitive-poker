@@ -28,7 +28,7 @@
 //***********************************************
 
     Deck::Deck() {
-        Card* tempPtr;
+        Card* tempPtr = nullptr;
         for (int iIterSuit = 0; iIterSuit < MAX_SUITS; iIterSuit++) {
             for (int iIterRank = 0; iIterRank < MAX_RANKS; iIterRank++) {
                 tempPtr = new Card(iIterSuit, iIterRank);
@@ -40,12 +40,60 @@
 
 //******
     Deck::Deck(int/*in*/) {                         //Alternative constructor - Generates a deck made of X decks of cards (TO BE IMPLEMENTED LATER);
+        Card* tempPtr = nullptr;                    //CURRENTLY IS USED FOR TESTING PURPOSES
+
+        tempPtr = new Card(SPADES, TWO);
+        stDeck.push(*(tempPtr));
+        delete tempPtr;
+        tempPtr = nullptr;
+
+        tempPtr = new Card(SPADES, KING);
+        stDeck.push(*(tempPtr));
+        delete tempPtr;
+        tempPtr = nullptr;
+
+        tempPtr = new Card(SPADES, QUEEN);
+        stDeck.push(*(tempPtr));
+        delete tempPtr;
+        tempPtr = nullptr;
+
+        tempPtr = new Card(SPADES, JACK);
+        stDeck.push(*(tempPtr));
+        delete tempPtr;
+        tempPtr = nullptr;
+
+        tempPtr = new Card(SPADES, TEN);
+        stDeck.push(*(tempPtr));
+        delete tempPtr;
+        tempPtr = nullptr;
 
     }
 
 //******
-    void Deck::Shuffle(int iInput/*in*/) {          //Shuffles the deck x times, where x is the argument passed to the function
-
+    void Deck::Shuffle() {                                  //Shuffles the deck x times, where x is the argument passed to the function - REMOVED X TIMES PARAMETER FOR TESTING PURPOSES
+        std::random_device shuffler;                        //Random device
+        std::mt19937 seedMake(shuffler());                  //Random device seed
+        std::vector<Card*> vTemp(52, nullptr);               //Vector to hold the card values
+        std::uniform_int_distribution<int> randInt(0,51);   //The object that produces our random number
+        Card* tempPtr = nullptr;
+        while (stDeck.size() > 0) {
+            int iTemp = randInt(seedMake);
+            if (vTemp.at(iTemp) == nullptr) {
+               tempPtr = new Card(stDeck.top());
+               vTemp.at(iTemp) = tempPtr;
+               stDeck.pop();
+               tempPtr = nullptr;
+            }
+        }
+        for (int iter = 0; iter < 52; iter++) {
+            std::stack<Card> stTemp;
+            Card cTemp(*(vTemp.at(iter)));
+            stDeck.push(cTemp);
+        }
+        for (auto p : vTemp) {
+            delete p;
+        }
+        vTemp.clear();
     }
 
 //******

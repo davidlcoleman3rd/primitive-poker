@@ -3,45 +3,35 @@
 
 
 
-
-
-#include "circularlList.h"
 #include <iostream>
+#include "card.h"
+#include "deck.h"
+#include "hand.h"
+#include "player.h"
+#include "circularlList.h"
+
+
 
 int main() {
-    CircularList<int> myList(1);
-    myList.NewNode(2);
-    myList.NewNode(3);
-    myList.NewNode(4);
 
-    myList.TraverseStart();
-    bool fullTraverse = false;
-    while (!(fullTraverse)) {
-        if (myList.GetCurr() == myList.GetHead()) {
-            std::cout << " ___  \n"
-                      << "/   \ \n"
-                      << "|   | \n"
-                      << "|   " << myList.GetPlayer() << "\n";
-        }
-        else if (myList.GetCurr() == myList.GetLast()) {
+    Deck myDeck;
+    myDeck.Shuffle();
 
-            std::cout << "|   | \n"
-                      << "|   | \n"
-                      << "|   " << myList.GetPlayer() << "\n"
-                      << "\___/ \n\n";
-        }
-
-        else {
-           std::cout  << "|   | \n"
-                      << "|   | \n"
-                      << "|   " << myList.GetPlayer() << "\n"
-                      << "|   | \n"
-                      << "|   | \n";
-        }
-        myList.TraverseNext();
-        if (myList.GetCurr() == myList.GetHead())
-            fullTraverse = true;
+    std::vector<Player*> playerPtr(4);
+    for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+        playerPtr[iter] = new Player(myDeck, 500.00);
     }
+
+    CircularList<Player*> turnOrder (playerPtr[0]);
+    for (int iter = 1; iter < PLAYER_COUNT; iter++) {
+        turnOrder.NewNode(playerPtr[iter]);
+    }
+    for (int iter = 1; iter <= PLAYER_COUNT; iter++) {
+        std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
+        turnOrder.GetPlayer()->PlayHand();
+        turnOrder.TraverseNext();
+    }
+
 
     return 0;
 }

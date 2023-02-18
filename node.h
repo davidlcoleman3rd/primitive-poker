@@ -59,7 +59,7 @@ public:
 
 
 private:
-    Type data;                          //Holds data for the node (in this context, holds the player whose turn it is)
+    Type data;                         //Holds data for the node (in this context, holds the player whose turn it is)
     Node<Type>* next;                   //Holds the next node in the list (in this context, the next player)
     Node<Type>* prev;                   //Holds the prev node in the list (in this context, the previous player)
 

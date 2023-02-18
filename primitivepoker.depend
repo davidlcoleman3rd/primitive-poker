@@ -1,39 +1,52 @@
 # depslib dependency file v1.0
-1674876327 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/deck.cpp
+1676329413 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/deck.cpp
 	"deck.h"
 
-1674434974 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/game.cpp
+1676679527 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/game.cpp
 
-1675215085 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/hand.cpp
+1676681094 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/hand.cpp
 	"hand.h"
 
-1674522538 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/main.cpp
-	"circularlList.h"
+1676684302 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/main.cpp
 	<iostream>
+	"card.h"
+	"deck.h"
+	"hand.h"
+	"player.h"
+	"circularlList.h"
 
-1675620274 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/circularlList.h
+1676684009 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/circularlList.h
 	"node.h"
 
-1674690447 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/node.h
+1676684025 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/node.h
 
-1675214922 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/player.cpp
+1676684189 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/player.cpp
+	"player.h"
 
-1674434974 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/river.cpp
+1676679527 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/river.cpp
 
-1674876327 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/card.cpp
+1676314540 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/card.cpp
 	"card.h"
 
-1674874355 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/card.h
+1676314798 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/card.h
 	<iostream>
 	<iomanip>
 	<string>
 
-1674876327 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/deck.h
+1675820669 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/deck.h
 	"card.h"
 	<stack>
+	<random>
 
-1674876327 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/hand.h
+1676320114 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/hand.h
 	"card.h"
 	"deck.h"
 	<vector>
+
+1676679527 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/discard.cpp
+
+1676679527 source:/home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/pot.cpp
+
+1676683119 /home/dave/Documents/Code - Projects/C++/Primitive Poker/primitivepoker/player.h
+	"hand.h"
 

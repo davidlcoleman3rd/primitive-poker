@@ -27,11 +27,14 @@ const int HAND_STATE = 1;         //Holds the numerical version of the enum CARD
 //***********************************************
 
 class Hand {
-private:
+public:
     Hand(Deck& /*in&out*/);                                 //Constructor - Gets a hand of cards
 
 //******
-    void GetHand(Deck&/*in&out*/);             //Function called by hand - generates a hand and returns it to the vector
+    void GetHand(Deck&/*in&out*/);                          //Function called by hand - generates a hand and returns it to the vector
+
+//******
+    void SortHand();                                        //Function to sort the hand by value - suit sorting not necessary
 
 //******
     void DrawCard(int,/*in*/ Deck&/*in&out*/);              //Interacts with the deck and draws cards from it
@@ -40,9 +43,18 @@ private:
     void Discard(std::vector<int>,/*in*/ Deck&/*in&out*/);  //Passes a list of all cards to be discarded and discards them before drawing more
 
 //******
+    void PrintHand() const;                                 //Prints every card in the players hand based on str values - FOR TESTING PURPOSES
+
+//******
+    int CountPoints();                                      //Iterates multiple times through a sorted hand to determine how strong that hand is vs other players
+
+//******
+    void ShowScore(int, int) const;                         //Prints out the specific hand the player has
+
+//******
     ~Hand();
 
-public:
+private:
     std::vector<Card> vCards;
 
 };

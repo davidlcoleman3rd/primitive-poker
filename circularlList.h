@@ -28,7 +28,7 @@ const int PLAYER_COUNT = 4;
 template <class Type>
 class CircularList {
 public:
-    CircularList(Type tInput) {                             //Constructor - Generates a circular list with one node
+    CircularList(Type& tInput) {                             //Constructor - Generates a circular list with one node
         head = new Node<Type>(tInput);
         head->SetNext(head);
         head->SetPrev(head);
@@ -37,37 +37,6 @@ public:
         prev = head;
         last = head;
         iLength = 1;
-    }
-
-//******
-    CircularList(Type tFirst, Type tSecond) {                       //Constructor - Generates a circular list with two nodes
-        head = new Node<Type>(tFirst);
-        next = new Node<Type>(tSecond);
-        head->SetNext(next);
-        next->SetPrev(head);
-        next->SetNext(head);
-        head->SetPrev(next);
-        curr = next;
-        last = curr;
-        prev = head;
-        iLength = 2;
-    }
-
-//******
-    CircularList(Type tFirst, Type tSecond, Type tThird) {          //Constructor - Generates a circular list with three nodes
-        head = new Node<Type>(tFirst);
-        curr = new Node<Type>(tSecond);
-        next = new Node<Type>(tThird);
-        head->SetNext(curr);
-        curr->SetPrev(head);
-        curr->SetNext(next);
-        next->SetPrev(curr);
-        next->SetNext(head);
-        head->SetPrev(next);
-        curr = next;
-        last = curr;
-        prev = head;
-        iLength = 3;
     }
 
 //******

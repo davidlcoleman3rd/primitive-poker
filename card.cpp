@@ -21,11 +21,11 @@
     Card::Card() { }                    //Default constructor - Does nothing as of yet
 
 //******
-    Card::Card(const Card& cOther) {    //Copy constructor - Creates a new object by copying the cOther
-        Card& temp = const_cast <Card&>(cOther);
-        SetSuit(int(temp.GetSuit()));
-        SetNum(int(temp.GetNum()));
-        SetState(temp.GetState());
+    Card::Card(const Card& cOther) {    //Copy constructor - Creates a new object by copying the cOther   //THIS FUNCTION IS ALL KINDS OF FUCKED UP
+                                                                                                          //  DO
+        SetSuit(int(cOther.GetSuit()));                                                                     //  NOT
+        SetNum(int(cOther.GetNum()));                                                                       //  USE
+        SetState(cOther.GetState());
     }
 
 //******
@@ -36,25 +36,26 @@
         state = IN_DECK;
     }
 //******
-    CardSuit Card::GetSuit(){             //Returns the card's suit to the calling function
+    CardSuit Card::GetSuit() const {             //Returns the card's suit to the calling function
         return suit;
     }
 //******
-    CardNum Card::GetNum(){               //Returns the card's num to the calling function
+    CardNum Card::GetNum() const {               //Returns the card's num to the calling function
         return num;
     }
 //******
-    std::string Card::GetSuitStr(){       //Returns a str version of suit to calling function
+    std::string Card::GetSuitStr() const {       //Returns a str version of suit to calling function
         return suitStr;
     }
 //******
-    std::string Card::GetNumStr(){        //Returns a str version of rank to the calling function
+    std::string Card::GetNumStr() const {        //Returns a str version of rank to the calling function
         return numStr;
     }
 //******
     void Card::SetSuit(int iSuitIn) {         //Sets the suit to the input parameter
         suit = CardSuit(iSuitIn);
         suitStr = SUIT_STR[iSuitIn];
+        suitSym = SUIT_SYM[iSuitIn];
     }
 //******
     void Card::SetNum(int iNumIn) {           //Sets the rank to the input parameter
@@ -68,8 +69,25 @@
     }
 
 //******
-    CardState Card::GetState() {                //Gets the current card state
+    CardState Card::GetState() const {                //Gets the current card state
         return state;
+    }
+
+//******
+    std::string Card::GetSuitSym() const {
+        return suitSym;
+    }
+
+//******
+    bool Card::operator==(const Card& cOther) const {
+        CardNum cnTemp = cOther.GetNum();
+        CardSuit csTemp = cOther.GetSuit();
+        if (suit == csTemp) {
+            if (num == cnTemp) {
+                return true;
+            }
+        }
+        return false;
     }
 
 //******

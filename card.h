@@ -28,10 +28,11 @@ enum CardNum {TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT,    //The rank of each c
               NINE, TEN, JACK, QUEEN, KING, ACE};
 enum CardState {IN_DECK, IN_HAND, IN_RIVER, IN_DISCARD};
 
-const std::string SUIT_STR[4] = {"CLB", "DMD", "HRT", "SPD"};           //String versions of suit...
-const std::string NUM_STR[13] = {" 2 ", " 3 ", " 4 ", " 5 ", " 6 ",     //...and rank.  Translate directlyu with enum values
-                                 " 7 ", " 8 ", " 9 ", " 10", "JAC",
-                                 "QUE", "KNG", "ACE"};
+const std::string SUIT_SYM[4] = {u8"♣", u8"♦", u8"♥", u8"♠"};           //String versions of suit...
+const std::string SUIT_STR[4] = {" CLUB", " DMND", "HEART", "SPADE"};
+const std::string NUM_STR[13] = {" 2", " 3", " 4", " 5", " 6",     //...and rank.  Translate directlyu with enum values
+                                 " 7", " 8", " 9", "10", " J",
+                                 " Q", " K", " A"};
 
 const int SUIT_COUNT = (sizeof(SUIT_STR) / sizeof(SUIT_STR[0]));         //Holds total number of suits for each card
 const int NUM_COUNT = (sizeof(NUM_STR) / sizeof(NUM_STR[0]));           //Holds total number of possible ranks for each card
@@ -50,16 +51,16 @@ public:
                                     //...to generate suit and rank value.
 
 //******
-    CardSuit GetSuit();             //Returns the card's suit to the calling function
+    CardSuit GetSuit() const;             //Returns the card's suit to the calling function
 
 //******
-    CardNum GetNum();               //Returns the card's num to the calling function
+    CardNum GetNum() const;               //Returns the card's num to the calling function
 
 //******
-    std::string GetSuitStr();       //Returns a str version of suit to calling function
+    std::string GetSuitStr() const;       //Returns a str version of suit to calling function
 
 //******
-    std::string GetNumStr();        //Returns a str version of rank to the calling function
+    std::string GetNumStr() const;        //Returns a str version of rank to the calling function
 
 //******
     void SetSuit(int/*in*/);        //Sets the suit to the input parameter
@@ -71,16 +72,24 @@ public:
     void SetState(CardState/*in*/); //Sets the state of the card
 
 //******
-    CardState GetState();           //Gets the state of the card
+    CardState GetState() const;           //Gets the state of the card
+
+//******
+    std::string GetSuitSym() const;       //Gets the symbol string for the card's suit
+
+//******
+    bool operator==(const Card& cOther) const;
 
 //******
     ~Card();
+
 
 private:
     CardSuit suit;
     CardNum num;
     std::string suitStr;
     std::string numStr;
+    std::string suitSym;
     CardState state;
 };
 

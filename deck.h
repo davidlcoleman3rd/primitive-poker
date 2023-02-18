@@ -22,6 +22,7 @@
 
 #include "card.h"
 #include <stack>
+#include <random>
 
 //***********************************************
 
@@ -40,7 +41,7 @@ public:
     Deck(int/*in*/);    //Alternative constructor - Generates a deck made of X decks of cards (TO BE IMPLEMENTED LATER);
 
 //******
-    void Shuffle(int/*in*/);     //Shuffles the deck
+    void Shuffle();              //Shuffles the deck
 
 //******
     Card DealCard(int/*in*/);    //Peeks a card from the top of the deck and distributes it to a player/river

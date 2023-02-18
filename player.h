@@ -16,12 +16,11 @@
 
 #include "hand.h"
 
-//***********************************************\
+//***********************************************
 
 
 class Player {
-public:
-    Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, gives them a hand of 5 cards and a sum of cash
+public:    Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, gives them a hand of 5 cards and a sum of cash
 
 //******
     float BetCash();                            //The player chooses how much money to bet on a hand
@@ -39,7 +38,7 @@ public:
     void Fold();                                //The player can forfeit their hand until the end of the round and get a new hand
 
 //******
-    Hand Play();                                //The player plays their sorted hand
+    void PlayHand();                                //The player plays their sorted hand
 
 //******
     ~Player();                                  //Destructor - currently does nothing
