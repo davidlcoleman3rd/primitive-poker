@@ -38,7 +38,13 @@ public:    Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, giv
     void Fold();                                //The player can forfeit their hand until the end of the round and get a new hand
 
 //******
-    void PlayHand();                                //The player plays their sorted hand
+    void PlayHand();                             //The player plays their sorted hand
+
+//******
+    void PlayHand(bool);                        //The player plays their sorted hand - NO PRINTING
+
+//******
+    float HandPoints();                          //Returns the player's point values to the calling function for this hand
 
 //******
     ~Player();                                  //Destructor - currently does nothing

@@ -19,6 +19,7 @@
 #include "card.h"
 #include "deck.h"
 #include <vector>
+#include <math.h>
 
 //***********************************************
 
@@ -46,10 +47,13 @@ public:
     void PrintHand() const;                                 //Prints every card in the players hand based on str values - FOR TESTING PURPOSES
 
 //******
-    int CountPoints();                                      //Iterates multiple times through a sorted hand to determine how strong that hand is vs other players
+    double CountPoints();                                   //Iterates multiple times through a sorted hand to determine how strong that hand is vs other players
 
 //******
-    void ShowScore(int, int) const;                         //Prints out the specific hand the player has
+    double CountPoints(bool);                               //Iterates multiple times through a sorted hand to determine how strong that hand is vs other players - no printing
+
+//******
+    void ShowScore(int, double) const;                      //Prints out the specific hand the player has
 
 //******
     ~Hand();

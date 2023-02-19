@@ -97,13 +97,24 @@
     void Player::PlayHand() {                                   //Sorts the player's hand based on suit first, and then rank. Used to generate a point value from the hand
         hCards->SortHand();
         hCards->PrintHand();
-        std::cout << "\n" << hCards->CountPoints() << " points\n\n";
+//        ShowScore(outputScore, totalScore);
+        std::cout << std::fixed <<  std::setprecision(14) << "\n" << hCards->CountPoints() << " points\n\n";
     }
 
 //******
-//    int Player::HandPoints() {                                  //Generates a "value" of the sorted hand
-//
-//    }
+        void Player::PlayHand(bool noPrint) {                   //Sorts the player's hand based on suit first, and then rank. Used to generate a point value from the hand
+        hCards->SortHand();                                     //No printing using bool
+        hCards->PrintHand();
+//        ShowScore(outputScore, totalScore);
+//      std::cout << std::fixed <<  std::setprecision(14) << "\n" << hCards->CountPoints() << " points\n\n";
+    }
+
+//******
+    float Player::HandPoints() {                                  //Generates a "value" of the sorted hand
+        hCards->SortHand();
+
+        return hCards->CountPoints(false);                      //False prevents hand values from being printed to the screen
+    }
 
 //******
     //Hand Play() {                               //The player plays their sorted hand
