@@ -32,9 +32,6 @@ public:    Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, giv
     float CheckCash();                          //Checks the amount of cash a player has
 
 //******
-    void Drop(Deck&/*inandout*/);               //The player can drop up to 3 cards - 4 if holding an ace - and draw that many
-
-//******
     void Fold();                                //The player can forfeit their hand until the end of the round and get a new hand
 
 //******
@@ -44,7 +41,13 @@ public:    Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, giv
     void PlayHand(bool);                        //The player plays their sorted hand - NO PRINTING
 
 //******
-    float HandPoints();                          //Returns the player's point values to the calling function for this hand
+    void DiscardCards(Deck&/*in&out*/);         //Allows the player to discard a set number of cards and draw that many cards before playing hand
+
+//******
+    void DiscardHand(Deck& /*in&out*/);         //Places all of the player's cards into the discard pile
+
+//******
+    float HandPoints();                         //Returns the player's point values to the calling function for this hand
 
 //******
     ~Player();                                  //Destructor - currently does nothing

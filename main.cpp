@@ -16,47 +16,84 @@ struct Score {
 };
 
 int main() {
-
+    bool gameLoop = true;
     Deck myDeck;
     myDeck.Shuffle();
-    std::vector<Score> vPlayerScore(PLAYER_COUNT);
-    std::vector<Player*> playerPtr(PLAYER_COUNT);
+    while (gameLoop) {
+        std::string playerChoice;
 
-    for (int iter = 0; iter < PLAYER_COUNT; iter++) {
-        playerPtr[iter] = new Player(myDeck, 500.00);
-        vPlayerScore[iter].playerNum = iter + 1;
-        vPlayerScore[iter].points = playerPtr[iter]->HandPoints();
-    }
+        std::vector<Score> vPlayerScore(PLAYER_COUNT);
+        std::vector<Player*> playerPtr(PLAYER_COUNT);
 
-    CircularList<Player*> turnOrder (playerPtr[0]);
-    for (int iter = 1; iter < PLAYER_COUNT; iter++) {
-        turnOrder.NewNode(playerPtr[iter]);
-    }
 
-    turnOrder.TraverseStart();
-    for (int iter = 1; iter <= PLAYER_COUNT; iter++) {
-        std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
-        turnOrder.GetPlayer()->PlayHand(false);
-        turnOrder.TraverseNext();
-    }
-
-    int tempMax = 0;
-    int tempPos = 0;
-    for (int iter = 0; iter < PLAYER_COUNT; iter++) {
-        if (vPlayerScore[iter].points >= tempMax) {
-            tempMax = vPlayerScore[iter].points;
-            tempPos = vPlayerScore[iter].playerNum;
-
+        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+            playerPtr[iter] = new Player(myDeck, 500.00);
+            vPlayerScore[iter].playerNum = iter + 1;
+            vPlayerScore[iter].points = playerPtr[iter]->HandPoints();
         }
+
+        CircularList<Player*> turnOrder (playerPtr[0]);
+        for (int iter = 1; iter < PLAYER_COUNT; iter++) {
+            turnOrder.NewNode(playerPtr[iter]);
+        }
+
+        turnOrder.TraverseStart();
+        for (int iter = 1; iter < 1 + 1; iter++) {
+            std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
+            turnOrder.GetPlayer()->PlayHand(false);
+        }
+
+        turnOrder.TraverseStart();
+        turnOrder.GetPlayer()->DiscardCards(myDeck);
+
+        turnOrder.TraverseStart();
+        for (int iter = 1; iter <= PLAYER_COUNT; iter++) {
+            std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
+            turnOrder.GetPlayer()->PlayHand(false);
+            turnOrder.TraverseNext();
+        }
+
+        int tempMax = 0;
+        int tempPos = 0;
+        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+            if (vPlayerScore[iter].points >= tempMax) {
+                tempMax = vPlayerScore[iter].points;
+                tempPos = vPlayerScore[iter].playerNum;
+
+            }
+        }
+
+        std::cout << "Player " << tempPos << " is the winner of the hand!\n\n";
+
+        for (auto i : playerPtr) {
+            i->DiscardHand(myDeck);
+            delete i;
+        }
+
+        playerPtr.clear();
+        bool choiceLoop = true;
+        std::cout << "\n\nDeck size: " << myDeck.GetSize() << "\n"
+                  << "\nDiscard size: " << myDeck.DiscardSize() << "\n\n";
+        while (choiceLoop) {
+            std::cout << "Would you like to play again?\n"
+                      << "Type <yes> to play again, or <no> to quit\n\n";
+            if(playerChoice == "") {
+                std::cin.ignore(1000, '\n');
+            }
+            getline(std::cin, playerChoice);
+            char choiceAuto = tolower(playerChoice.at(0));
+            tolower(choiceAuto);
+            switch(choiceAuto) {
+                case 'y' : choiceLoop = false; break;
+                case 'n' : choiceLoop = false; gameLoop = false; break;
+                default : {
+                    std::cout << "\nInvalid entry, try again\n";
+                    break;
+                }
+            }
+        }
+        playerChoice = "";
     }
-
-    std::cout << "Player " << tempPos << " is the winner of the hand!\n\n";
-
-    for (auto i : playerPtr) {
-        delete i;
-    }
-
-    playerPtr.clear();
 /*
     const double ONE = 1.0;
 
@@ -75,6 +112,7 @@ int main() {
               << ONE / std::pow(13,11) << "\n"
               << ONE / std::pow(13,12) << "\n\n";
 */
+    std::cout << "\nGoodbye!!\n";
     return 0;
 }
 

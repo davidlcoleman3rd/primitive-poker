@@ -47,10 +47,21 @@ public:
     void PrintHand() const;                                 //Prints every card in the players hand based on str values - FOR TESTING PURPOSES
 
 //******
+    void PrintCard(Card) const;                             //Prints only a single card - can be used to print similar card data structures to hands that are not hands
+                                                            //...like all aces in a hand when deciding which to keep (when discarding 4 cards) in example
+
+//******
     double CountPoints();                                   //Iterates multiple times through a sorted hand to determine how strong that hand is vs other players
 
 //******
     double CountPoints(bool);                               //Iterates multiple times through a sorted hand to determine how strong that hand is vs other players - no printing
+
+//******
+    void DiscardCards(Deck&);                               //Allows the user to discard cards in order to draw new ones
+                                                            //Up to 3 cards can be discarded normally, or 4 cards if the player is holding an
+                                                            //...an ace.  Draws an appropriate amount of cards once finished
+//******
+    void DiscardHand(Deck&);                                //Discards the entire player's hand back into the discard pile
 
 //******
     void ShowScore(int, double) const;                      //Prints out the specific hand the player has

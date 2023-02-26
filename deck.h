@@ -21,6 +21,7 @@
 #define DECK_H
 
 #include "card.h"
+#include "discard.h"
 #include <stack>
 #include <random>
 
@@ -47,11 +48,23 @@ public:
     Card DealCard(int/*in*/);    //Peeks a card from the top of the deck and distributes it to a player/river
 
 //******
+    int GetSize();               //Returns the current size of the deck to the calling function
+
+//******
+    void Reshuffle();            //Shuffles the discard pile back into the deck
+
+//******
+    void ToDiscard(Card/*in*/);        //Sends the card passed as argument to the discard pile
+
+//******
+    int DiscardSize();          //Returns current size of the discard pile to the calling function
+//******
     ~Deck();            //Destructor - currently does nothing
 
 
 private:
     std::stack<Card> stDeck;
+    Discard disPile;
 };
 
 #endif // DECK_H

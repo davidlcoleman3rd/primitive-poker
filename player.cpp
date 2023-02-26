@@ -110,6 +110,16 @@
     }
 
 //******
+        void Player::DiscardCards(Deck& dInput) {
+            hCards->DiscardCards(dInput);
+        }
+
+//******
+        void Player::DiscardHand(Deck& dInput) {
+            hCards->DiscardHand(dInput);
+        }
+
+//******
     float Player::HandPoints() {                                  //Generates a "value" of the sorted hand
         hCards->SortHand();
 
@@ -124,6 +134,7 @@
 //******
     Player::~Player() {
         delete hCards;
+        hCards = nullptr;
     }                      //Destructor - currently does nothing
 
 /*
