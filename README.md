@@ -1,7 +1,16 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
-**Version 0.2.1**
+**Version 0.3.0**
+
+- Added a functional discard pile class and bound it to the deck class
+- Made it so decks shuffle back from the discard pile if necessary (this will be a modular feature in the future)
+- Added discard functionality
+- Added game loops; allow the player to make decisions in games and choose to continue playing or to quit.
+
+============
+
+***Version 0.2***
 
 - Added the <math.h> library to allow for exponent arithmetic
 - Changed the scoring system to use doubles and an accelerated multiplier; makes sure that the correct victor is always chosen when a hand is won
@@ -9,8 +18,6 @@ A simple text-based poker game WIP.
 - Added "winner" selection - each hand will pass its score total to a vector.  This vector is traversed and the "maximum" value is selected, determining the winner by choosing the player with the highest score.
    - Have not implemented a solution for ties yet
    - Not sure if when implemented that tied games will work with doubles, due to floating errors.  May need to do some testing and add a "round to the nearest decimal" function for proper functionality
-
-**Version 0.2.0**
 - Merged the deckAndHandTest branch with main
 - Implemented the circularlList class and the Player class to allow for mulitple players to draw hands of cards from the same deck, printing all hands in order with their score values
 - Fixed logic issues with this implementation in order to print all hands without error
