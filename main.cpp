@@ -4,6 +4,7 @@
 
 
 #include <iostream>
+#include <limits>
 #include "card.h"
 #include "deck.h"
 #include "hand.h"
@@ -12,7 +13,7 @@
 
 struct Score {
     int playerNum;
-    float points;
+    double points;
 };
 
 int main() {
@@ -40,16 +41,17 @@ int main() {
         turnOrder.TraverseStart();
         for (int iter = 1; iter < 1 + 1; iter++) {
             std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
-            turnOrder.GetPlayer()->PlayHand(false);
+            turnOrder.GetPlayer()->PlayHand();
         }
 
         turnOrder.TraverseStart();
         turnOrder.GetPlayer()->DiscardCards(myDeck);
+        vPlayerScore[0].points = playerPtr[0]->HandPoints();
 
         turnOrder.TraverseStart();
         for (int iter = 1; iter <= PLAYER_COUNT; iter++) {
             std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
-            turnOrder.GetPlayer()->PlayHand(false);
+            turnOrder.GetPlayer()->PlayHand();
             turnOrder.TraverseNext();
         }
 
@@ -69,6 +71,7 @@ int main() {
             i->DiscardHand(myDeck);
             delete i;
         }
+        myDeck.Reshuffle();
 
         playerPtr.clear();
         bool choiceLoop = true;
@@ -81,7 +84,7 @@ int main() {
                 std::cin.ignore(1000, '\n');
             }
             getline(std::cin, playerChoice);
-            char choiceAuto = tolower(playerChoice.at(0));
+            char choiceAuto = playerChoice.at(0);
             tolower(choiceAuto);
             switch(choiceAuto) {
                 case 'y' : choiceLoop = false; break;

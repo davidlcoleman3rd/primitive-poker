@@ -64,7 +64,7 @@ public:
     void DiscardHand(Deck&);                                //Discards the entire player's hand back into the discard pile
 
 //******
-    void ShowScore(int, double) const;                      //Prints out the specific hand the player has
+    void ShowScore(int, double) const;                 //Prints out the specific hand the player has
 
 //******
     ~Hand();

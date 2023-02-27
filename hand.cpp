@@ -148,7 +148,7 @@
 //******
     double Hand::CountPoints() {
         SortHand();
-        double totalScore = 0;
+        long double totalScore = 0;
         int outputScore = 0;
         int iteration = 0;
         CardSuit csTemp;
@@ -218,7 +218,7 @@
             cnTemp = iter.GetNum();
             iteration++;
         }
-        int temp = 0;
+        unsigned long int temp = 0;
         if (hasPair) {
             if (hasTrips) {
                 if (hasQuads) {
@@ -231,21 +231,21 @@
                 else if (fullHouse) {
                     if (tripsFirst) {
                         for (int iter = 0; iter < 3; iter++) {
-                            int holdCard = iter;
+                            int holdCard = StreakedCards.at(iter);
                             temp += (holdCard * 300000);
                         }
                         for (int iter = 3; iter < 5; iter++) {
-                            int holdCard = iter;
+                            int holdCard = StreakedCards.at(iter);
                             temp += (holdCard * 1000);
                         }
                     }
                     else {
                         for (int iter = 0; iter < 2; iter++) {
-                            int holdCard = iter;
+                            int holdCard = StreakedCards.at(iter);
                             temp += (holdCard * 1000);
                         }
                         for (int iter = 2; iter < 5; iter++) {
-                            int holdCard = iter;
+                            int holdCard = StreakedCards.at(iter);
                             temp += (holdCard * 300000);
                         }
                     }
@@ -260,16 +260,19 @@
                 }
             }
             else if (twoPair) {
-                for (auto iter : StreakedCards) {
-                    int holdCard = iter;
-                    temp += (holdCard * 40);
+                for (int iter = 0; iter < 2; iter++) {
+                    int holdCard = StreakedCards.at(iter);
+                    temp += (holdCard * 30);
+                }
+                for (int iter = 2; iter < 4; iter++) {
+                    int holdCard = StreakedCards.at(iter);
                 }
                 outputScore += 200;
             }
             else {
                 for (auto iter : StreakedCards) {
                     int holdCard = iter;
-                    temp += (holdCard * 10);
+                    temp += (holdCard);
                 }
                 outputScore += 100;
             }
@@ -281,16 +284,16 @@
         bool isStraight = true;
         bool isFlush = true;
         iteration = 0;
-        for (auto& iter : vCards) {
+        for (auto iter : vCards) {
             if (iteration > 0) {
                 if (iter.GetSuit() != csTemp) {
                     isFlush = false;
                 }
-                if (iter.GetNum() != (cnTemp - 1)) {
+                if (iter.GetNum() != (cnTemp - CardNum(1))) {
                     isStraight = false;
                 }
-                StreakedCards.push_back(int(iter.GetNum()) + 1);
             }
+            StreakedCards.push_back(int(iter.GetNum()) + 1);
             csTemp = iter.GetSuit();
             cnTemp = iter.GetNum();
             iteration++;
@@ -302,7 +305,8 @@
                     int holdCards = iter;
                     temp += (holdCards * 53000000);
                 }
-                if (temp == 2760000000.0) {
+                outputScore += 400;
+                if (temp > 2914000000) {
                     totalScore = 9999999999.0;
                     outputScore = 900;
                     ShowScore(outputScore, totalScore);
@@ -334,7 +338,7 @@
 //******
     double Hand::CountPoints(bool noPrint) {
         SortHand();
-        double totalScore = 0;
+        long double totalScore = 0;
         int outputScore = 0;
         int iteration = 0;
         CardSuit csTemp;
@@ -404,7 +408,7 @@
             cnTemp = iter.GetNum();
             iteration++;
         }
-        int temp = 0;
+        unsigned long int temp = 0;
         if (hasPair) {
             if (hasTrips) {
                 if (hasQuads) {
@@ -417,21 +421,21 @@
                 else if (fullHouse) {
                     if (tripsFirst) {
                         for (int iter = 0; iter < 3; iter++) {
-                            int holdCard = iter;
+                            int holdCard = StreakedCards.at(iter);
                             temp += (holdCard * 300000);
                         }
                         for (int iter = 3; iter < 5; iter++) {
-                            int holdCard = iter;
+                            int holdCard = StreakedCards.at(iter);
                             temp += (holdCard * 1000);
                         }
                     }
                     else {
                         for (int iter = 0; iter < 2; iter++) {
-                            int holdCard = iter;
+                            int holdCard = StreakedCards.at(iter);
                             temp += (holdCard * 1000);
                         }
                         for (int iter = 2; iter < 5; iter++) {
-                            int holdCard = iter;
+                            int holdCard = StreakedCards.at(iter);
                             temp += (holdCard * 300000);
                         }
                     }
@@ -446,16 +450,19 @@
                 }
             }
             else if (twoPair) {
-                for (auto iter : StreakedCards) {
-                    int holdCard = iter;
-                    temp += (holdCard * 40);
+                for (int iter = 0; iter < 2; iter++) {
+                    int holdCard = StreakedCards.at(iter);
+                    temp += (holdCard * 30);
+                }
+                for (int iter = 2; iter < 4; iter++) {
+                    int holdCard = StreakedCards.at(iter);
                 }
                 outputScore += 200;
             }
             else {
                 for (auto iter : StreakedCards) {
                     int holdCard = iter;
-                    temp += (holdCard * 10);
+                    temp += (holdCard);
                 }
                 outputScore += 100;
             }
@@ -467,16 +474,16 @@
         bool isStraight = true;
         bool isFlush = true;
         iteration = 0;
-        for (auto& iter : vCards) {
+        for (auto iter : vCards) {
             if (iteration > 0) {
                 if (iter.GetSuit() != csTemp) {
                     isFlush = false;
                 }
-                if (iter.GetNum() != (cnTemp - 1)) {
+                if (iter.GetNum() != (cnTemp - CardNum(1))) {
                     isStraight = false;
                 }
-                StreakedCards.push_back(int(iter.GetNum()) + 1);
             }
+            StreakedCards.push_back(int(iter.GetNum()) + 1);
             csTemp = iter.GetSuit();
             cnTemp = iter.GetNum();
             iteration++;
@@ -488,10 +495,11 @@
                     int holdCards = iter;
                     temp += (holdCards * 53000000);
                 }
-                if (temp == 2760000000.0) {
+                outputScore += 400;
+                if (temp > 2914000000) {
                     totalScore = 9999999999.0;
                     outputScore = 900;
-//                  ShowScore(outputScore, totalScore);
+                    ShowScore(outputScore, totalScore);
                     return totalScore;
                 }
                 outputScore += 500;
