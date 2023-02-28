@@ -1,6 +1,14 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.3.1**
+
+- Added primitive version of "game" routines in main
+   - These need to be extracted into functions and optimized
+   - Use undefined function prototypes for players that need to be declared and defined
+- Started the process of adding betting to the game
+   - This feature will continue to be a primitive iteration until an "AI" is added for the computer players
+
 **Version 0.3.0**
 
 - Added a functional discard pile class and bound it to the deck class
