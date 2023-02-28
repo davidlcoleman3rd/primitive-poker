@@ -526,6 +526,11 @@
     }
 
 //******
+    int Hand::CardCount() {
+        return vCards.size();
+    }
+
+//******
     void Hand::DiscardCards(Deck& dInput) {
         int discardCount = 0;
         int discardChoice = 0;
@@ -600,6 +605,7 @@
             }
             dInput.ToDiscard(vCards.at(discardChoice - 1));
             vCards.erase(vCards.begin() + (discardChoice - 1));
+//          vCards.resize(discardChoice - 1);
             std::cout << "\n\n";
             discardChoice = -1;
         }
@@ -608,12 +614,14 @@
 //        PrintHand();
     }
 
+//******
     void Hand::DiscardHand(Deck& dInput) {
         for (auto i : vCards) {
             dInput.ToDiscard(i);
         }
         for (int iter = vCards.size(); iter > 0; iter--) {
             vCards.erase(vCards.begin() + (iter - 1));
+//          vCards.resize(iter - 1);
         }
         vCards.clear();
     }

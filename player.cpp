@@ -21,19 +21,55 @@
     }
 
 //******
- //   float Player::BetCash() {                                                   //The player chooses how much money to bet on a hand
-    //    float fTempCash = fCash + 1;                                            //Sets temp cash just out of range to prime loop
-  //      while (fTempCash > fCash || fTempCash < 0) {                            //Loop repeats until fTempCash is a valid amount (greater than or equal to 0 and less than total cash)
-     //       std::cout << "\nEnter how much money you bet. Type 0 to fold.\n";
-      //      std::cin >> fTempCash;
-       //     if (fTempCash = 0) {                                                //If the player enters 0, they fold their hand
-         //       Fold();
-        //        break;
-         //   }
-       // }
-       // fCash -= fTempCash;                                                     //Subtracts the total amount to be bet from the total cash the player has
-       // return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
-  //  }
+    float Player::AnteUp(int anteSize) {
+        fCash -= anteSize;
+        return anteSize;
+    }
+
+//******
+    float Player::BetCash(Deck& dInput) {                                           //The player chooses how much money to bet on a hand
+        if (fCash > 0) {
+            float fTempCash = fCash + 1;                                            //Sets temp cash just out of range to prime loop
+            while (fTempCash > fCash || fTempCash < 0) {                            //Loop repeats until fTempCash is a valid amount (greater than or equal to 0 and less than total cash)
+                std::cout << "\nEnter how much money you bet. Type 0 to fold.\n";
+                std::cin >> fTempCash;
+                if (fTempCash == 0) {                                                //If the player enters 0, they fold their hand
+                    Fold(dInput);
+                    break;
+                }
+                else if (fTempCash > fCash || fTempCash < 0) {
+                    std::cout << "\nInvalid input.  Only enter a value within your cash amount, or fold.\n";
+                }
+            }
+            fCash -= fTempCash;                                                     //Subtracts the total amount to be bet from the total cash the player has
+            return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
+        }
+        else {
+            std::cout << "\nOut of the money!\n\n";
+            Fold(dInput);
+            return -1;
+        }
+    }
+
+//******
+    float Player::BetCash(int playerNum, bool cpuBet, Deck& dInput) {               //The CPU chooses how much money to bet on a hand - bool sets CPU
+        float fTempCash = 0;
+        if (fCash > 0) {
+            if (fCash > 50) {
+                fTempCash = 50;
+            }
+            else {
+                fTempCash = fCash;
+            }
+            fCash -= fTempCash;                                                     //Subtracts the total amount to be bet from the total cash the player has
+            return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
+        }
+        else {
+            std::cout << "\nOut of the money!\n\n";
+            Fold(dInput);
+            return -1;
+        }
+    }
 //******
     void Player::GetCash(float fCashIn/*in*/) {                     //The player gets cash in return from the pot when they win
         fCash += fCashIn;
@@ -80,13 +116,10 @@
 */
 
 //******
-//    void Player::Fold(Discard& diPile/*out*/){                  //The player can forfeit their hand until the end of the round and get a new hand
- //       while (hCards.size() > 0) {
-  //          diPile.GetCard(hCards[hCards.size() - 1]);
-   //         hCards.pop_back();
-  //      }
-   //     bFolded = true;
-    //}
+    void Player::Fold(Deck& dInput/*out*/){                  //The player can forfeit their hand until the end of the round and get a new hand
+        DiscardHand(dInput);
+        bFolded = true;
+}
 
 //******
 //    bool Player::GetFoldStatus() {
@@ -117,6 +150,20 @@
 //******
         void Player::DiscardHand(Deck& dInput) {
             hCards->DiscardHand(dInput);
+        }
+
+//******
+        void Player::NewHand(Deck& dInput) {
+            bFolded = false;
+            hCards->DiscardHand(dInput);
+            hCards->DrawCard(5, dInput);
+        }
+
+//******
+        void Player::NewHand(Deck& dInput, bool noDiscard) {
+            bFolded = false;
+            int tempInt = hCards->CardCount();
+            hCards->DrawCard((5 - tempInt), dInput);
         }
 
 //******

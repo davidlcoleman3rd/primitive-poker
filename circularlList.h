@@ -87,6 +87,21 @@ public:
     }
 
 //******
+    void RemovePlayer(int playerNum) {                  //Removes a player from the circular list
+        TraverseStart();
+        int tempNum = 1;
+        while (tempNum < playerNum) {
+            TraverseNext();
+            tempNum++;
+        }
+        prev->SetNext(next);
+        next->SetPrev(prev);
+        delete curr;
+        curr = next;
+        next = curr->GetNext();
+    }
+
+//******
     Node<Type>* GetHead() {
         return head;
     }

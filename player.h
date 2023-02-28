@@ -23,7 +23,10 @@ class Player {
 public:    Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, gives them a hand of 5 cards and a sum of cash
 
 //******
-    float BetCash();                            //The player chooses how much money to bet on a hand
+    float AnteUp(int);                          //The player wagers the ante for the hand
+
+//******
+    float BetCash(Deck&);                       //The player chooses how much money to bet on a hand
 
 //******
     void GetCash(float/*in*/);                  //The player gets cash in return from the pot when they win
@@ -32,7 +35,12 @@ public:    Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, giv
     float CheckCash();                          //Checks the amount of cash a player has
 
 //******
-    void Fold();                                //The player can forfeit their hand until the end of the round and get a new hand
+    void Fold(Deck&);                           //The player can forfeit their hand until the end of the round and get a new hand
+
+//******
+    float BetCash(int playerNum,
+                bool cpuBet, Deck& dInput);     //The CPU chooses how much money to bet on a hand - bool sets CPU
+
 
 //******
     void PlayHand();                             //The player plays their sorted hand
@@ -45,6 +53,18 @@ public:    Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, giv
 
 //******
     void DiscardHand(Deck& /*in&out*/);         //Places all of the player's cards into the discard pile
+
+//******
+    void DiscardHand(Deck&, /*in&out*/ bool);   //Discards player's entire hand - bool argument will make sure that a new hand is not drawn
+
+//******
+    void NewHand(Deck&/*in&out*/);              //Discards player's entire hand and draws a new one
+
+//******
+    void NewHand(Deck&,/*in&out*/ bool);        //Draws enough cards to give the player a new hand - bool = no discarding
+
+//******
+    void GetHand(Deck& /*in&out*/);             //Draws as many cards as necessary to get a full hand of cards
 
 //******
     float HandPoints();                         //Returns the player's point values to the calling function for this hand

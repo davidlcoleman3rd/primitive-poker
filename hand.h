@@ -64,6 +64,9 @@ public:
     void DiscardHand(Deck&);                                //Discards the entire player's hand back into the discard pile
 
 //******
+    int CardCount();                                    //Returns the amount of cards in hand to the calling function
+
+//******
     void ShowScore(int, double) const;                 //Prints out the specific hand the player has
 
 //******
