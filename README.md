@@ -1,6 +1,11 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.3.1.1**
+- Begun to define the differences between a user player and a CPU player
+- Added stats to the CPU that will be a part of the CPU decision making engine
+   - This will determine whether the CPU will be more likely to draw risky cards, take risky bets, raise, call, and/or fold
+
 **Version 0.3.1**
 
 - Added primitive version of "game" routines in main

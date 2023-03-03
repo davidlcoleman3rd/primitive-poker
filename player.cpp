@@ -192,3 +192,31 @@ private:
 };
 
 */
+
+
+
+//******
+    CPU(Deck&/*in&out*/ myDeck, float/*in*/ myCash)      //Generates a player, gives them a hand of 5 cards and a sum of cash
+            : Player(myDeck, myCash) {
+        std::random_device statMaker;                       //Random device
+        std::mt19937 seedMake(statMaker());                  //Random device seed
+        std::uniform_int_distribution<int> randInt(0,5);       //The object that produces our random number
+        intellectStat = randint(seedMake);
+        aggressivenessStat = randint(seedMake);
+        carefulnessStat = randint(seedMake);
+    }
+
+//******
+    float BetCash(Deck&) {                       //The CPU chooses how much money to bet on a hand
+
+    }
+
+//******
+    float CallBet(Deck&) {                      //The CPU can choose to call or raise an existing bet
+
+    }
+
+//******
+    ~CPU() {   };
+
+};

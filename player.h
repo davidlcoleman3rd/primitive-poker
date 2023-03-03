@@ -15,18 +15,29 @@
 #define PLAYER_H
 
 #include "hand.h"
+#include <random>
 
 //***********************************************
 
 
 class Player {
-public:    Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, gives them a hand of 5 cards and a sum of cash
+public:
+    Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, gives them a hand of 5 cards and a sum of cash
 
 //******
     float AnteUp(int);                          //The player wagers the ante for the hand
 
 //******
-    float BetCash(Deck&);                       //The player chooses how much money to bet on a hand
+    virtual float BetCash(Deck&);               //The player chooses how much money to bet on a hand - Redefined if used by a CPU
+
+//******
+    virtual float CallBet(Deck&);               //The player can choose to call or raise an existing bet - Redefined if used by a CPU
+
+//******
+    float TakeWager(float);                     //The player's wagered money is given to the dealer and placed in the pot
+
+//******
+    bool FoldedHand();                          //Returns whether or not the player has folded their hand or not
 
 //******
     void GetCash(float/*in*/);                  //The player gets cash in return from the pot when they win
@@ -36,11 +47,6 @@ public:    Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, giv
 
 //******
     void Fold(Deck&);                           //The player can forfeit their hand until the end of the round and get a new hand
-
-//******
-    float BetCash(int playerNum,
-                bool cpuBet, Deck& dInput);     //The CPU chooses how much money to bet on a hand - bool sets CPU
-
 
 //******
     void PlayHand();                             //The player plays their sorted hand
@@ -76,6 +82,30 @@ private:
     Hand* hCards;
     float fCash;
     bool bFolded;
+};
+
+class CPU : public Player {
+public:
+
+//******
+    CPU(Deck&/*in&out*/ myDeck, float/*in*/ myCash)
+            : Player(myDeck, myCash) {};                //Generates a player, gives them a hand of 5 cards and a sum of cash
+
+//******
+    float BetCash(Deck&);               //The CPU chooses how much money to bet on a hand
+
+//******
+    float CallBet(Deck&);               //The CPU can choose to call or raise an existing bet
+
+//******
+    ~CPU();
+
+//******
+private:
+    int intellectStat;
+    int aggressivenessStat;
+    int carefulnessStat;
+
 };
 
 #endif // PLAYER_H

@@ -79,10 +79,10 @@ int main() {
         }
         else {
             callValue = turnOrder.GetPlayer()->BetCash(myDeck);
-            myPot += callvalue;
+            myPot += callValue;
         }
         while (callingBets) {
-            int temp = 0;
+            float temp = 0;
             betIteration++;
             if (betIteration == PLAYER_COUNT) {
                 betIteration = 0;
