@@ -31,7 +31,7 @@ public:
     virtual float BetCash(Deck&);               //The player chooses how much money to bet on a hand - Redefined if used by a CPU
 
 //******
-    virtual float CallBet(Deck&);               //The player can choose to call or raise an existing bet - Redefined if used by a CPU
+    virtual float CallBet(float&, Deck&);       //The player can choose to call or raise an existing bet - Redefined if used by a CPU
 
 //******
     float TakeWager(float);                     //The player's wagered money is given to the dealer and placed in the pot
@@ -78,7 +78,7 @@ public:
 //******
     ~Player();                                  //Destructor - currently does nothing
 
-private:
+protected:
     Hand* hCards;
     float fCash;
     bool bFolded;
@@ -88,14 +88,13 @@ class CPU : public Player {
 public:
 
 //******
-    CPU(Deck&/*in&out*/ myDeck, float/*in*/ myCash)
-            : Player(myDeck, myCash) {};                //Generates a player, gives them a hand of 5 cards and a sum of cash
+    CPU(Deck&/*in&out*/ myDeck, float/*in*/ myCash);    //Generates a player, gives them a hand of 5 cards and a sum of cash
 
 //******
-    float BetCash(Deck&);               //The CPU chooses how much money to bet on a hand
+    float BetCash(int, Deck&);                          //The CPU chooses how much money to bet on a hand
 
 //******
-    float CallBet(Deck&);               //The CPU can choose to call or raise an existing bet
+    float CallBet(float&, int, Deck&);                  //The CPU can choose to call or raise an existing bet
 
 //******
     ~CPU();

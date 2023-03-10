@@ -1,6 +1,13 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.3.1.2**
+- Created quick and rough prototypes of the betting, calling, folding, and raising subroutines
+   - The CPU versions of these functions all use the normal player versions for now.  This will be improved in time
+- Implemented the betting of player cash in the main function.
+   - This is currently rough and does not allow all players to make a bet as it should.
+
+
 **Version 0.3.1.1**
 - Begun to define the differences between a user player and a CPU player
 - Added stats to the CPU that will be a part of the CPU decision making engine

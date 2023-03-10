@@ -30,7 +30,12 @@ int main() {
     int betIteration = 0;
 
     for (int iter = 0; iter < PLAYER_COUNT; iter++) {
-            playerPtr[iter] = new Player(myDeck, 500.00);
+            if (iter == 0) {
+                playerPtr[iter] = new Player(myDeck, 500.00);
+            }
+            else {
+                playerPtr[iter] = new CPU(myDeck, 500.00);
+            }
         }
 
     while (gameLoop) {
@@ -64,6 +69,11 @@ int main() {
         turnOrder.TraverseStart();
         turnOrder.GetPlayer()->DiscardCards(myDeck);
         vPlayerScore[0].points = playerPtr[0]->HandPoints();
+        for (int iter = 1; iter < 1 + 1; iter++) {
+            std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
+            turnOrder.GetPlayer()->PlayHand();
+        }
+
 
         turnOrder.TraverseStart();
         for (int iter = betIteration; iter > 0; iter--) {
@@ -74,8 +84,10 @@ int main() {
         std::vector<bool> allCalled(PLAYER_COUNT, false);
         bool callingBets = true;
         if (betIteration > 0) {
-            callValue = turnOrder.GetPlayer()->BetCash(betIteration + 1, true, myDeck);
+            CPU* temp = dynamic_cast<CPU*>(turnOrder.GetPlayer());
+            callValue = temp->BetCash(betIteration + 1, myDeck);
             allCalled.at(betIteration) = true;
+            temp = nullptr;
         }
         else {
             callValue = turnOrder.GetPlayer()->BetCash(myDeck);
@@ -107,7 +119,8 @@ int main() {
                 }
             }
             else {
-                temp = turnOrder.GetPlayer()->CallBet(callValue, betIteration + 1, true, myDeck);       //FUNCTION NEEDS DEFINITION
+                CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
+                temp = tempPtr->CallBet(callValue, betIteration + 1, myDeck);       //FUNCTION NEEDS DEFINITION
                 if (turnOrder.GetPlayer()->FoldedHand()) {
                     allCalled.at(betIteration) = true;
                 }
@@ -137,7 +150,9 @@ int main() {
             betIteration = 0;
         }
 
-        std::cout << "\nHow much do you bet on this hand?\n\n";
+        //std::cout << "\nHow much do you bet on this hand?\n\n";
+
+        turnOrder.TraverseStart();
         for (int iter = 1; iter <= PLAYER_COUNT; iter++) {
             std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
             turnOrder.GetPlayer()->PlayHand();
