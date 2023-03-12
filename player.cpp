@@ -17,7 +17,8 @@
     Player::Player(Deck& dDeck,/*in&out*/ float fStartCash/*in*/) {
         fCash = fStartCash;                                                     //Starts each player off with a set amount of money
         hCards = new Hand(dDeck);                                               //Generates a hand of 5 cards for each player
-        bFolded = false;                                                        //Sets the "folded" state to false - used to check if the player has folded this turn
+        bFolded = false;                                                       //Sets the "folded" state to false - used to check if the player has folded this turn
+        currWager = 0;
     }
 
 //******
@@ -42,6 +43,7 @@
                 }
             }
             fCash -= fTempCash;                                                     //Subtracts the total amount to be bet from the total cash the player has
+            currWager = fTempCash;                                                  //Sets the current amount of money the player is betting to fTempCash
             return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
         }
         else {
@@ -52,50 +54,47 @@
     }
 
 //******
-    float Player::CallBet(float& callValue, Deck& dInput) {             //The CPU can choose to call or raise an existing bet
-        int playerInput;
-        bool betting = true;
-         while (betting) {
-            std::cout << "\nDo you raise, call, or fold? \n"
-                      << "To call, type 0. To raise, type the amount you bet over the call\n"
-                      << "To fold, type a negative value.\n\n"
-                      << "Current call is:    " << callValue << "\n\n";
-            std::cin >> playerInput;
-            if (playerInput == 0) {
-                std::cout << "\nPlayer 1 calls the bet.\n\n";
-                return callValue;
-            }
-            else if (playerInput < 0) {
-                std::cout << "\nPlayer 1 folds.\n\n";
-                Fold(dInput);
-                return callValue;
-            }
-            else {
-                playerInput = 0;
-                std::cout << "\nHow much do you want to raise the current bet of " << callValue << " by?\n\n";
+    float Player::CallBet(float callValue, Deck& dInput) {             //The CPU can choose to call or raise an existing bet
+        int temp = 0;
+        if (fCash < callValue - currWager) {
+            std::cout << "\nPlayer 1 is out of the money\n\n";
+            Fold(dInput);
+            return 0;
+        }
+        else if (FoldedHand()) {
+            std::cout << "\nPlayer 1 has folded\n";
+            return 0;
+        }
+        else {
+            int playerInput;
+            bool betting = true;
+            while (betting) {
+                std::cout << "\nDo you raise, call, or fold? \n"
+                          << "To call, type 0. To raise, type the amount you bet over the call\n"
+                          << "To fold, type a negative value.\n\n"
+                          << "Current call is:    " << callValue << "\n\n";
                 std::cin >> playerInput;
                 if (playerInput == 0) {
-                    std::cout << "\nPlayer 1 raises by 0.  Bet is called\n\n";
+                    std::cout << "\nPlayer 1 calls the bet.\n\n";
                     return callValue;
                 }
                 else if (playerInput < 0) {
-                    std::cout << "\nPlayer 1 changes their mind and folds.\n\n";
+                    std::cout << "\nPlayer 1 folds.\n\n";
                     Fold(dInput);
-                    return callValue;
+                    return 0;
                 }
                 else {
-                    if (fCash >= (callValue + playerInput)) {
-                        callValue += playerInput;
-                        betting = false;
-                    }
-                    else {
-                        std::cout << "\nYou do not have enough money for that raise.  Please try again.\n";
+                        if (fCash >= (callValue + playerInput)) {
+                            temp = callValue + playerInput;
+                            betting = false;
+                        }
+                        else {
+                            std::cout << "\nPlayer 1 does not have enough money for that raise.  Please try again.\n";
+                        }
                     }
                 }
             }
-        }
-
-        return callValue;
+        return temp;
     }
 
 //******
@@ -105,8 +104,10 @@
 
 //******
     float Player::TakeWager(float fCashIn/*in*/) {
-        fCash -= fCashIn;
-        return fCashIn;
+        int temp = fCashIn - currWager;
+        currWager += temp;
+        fCash -= temp;
+        return temp;
     }
 
 //******
@@ -198,6 +199,7 @@
             bFolded = false;
             int tempInt = hCards->CardCount();
             hCards->DrawCard((5 - tempInt), dInput);
+            currWager = 0;
         }
 
 //******
@@ -216,6 +218,7 @@
     Player::~Player() {
         delete hCards;
         hCards = nullptr;
+        std::cout << "\nDestructor test - Player\n\n";
     }                      //Destructor - currently does nothing
 
 /*
@@ -266,53 +269,49 @@ private:
     }
 
 //******
-    float CPU::CallBet(float& callValue, int playerNum, Deck& dInput) {             //The CPU can choose to call or raise an existing bet
-        int playerInput;
-        bool betting = true;
-         while (betting) {
-            std::cout << "\nDo you raise, call, or fold? \n"
-                      << "To call, type 0. To raise, type the amount you bet over the call\n"
-                      << "To fold, type a negative value.\n\n"
-                      << "Current call is:    " << callValue << "\n\n";
-            std::cin >> playerInput;
-            if (playerInput == 0) {
-                std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
-                return callValue;
-            }
-            else if (playerInput < 0) {
-                std::cout << "\nPlayer " << playerNum << " folds.\n\n";
-                Fold(dInput);
-                return callValue;
-            }
-            else {
-                playerInput = 0;
-                std::cout << "\nHow much do you want to raise the current bet of " << callValue << " by?\n\n";
+    float CPU::CallBet(float callValue, int playerNum, Deck& dInput) {             //The CPU can choose to call or raise an existing bet
+        if (fCash < callValue) {
+            std::cout << "\nPlayer 1 is out of the money\n\n";
+            Fold(dInput);
+            return callValue;
+        }
+        else if (FoldedHand()) {
+            std::cout << "\nPlayer 1 has folded\n";
+            return callValue;
+        }
+        else {
+            int playerInput;
+            bool betting = true;
+            while (betting) {
+                std::cout << "\nDo you raise, call, or fold? \n"
+                          << "To call, type 0. To raise, type the amount you bet over the call\n"
+                          << "To fold, type a negative value.\n\n"
+                          << "Current call is:    " << callValue << "\n\n";
                 std::cin >> playerInput;
                 if (playerInput == 0) {
-                    std::cout << "\nPlayer " << playerNum << " raises by 0.  Bet is called\n\n";
+                    std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
                     return callValue;
                 }
                 else if (playerInput < 0) {
-                    std::cout << "\nPlayer " << playerNum << " changes their mind and folds.\n\n";
+                    std::cout << "\nPlayer " << playerNum << " folds.\n\n";
                     Fold(dInput);
                     return callValue;
                 }
                 else {
-                    if (fCash >= (callValue + playerInput)) {
-                        callValue += playerInput;
-                        betting = false;
-                    }
-                    else {
-                        std::cout << "\nYou do not have enough money for that raise.  Please try again.\n";
+                        if (fCash >= (callValue + playerInput)) {
+                            callValue += playerInput;
+                            betting = false;
+                        }
+                        else {
+                            std::cout << "\nPlayer " << playerNum << " does not have enough money for that raise.  Please try again.\n";
+                        }
                     }
                 }
             }
-        }
-
         return callValue;
     }
 
 //******
     CPU::~CPU() {
-
+        std::cout << "\nDestructor test - CPU\n\n";
     }

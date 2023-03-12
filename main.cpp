@@ -28,6 +28,7 @@ int main() {
     std::vector<Score> vPlayerScore(PLAYER_COUNT);
     std::vector<Player*> playerPtr(PLAYER_COUNT);
     int betIteration = 0;
+    int currBet = 0;
 
     for (int iter = 0; iter < PLAYER_COUNT; iter++) {
             if (iter == 0) {
@@ -83,7 +84,7 @@ int main() {
         float callValue = 0;
         std::vector<bool> allCalled(PLAYER_COUNT, false);
         bool callingBets = true;
-        if (betIteration > 0) {
+        if (currBet > 0) {
             CPU* temp = dynamic_cast<CPU*>(turnOrder.GetPlayer());
             callValue = temp->BetCash(betIteration + 1, myDeck);
             allCalled.at(betIteration) = true;
@@ -91,9 +92,11 @@ int main() {
         }
         else {
             callValue = turnOrder.GetPlayer()->BetCash(myDeck);
-            myPot += callValue;
+            allCalled.at(betIteration) = true;
         }
+        myPot += callValue;
         while (callingBets) {
+            std::cout << "\nThis is a test\n\n";
             float temp = 0;
             betIteration++;
             if (betIteration == PLAYER_COUNT) {
@@ -139,15 +142,15 @@ int main() {
             }
             callingBets = false;
             for (auto i : allCalled) {
-                if (i = false) {
+                if (i == false) {
                     callingBets = true;
                 }
             }
         }
 
-        betIteration++;
-        if (betIteration == (PLAYER_COUNT)) {
-            betIteration = 0;
+        currBet++;
+        if (currBet == (PLAYER_COUNT)) {
+            currBet = 0;
         }
 
         //std::cout << "\nHow much do you bet on this hand?\n\n";
@@ -155,7 +158,12 @@ int main() {
         turnOrder.TraverseStart();
         for (int iter = 1; iter <= PLAYER_COUNT; iter++) {
             std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
+            if (turnOrder.GetPlayer()->FoldedHand()) {
+                std::cout << "\nPlayer " << iter << " has folded\n\n";
+            }
+            else {
             turnOrder.GetPlayer()->PlayHand();
+            }
             turnOrder.TraverseNext();
         }
 
