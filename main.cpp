@@ -27,8 +27,8 @@ int main() {
     float myPot = 0;
     std::vector<Score> vPlayerScore(PLAYER_COUNT);
     std::vector<Player*> playerPtr(PLAYER_COUNT);
-    int betIteration = 0;
     int currBet = 0;
+    int betIteration = 0;
 
     for (int iter = 0; iter < PLAYER_COUNT; iter++) {
             if (iter == 0) {
@@ -77,24 +77,26 @@ int main() {
 
 
         turnOrder.TraverseStart();
-        for (int iter = betIteration; iter > 0; iter--) {
+        for (int iter = currBet; iter > 0; iter--) {
             turnOrder.TraverseNext();
         }
 
         float callValue = 0;
         std::vector<bool> allCalled(PLAYER_COUNT, false);
         bool callingBets = true;
+        std::cout << "\nPlayer " << currBet + 1 << " is leading the bet this hand\n\n";
         if (currBet > 0) {
             CPU* temp = dynamic_cast<CPU*>(turnOrder.GetPlayer());
-            callValue = temp->BetCash(betIteration + 1, myDeck);
-            allCalled.at(betIteration) = true;
+            callValue = temp->BetCash(currBet + 1, myDeck);
+            allCalled.at(currBet) = true;
             temp = nullptr;
         }
         else {
             callValue = turnOrder.GetPlayer()->BetCash(myDeck);
-            allCalled.at(betIteration) = true;
+            allCalled.at(currBet) = true;
         }
         myPot += callValue;
+        betIteration = currBet;
         while (callingBets) {
             std::cout << "\nThis is a test\n\n";
             float temp = 0;

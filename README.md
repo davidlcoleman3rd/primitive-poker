@@ -1,6 +1,10 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.3.1.4**
+- Adjusted player and CPU betting so that a full round of betting can be completed FOR all players, BY the user player
+   - The same needs laid out in 0.3.1.3 still need further implementation
+
 **Version 0.3.1.3**
 - Reached a state where betting is fully integreated with the rest of the code - it is now possible for the player to bet mid-game
 - Fixed arithmetic on player betting - need to adjust this for player and CPU however
