@@ -203,6 +203,11 @@
         }
 
 //******
+        int Player::GetWager(){                             //Returns the player's current wager amount to the calling function
+            return currWager;
+        }
+
+//******
     float Player::HandPoints() {                                  //Generates a "value" of the sorted hand
         hCards->SortHand();
 

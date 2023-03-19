@@ -1,6 +1,10 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.3.1.5**
+- Now allows the initial bet to be a fold and to pass the leading bet to the next player if desired
+   - This has a big bug where calling can pose a problem on the 4th player.  I don't know why this is currently and it needs to be investigated.
+
 **Version 0.3.1.4**
 - Adjusted player and CPU betting so that a full round of betting can be completed FOR all players, BY the user player
    - The same needs laid out in 0.3.1.3 still need further implementation

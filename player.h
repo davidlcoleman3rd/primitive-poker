@@ -73,6 +73,9 @@ public:
     void GetHand(Deck& /*in&out*/);             //Draws as many cards as necessary to get a full hand of cards
 
 //******
+    int GetWager();                             //Returns the player's current wager amount to the calling function
+
+//******
     float HandPoints();                         //Returns the player's point values to the calling function for this hand
 
 //******
