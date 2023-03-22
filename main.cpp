@@ -108,13 +108,13 @@ int main() {
             if (firstBet) {
                 if (tempBet > 0) {
                     CPU* temp = dynamic_cast<CPU*>(turnOrder.GetPlayer());
-                    callValue = temp->BetCash(currBet + 1, myDeck);
-                    allCalled.at(currBet) = true;
+                    callValue = temp->BetCash(tempBet + 1, myDeck);
+                    allCalled.at(tempBet) = true;
                     temp = nullptr;
                 }
                 else {
                     callValue = turnOrder.GetPlayer()->BetCash(myDeck);
-                    allCalled.at(currBet) = true;
+                    allCalled.at(tempBet) = true;
                 }
             }
             if (turnOrder.GetPlayer()->FoldedHand()) {
@@ -131,7 +131,7 @@ int main() {
         }
 
         myPot += callValue;
-        betIteration = currBet;
+        betIteration = tempBet;
 
         while (callingBets) {
             std::cout << "\nThis is a test\n\n";
@@ -200,14 +200,14 @@ int main() {
         //std::cout << "\nHow much do you bet on this hand?\n\n";
 
         turnOrder.TraverseStart();
-        for (int iter = 1; iter <= PLAYER_COUNT; iter++) {
-            std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
+        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+            std::cout << "~~~~~~\nPlayer " << iter + 1 << ":\n\n";
             if (turnOrder.GetPlayer()->FoldedHand()) {
                 std::cout << "\nPlayer " << iter << " has folded\n\n";
                 vPlayerScore[iter].points = 0;
             }
             else {
-            turnOrder.GetPlayer()->PlayHand();
+                turnOrder.GetPlayer()->PlayHand();
             }
             turnOrder.TraverseNext();
         }
@@ -230,6 +230,10 @@ int main() {
             }
             turnOrder.GetPlayer()->GetCash(myPot);
             myPot = 0;
+            for (auto i : vPlayerScore) {
+                std::cout << i.points << "\n";
+            }
+            std::cout << "\n";
         }
         else {
             std::cout << "All players tied and get their bets back\n\n";
@@ -263,7 +267,9 @@ int main() {
             switch(choiceAuto) {
                 case 'y' : {
                     for (auto i : playerPtr) {
-                        i->DiscardHand(myDeck);
+                        if (!(i->FoldedHand())) {
+                            i->DiscardHand(myDeck);
+                        }
                     }
                     myDeck.Reshuffle();
 
@@ -277,10 +283,15 @@ int main() {
                     choiceLoop = false;
                     gameLoop = false;
                     for (auto i : playerPtr) {
-                        i->DiscardHand(myDeck);
+                        if (!(i->FoldedHand())) {
+                            i->DiscardHand(myDeck);
+                        }
                         delete i;
                     }
+                    myDeck.Reshuffle();
                     playerPtr.clear();
+                    std::cout << "\n\nCards in deck = " << myDeck.GetSize() << "\n"
+                                  << "Cards in discard = " << myDeck.DiscardSize() << "\n\n";
                     break;
                 }
                 default : {

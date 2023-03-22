@@ -1,6 +1,11 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.3.2**
+- Fixed the mysterious 4th player calling bug by fixing a for loop that assigns point values to a player based on their hand contents
+- Fixed a bug where a player's points persisted even after folding
+- Betting using the player functionality and subroutines for CPU players is fully functional now - CPU specific functionality needs to be implemented
+
 **Version 0.3.1.5**
 - Now allows the initial bet to be a fold and to pass the leading bet to the next player if desired
    - This has a big bug where calling can pose a problem on the 4th player.  I don't know why this is currently and it needs to be investigated.

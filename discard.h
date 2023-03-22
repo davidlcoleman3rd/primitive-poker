@@ -40,7 +40,7 @@ public:
     int GetSize();                  //Returns the current size of the discard pile to the calling function
 
 //******
-    ~Discard();                        //Destructor - currently does nothing
+  //  ~Discard();                        //Destructor - currently does nothing
 
 
 private:
