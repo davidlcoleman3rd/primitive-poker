@@ -134,7 +134,7 @@ int main() {
         betIteration = tempBet;
 
         while (callingBets) {
-            std::cout << "\nThis is a test\n\n";
+            //std::cout << "\nThis is a test\n\n";
             float temp = 0;
             betIteration++;
             if (betIteration == PLAYER_COUNT) {
@@ -142,6 +142,7 @@ int main() {
             }
             turnOrder.TraverseNext();
             if (!(turnOrder.GetPlayer()->FoldedHand())) {
+                std::cout << "\nPlayer " << betIteration + 1 << " can choose to call, raise, or fold.\n\n";
                 if (betIteration == 0) {
                     temp = turnOrder.GetPlayer()->CallBet(callValue, myDeck);           //FUNCTION NEEDS DEFINITION
                     if (turnOrder.GetPlayer()->FoldedHand()) {                          //FUNCTION NEEDS DEFINITION
@@ -203,7 +204,7 @@ int main() {
         for (int iter = 0; iter < PLAYER_COUNT; iter++) {
             std::cout << "~~~~~~\nPlayer " << iter + 1 << ":\n\n";
             if (turnOrder.GetPlayer()->FoldedHand()) {
-                std::cout << "\nPlayer " << iter << " has folded\n\n";
+                std::cout << "\nPlayer " << iter + 1 << " has folded\n\n";
                 vPlayerScore[iter].points = 0;
             }
             else {
@@ -230,9 +231,9 @@ int main() {
             }
             turnOrder.GetPlayer()->GetCash(myPot);
             myPot = 0;
-            for (auto i : vPlayerScore) {
-                std::cout << i.points << "\n";
-            }
+          //  for (auto i : vPlayerScore) {
+           //     std::cout << i.points << "\n";
+           // }
             std::cout << "\n";
         }
         else {

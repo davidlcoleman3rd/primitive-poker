@@ -1,6 +1,9 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.3.2.0.1**
+- Small update to function that prints a player's hand when they have folded - older version had incorrect player numbers printing.  Fixed now.
+
 **Version 0.3.2**
 - Fixed the mysterious 4th player calling bug by fixing a for loop that assigns point values to a player based on their hand contents
 - Fixed a bug where a player's points persisted even after folding
