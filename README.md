@@ -1,6 +1,11 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.4.1**
+- Added functionality for CPU to gather information from other players based on stats, and to use this information to increase and decrease the likeliness that they will make a certain decision - such as betting, folding, and how much to bet by.
+   - Very much a WIP - Need to add functionality for generating an "opinion" based on player tells before this will be functional
+   - Also need to generate a similar function for deciding on raises and calls - the math for determining how "worth it" a call is vs folding as well as based on how much money they've already put into the pot need to be formulated
+
 **Version 0.4.0**
 - Begun to define the CPU's betting functionality using a convergent decision-tree algorithm that will allow the CPU to use its perception, bluff, and aggressiveness stats to evaluate other players' tells and bluffs, its own hand value, the likeliness it thinks it has to win a hand, how much it's willing to bet on a good or bad hand, and how likely it is to fold given the circumstances
 
