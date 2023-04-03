@@ -1,6 +1,9 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.4.2**
+- Further defined the CPU's betting algorithm and begun to define means for it to communicate with the player and the player's ability to communicate with the CPU in terms of betting and bluffing.
+
 **Version 0.4.1**
 - Added functionality for CPU to gather information from other players based on stats, and to use this information to increase and decrease the likeliness that they will make a certain decision - such as betting, folding, and how much to bet by.
    - Very much a WIP - Need to add functionality for generating an "opinion" based on player tells before this will be functional
