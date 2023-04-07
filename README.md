@@ -1,6 +1,12 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+
+
+**Version 0.4.3**
+- Added and defined a subroutine by which the CPU can discard undesirable cards.
+   - As it stands, this is a straightforward task that assumes that all CPU's will pick the most obvious option.  I am not sure if this will change to give the CPU more decision-making capability, as "poor" cards are pretty straight forward, and I don't want to overcomplicate CPU decision making.  I think, instead, a stat-based dice check will determine if the CPU will decide to discard cards at all, and another stat-based dice roll will determine how "strict" the CPU is; if they will be willing to keep their cards on a more risky hand.
+
 **Version 0.4.2**
 - Further defined the CPU's betting algorithm and begun to define means for it to communicate with the player and the player's ability to communicate with the CPU in terms of betting and bluffing.
 

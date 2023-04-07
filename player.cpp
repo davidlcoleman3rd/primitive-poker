@@ -27,40 +27,6 @@
         return anteSize;
     }
 
-    PlayerPerception CPU::JudgeHand() {                 //Gets a judgement for the hand and attempts to pass a bluffed judgement to the table
-
-        float temp = hCards->CountPoints(false);
-        std::random_device scoreMake;                           //Random device
-        std::mt19937 seedMake(scoreMake());                     //Random device seed
-        std::uniform_int_distribution<int> randInt(1, 100);     //The object that produces our random number
-
-
-        if (temp <= 10) {
-            opinion = WEAK;
-        }
-        else if (temp <= 30) {
-            opinion = SUBPAR;
-        }
-        else if (temp <= 720) {
-            opinion = AVERAGE;
-        }
-        else if (temp <= 2400) {
-            opinion = DECENT;
-        }
-        else {
-            opinion = STRONG;
-        }
-
-        if (scoreMake(seedMake) > 40) {                         //NEED TO DEFINE THIS
-            std::cout << "\n"
-            return PlayerPerception(int(STRONG) - int(opinion));
-        }
-        else {
-            GetTell();
-            return opinion;
-        }
-    }
-
 //******
     float Player::BetCash(Deck& dInput) {                                           //The player chooses how much money to bet on a hand
         if (fCash > 0) {
@@ -309,7 +275,7 @@ private:
         }
 
         if (bluffStat + (scoreMake(seedMake) / DICE_MOD) > 10) {
-            GetTell();
+            GetTell(int(STRONG) - int(opinion));
             return PlayerPerception(int(STRONG) - int(opinion));
         }
         else {
@@ -319,7 +285,7 @@ private:
     }
 
 //******
-    void CPU::GetTell() {
+    void CPU::GetTell(PlayerPerception opinion) {
         switch(opinion) {
             case WEAK:      "\nThey don't look too happy with the cards they were dealt.\n\n"; break;
             case SUBPAR:    "\nThey look as though their cards could be better.\n\n"; break;
@@ -327,6 +293,19 @@ private:
             case DECENT:    "\nThey look happy; they must have good cards in their hand.\n\n"; break;
             case STRONG:    "\nThey almost look estactic - their hand must be excellent.\n\n"; break;
             default:        "\nYou can't really get a good read on their face.  They could have anything.\n\n"; break;
+        }
+    }
+
+//******
+    void CPU::DiscardCards(Deck& dInput) {
+        //std::random_device handMake;                           //Random device
+        //std::mt19937 seedMake(handMake());                     //Random device seed
+        //std::uniform_int_distribution<int> randInt(1, 100);     //The object that produces our random number
+
+        if (opinion < STRONG) {
+            std::vector<int> selections;
+            hCards->SelectCards(selections);
+            hCards->CPUDiscard(dInput);
         }
     }
 
