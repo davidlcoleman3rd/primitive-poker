@@ -3,6 +3,13 @@ A simple text-based poker game WIP.
 
 
 
+**Version 0.4.4**
+- Defined an (untested) method for which the CPU player can determine which cards are "good" and which cards are "bad" and should be discarded.
+   - The CPU will prioritize "low-hanging fruit."  If it finds any matching cards, it will try and go for pairs, three-of-a-kind, full houses, and etc.
+   - If it cannot find any matching cards, it will go for flushes, as they are statistically more likely than straights - it will see how many cards of matching suits it has, and then see how many cards "within range" of a straight it has.  If among the candidate sets of cards (using a vector of card vectors) it finds, it will pick the largest, unless there is a tie between a flush and a straight, in which it will pick the flush - as it is statistically a better bet (and statistically, the odds of winning with a flush are much higher than the odds of them beating your flush with a straight and beyond
+   - If a flush ties a flush or a straight ties a straight, the first one it finds will be selected.  This is because due to the nature of the hands already being pre-sorted, the first sets of values in the vector of vectors will always contain the more "valuable" pair - the first cards in the vector are the highest ranked (Aces will always be first, two's will always be last)
+   - It will then go throught the actual card vector for the players hand and match the actual card position in their hand with the card suit and value in the "bad cards" vector.  When it hits, it knows that this particular position is where that card is in the hand - it stores that number in a vector of ints, which is passed back to the calling function to be used to discard the particular bad cards from the CPU player's hand.
+
 **Version 0.4.3**
 - Added and defined a subroutine by which the CPU can discard undesirable cards.
    - As it stands, this is a straightforward task that assumes that all CPU's will pick the most obvious option.  I am not sure if this will change to give the CPU more decision-making capability, as "poor" cards are pretty straight forward, and I don't want to overcomplicate CPU decision making.  I think, instead, a stat-based dice check will determine if the CPU will decide to discard cards at all, and another stat-based dice roll will determine how "strict" the CPU is; if they will be willing to keep their cards on a more risky hand.
