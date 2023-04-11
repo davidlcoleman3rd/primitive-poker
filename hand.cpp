@@ -643,7 +643,8 @@
         std::vector<std::vector<Card*>> straightCards;
         std::vector<std::vector<Card*>> flushCards;
 
-        for (auto i : vCards) {
+        for (int iter = 0; iter < vCards.size(); iter++) {
+            Card* i = &vCards.at(iter);
             if (i->GetNum() == ACE) {
                 hasAce = true;
             }
@@ -651,9 +652,15 @@
                 prevCard = i;
             }
             else {
+                std::cout << "\ni    = " << i->GetNum()
+                              << "\nprev = " << prevCard->GetNum()
+                              << "\ni suit   = " << i->GetSuit()
+                              << "\nprevSuit = " << prevCard->GetSuit()
+                              << "\n\n\n";
                 if (i->GetNum() == prevCard->GetNum()) {
+
                     if (streak) {
-                        goodCards.push_back(prevCard);
+                        goodCards.push_back(i);
                     }
                     else {
                         streak = true;
@@ -670,16 +677,17 @@
                     else {
                         streak = false;
                     }
-                    if (i->GetSuit() == vCards.back()->GetSuit() && i->GetNum() == vCards.back()->GetNum()) {
+                    if (i->GetSuit() == vCards.back().GetSuit() && i->GetNum() == vCards.back().GetNum()) {
                         badCards.push_back(i);
                         straightCheck.push_back(i);
                         flushCheck.push_back(i);
                     }
                 }
-                prevCard = i;
             }
         }
-
+        std::cout << "\nGood cards - " << goodCards.size()
+                  << "\nBad cards  - " << badCards.size()
+                  << "\n\n\n";
         //**
 
         if (goodCards.size() == 0) {
@@ -702,12 +710,12 @@
                     tempVect.push_back(straightCheck.at(i));
                 }
                 for (auto i : tempNums) {
-                    straightCheck.erase(i);
+                    straightCheck.erase(straightCheck.begin() + i);
                 }
                 straightCards.push_back(tempVect);
                 tempVect.clear();
             }
-            while (flushCheck.size > 0) {
+            while (flushCheck.size() > 0) {
                 std::vector<int> tempNums;
                 CardSuit tempSuit;
                 for (int iter = 0; iter < flushCheck.size(); iter++) {
@@ -716,7 +724,7 @@
                         tempNums.push_back(iter);
                     }
                     else {
-                        if (flushCheck.at(iter)->GetSuit == tempSuit) {
+                        if (flushCheck.at(iter)->GetSuit() == tempSuit) {
                             tempNums.push_back(iter);
                         }
                     }
@@ -726,10 +734,11 @@
                     tempVect.push_back(flushCheck.at(i));
                 }
                 for (auto i : tempNums) {
-                    flushCheck.erase(i);
+                    flushCheck.erase(flushCheck.begin() + i);
                 }
                 flushCards.push_back(tempVect);
                 tempVect.clear();
+
             }
             int flushNum = 0;
             int straightNum = 0;
@@ -796,7 +805,7 @@
 
         if (badCards.size() >= 3) {
             if (hasAce) {
-                discardCount = 4
+                discardCount = 4;
             }
             else {
                 discardCount = 3;
@@ -808,7 +817,7 @@
 
         for (int iter = 0; iter < vCards.size(); iter++) {
             for (auto k : badCards) {
-                if ((k->GetNum() == vCards.at(iter).GetNum()) && (k->GetSuit() == vCards.at(iter.GetSuit()))) {
+                if ((k->GetNum() == vCards.at(iter).GetNum()) && (k->GetSuit() == vCards.at(iter).GetSuit())) {
                     selections.push_back(iter);
                 }
             }
@@ -830,8 +839,13 @@
     }
 
 //******
-    void Hand::CPUDiscard(Deck& dInput, std::vector<int> selections) {               //NEED TO CHANGE THIS FUNCTIONS LOGIC TO ALLOW FOR PLAYER STATS TO COME INTO PLAY!!!!!!!
-
+    void Hand::CPUDiscard(Deck& dInput, std::vector<int>& selections) {               //NEED TO CHANGE THIS FUNCTIONS LOGIC TO ALLOW FOR PLAYER STATS TO COME INTO PLAY!!!!!!!
+        for (int iter = 0; iter < selections.size(); iter++) {
+            dInput.ToDiscard(vCards.at(selections.at(iter)));
+            vCards.erase(vCards.begin() + (selections.at(iter)));
+        }
+        DrawCard(selections.size(), dInput);
+        SortHand();
     }
 
 //******
