@@ -1,6 +1,14 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.5.1**
+- Have begun to test and refine the functionality of the CPU's card selection and discard functions
+   - This has intermittent memory errors when discarding and drawing new cards, and mysterious selection errors when picking cards to drop
+      - Sometimes the CPU will discard an obvious pair - there are instances when the CPU could have had a 3 of a kind, but failed because it discarded a card that didn't make sense
+      - There are instances where the CPU will choose the wrong color card to discard for a flush; it should select the suit of the highest value card first and foremost in the instance of a tie
+      - I can imagine the above error about flushes will also apply to straight selection as well
+   - Despite bugs and errors revealing themselves, progress has been made and general, rough skeleton of the subroutine is revealing itself
+
 **Version 0.5.0**
 - Begun the process of implementing and refining all CPU algorithms, functions, and methods.
    - JudgeHand() and GiveTell() seem to be working correctly.
