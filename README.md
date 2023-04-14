@@ -1,6 +1,10 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.5.2**
+- Fully defined the selection and discard functions for the CPU
+   - There is unorthodox behavior where if the first two cards are to be discarded as well as the last card, sometimes unintended cards are selected for discard.  I don't know exactly why this is the case, but it doesn't cause that many problems with gameplay, and if need be is servicable although not optimal.  Will investigate further during the MVP phase of release.
+
 **Version 0.5.1**
 - Have begun to test and refine the functionality of the CPU's card selection and discard functions
    - This has intermittent memory errors when discarding and drawing new cards, and mysterious selection errors when picking cards to drop
