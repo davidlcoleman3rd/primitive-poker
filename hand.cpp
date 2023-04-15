@@ -926,7 +926,7 @@
         for (int iter = 0; iter < selections.size(); iter++) {          //MIGHT NOT BE NECESSARY!!
             std::cout << "\n\nIter = " << iter << "\n\n";               //!!!!!!!!!!!!!!
             if (cardNums.size() > 0) {                                  //!!!!!!!!!!!!!!
-                for (auto i : cardNums) {                               //!!!!!!!!!!!!!!
+                /*for (auto i : cardNums) {                               //!!!!!!!!!!!!!!
                      for (auto &k : selections) {
                         std::cout << "\n\nPrev k = " << k << "\n\n";
                         if (k > i) {
@@ -935,6 +935,9 @@
                         }
                     }
                 }
+                */
+
+                selections.at(iter) -= iter;
             }
             std::cout << selections.at(iter);
             if (selections.at(iter) < vCards.size()) {
