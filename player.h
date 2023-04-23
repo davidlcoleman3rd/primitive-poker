@@ -26,6 +26,19 @@ enum PlayerPerception {WEAK, SUBPAR, NO_ANALYSIS, AVERAGE, CANNOT_READ, DECENT, 
 
 const int DICE_MOD = 10;
 
+const int NAT_TWENTY = 94;
+const int NAT_ZERO = 6;
+
+const int MASTER_ROLL = 18;
+const int HARD_ROLL = 16;
+const int MED_ROLL = 14;
+const int EASY_ROLL = 12;
+const int TRIVIAL_ROLL = 13;
+
+const int BASIC_ACTION = 30;
+const int DECISIVE_ACTION = 75;
+const int POINTS_DIV = 100;
+
 //***********************************************
 
 class Player {
@@ -87,6 +100,18 @@ public:
     float HandPoints();                         //Returns the player's point values to the calling function for this hand
 
 //******
+    PlayerPerception GetPlayerTells(int);       //Returns the player's belief of how good a hand is based on their own card values and opponent tells
+
+//******
+    int GetBluffStat();                         //Returns the player's bluff stat to the calling function
+
+//******
+    int GetPerceptionStat();                    //Returns the player's perception stat to the calling function
+
+//******
+    int GetAggressivenessStat();                //Returns the player's aggressiveness stat to the calling function
+
+//******
     ~Player();                                  //Destructor - currently does nothing
 
 protected:
@@ -94,6 +119,12 @@ protected:
     float fCash;
     bool bFolded;
     int currWager;
+    int perceptionStat;                         //This stat will affect the player's ability to read tells of other players, realize if other players are reading their tells, and how good their hand is
+    int aggressivenessStat;                     //This stat will affect the player's willingness to bet very large sums of money, take risks, and put pressure on the rest of the table
+    int bluffStat;                              //This stat will affect the player's ability to provide "fake" tells for opponents, and their willingness to make strong bets even with a poor hand (based on their ability to convince opponents of their bluff)
+    PlayerPerception opinions[PLAYER_COUNT];    //This is the opinion the player has over the rest of the table
+    bool holding;                               //This bool determines if the player will keep a hand no matter what.  This is for advanced behavior where the player's bluff AND aggressiveness are both high enough
+                                                //...for them to decide to make a big bet on a weaker hand
 };
 
 class CPU : public Player {
@@ -128,20 +159,17 @@ public:
                        std::vector<double> inScores, std::vector<int> inBluff,
                        std::vector<PlayerPerception> inOpinion);
 
+//******
+    PlayerPerception JudgeHand();       //Returns the player's opinion of their own hand to the calling function - gives a visible tell to the terminal
 
 //******
-    PlayerPerception JudgeHand();
+    PlayerPerception JudgeHand(bool);   //Returns the player's opinion of their own hand to the calling function - bool parameter prevents a visible tell from being printed
 
 //******
     ~CPU();
 
 //******
 private:
-    int perceptionStat;                 //This stat will affect the CPU's ability to read tells of other players, realize if other players are reading their tells, and how good their hand is
-    int aggressivenessStat;             //This stat will affect the CPU's willingness to bet very large sums of money, take risks, and put pressure on the rest of the table
-    int bluffStat;                      //This stat will affect the CPU's ability to provide "fake" tells for opponents, and their willingness to make strong bets even with a poor hand (based on their ability to convince opponents of their bluff)
-    PlayerPerception opinion;           //This variable will determine how the player feels about their own hand
-    PlayerPerception otherPlayer[3];    //This variable will determine how the player feels about the rest of the players' hands
 
 };
 

@@ -1,22 +1,25 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
-**Version 0.5.2.1**
-- Fixed the unorthodox behavior by simplifying the discard function for CPU's by which is selects the cards that it would like to discard.  This causes the known unorthodox behavior to cease.
+**Version 0.6.0**
+- Begun to refine, define, and implement functionality for CPU calling and betting
+- Change stats to be universal - players have them as well.  They will, howevever, have default values
+- Begun to implement vectors for passing values into the CPU betting and calling/raising functions
+   - This will require further investigation as far as mapping goes - Not sure if these map entirely appropriately
+- Declared functions for getting values from each player in order to use them for CPU betting.  Need to define and refine them.
 
-**Version 0.5.2**
+============
+
+**Version 0.5.0**
+- Fixed the unorthodox behavior by simplifying the discard function for CPU's by which is selects the cards that it would like to discard.  This causes the known unorthodox behavior to cease.
 - Fully defined the selection and discard functions for the CPU
    - There is unorthodox behavior where if the first two cards are to be discarded as well as the last card, sometimes unintended cards are selected for discard.  I don't know exactly why this is the case, but it doesn't cause that many problems with gameplay, and if need be is servicable although not optimal.  Will investigate further during the MVP phase of release.
-
-**Version 0.5.1**
 - Have begun to test and refine the functionality of the CPU's card selection and discard functions
    - This has intermittent memory errors when discarding and drawing new cards, and mysterious selection errors when picking cards to drop
       - Sometimes the CPU will discard an obvious pair - there are instances when the CPU could have had a 3 of a kind, but failed because it discarded a card that didn't make sense
       - There are instances where the CPU will choose the wrong color card to discard for a flush; it should select the suit of the highest value card first and foremost in the instance of a tie
       - I can imagine the above error about flushes will also apply to straight selection as well
    - Despite bugs and errors revealing themselves, progress has been made and general, rough skeleton of the subroutine is revealing itself
-
-**Version 0.5.0**
 - Begun the process of implementing and refining all CPU algorithms, functions, and methods.
    - JudgeHand() and GiveTell() seem to be working correctly.
    - In the process of implementing the DiscardCard() function.  There seems to be issues with determining the best cards to drop to shoot for a flush or a straight; an invalid pointer, sigabort, and etc. misc errors with memory are occuring.  Need to investigate further as more refining and testing is done.

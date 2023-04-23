@@ -215,6 +215,16 @@
     }
 
 //******
+    void Player::SetOpinion(PlayerPerception input) {
+        opinions.push_back(input);
+    }
+
+//******
+    void Player::SetOpinion(PlayerPerception input, int selection) {
+        opinions.at(selection) = input;
+    }
+
+//******
     //Hand Play() {                               //The player plays their sorted hand
     //    return hCards;
     //}
@@ -256,30 +266,72 @@ private:
         std::random_device scoreMake;                           //Random device
         std::mt19937 seedMake(scoreMake());                     //Random device seed
         std::uniform_int_distribution<int> randInt(1, 100);     //The object that produces our random number
-
+        int tempRoll = 0;                                       //Diceroll variable - used to streamline the dice rolling process
 
         if (temp <= 10) {
-            opinion = WEAK;
+            opinions[0] = WEAK;
         }
         else if (temp <= 30) {
-            opinion = SUBPAR;
+            opinions[0] = SUBPAR;
         }
         else if (temp <= 720) {
-            opinion = AVERAGE;
+            opinions[0] = AVERAGE;
         }
         else if (temp <= 2400) {
-            opinion = DECENT;
+            opinions[0] = DECENT;
         }
         else {
-            opinion = STRONG;
+            opinions[0] = STRONG;
         }
-
-        if (bluffStat + (randInt(seedMake)) / DICE_MOD > 10) {
-            GetTell(PlayerPerception(int(STRONG) - int(opinion)));
-            return PlayerPerception(int(STRONG) - int(opinion));
+        tempRoll = (randInt(seedMake));
+        if (bluffStat + tempRoll / DICE_MOD > EASY_ROLL || tempRoll > NAT_TWENTY) {
+            tempRoll = (randInt(seedMake));
+            if (aggressivenessStat + tempRoll / DICE_MOD > MASTER_ROLL || tempRoll > NAT_TWENTY) {
+                GetTell(PlayerPerception(int(STRONG) - int(opinions[0])));
+                return PlayerPerception(int(STRONG) - int(opinions[0]));
+            }
+            else {
+                GetTell(CANNOT_READ);
+                return CANNOT_READ;
+            }
         }
         else {
             GetTell();
+            return opinions[0];
+        }
+    }
+
+//******
+    PlayerPerception CPU::JudgeHand(bool noOuput) {                 //Gets a judgement for the hand and attempts to pass a bluffed judgement to the table
+                                                                    //BOOL PASSED PREVENTS OUTPUT TO THE TERMINAL
+        float temp = hCards->CountPoints(false);
+        std::random_device scoreMake;                           //Random device
+        std::mt19937 seedMake(scoreMake());                     //Random device seed
+        std::uniform_int_distribution<int> randInt(1, 100);     //The object that produces our random number
+
+
+        if (temp <= 10) {
+            opinions[0] = WEAK;
+        }
+        else if (temp <= 30) {
+            opinions[0] = SUBPAR;
+        }
+        else if (temp <= 720) {
+            opinions[0] = AVERAGE;
+        }
+        else if (temp <= 2400) {
+            opinions[0] = DECENT;
+        }
+        else {
+            opinions[0] = STRONG;
+        }
+
+        if (bluffStat + (randInt(seedMake)) / DICE_MOD > 10) {
+            //GetTell(PlayerPerception(int(STRONG) - int(opinion)));
+            return PlayerPerception(int(STRONG) - int(opinion));
+        }
+        else {
+            //GetTell();
             return opinion;
         }
     }
@@ -298,7 +350,7 @@ private:
 
 //******
     void CPU::GetTell() {
-        switch(opinion) {
+        switch(opinions[0]) {
             case WEAK:      std::cout << "\nThey don't look too happy with the cards they were dealt.\n\n"; break;
             case SUBPAR:    std::cout << "\nThey look as though their cards could be better.\n\n"; break;
             case AVERAGE:   std::cout << "\nThey look indifferent; their hand must be serviceable.\n\n"; break;
@@ -329,9 +381,9 @@ private:
     }
 
 //******
-    float CPU::BetCash(int playerNum, Deck& dInput, std::vector<PlayerPerception> inPerception,
+    float CPU::BetCash(int playerNum, Deck& dInput, std::vector<PlayerPerception> inPerception, //OPPONENT OPINION OF SELF
                        std::vector<double> inScores, std::vector<int> inBluff,
-                       std::vector<PlayerPerception> inOpinion) {                               //The CPU chooses how much money to bet on a hand
+                       std::vector<PlayerPerception> inOpinion /*OPPENENT OPPINION OF PLAYER*/) {                               //The CPU chooses how much money to bet on a hand
 
         float actionScore = 0;                                    //This score determines if the player will bet or if they will fold
         double fTemp;                                           //Temporarily hold float values
@@ -343,26 +395,41 @@ private:
         std::random_device scoreMake;                           //Random device
         std::mt19937 seedMake(scoreMake());                     //Random device seed
         std::uniform_int_distribution<int> randInt(1, 100);     //The object that produces our random number
+        int tempRoll = 0;                                       //Variable used to hold dicerolls
+        int playerRoll = 0;                                     //Variable used to hold player dicerolls
+        int opponentRoll = 0;                                   //Variable used to hold opponent dicerolls
 
         if (CheckCash() > 0) {
             float fTempCash = CheckCash() + 1;                                      //Sets temp cash just out of range to prime loop
             while (fTempCash > fCash || fTempCash < 0) {                            //Loop repeats until fTempCash is a valid amount (greater than or equal to 0 and less than total cash)
 
-                fTemp = (hCards->CountPoints(false) / 100) + (randInt(seedMake) / DICE_MOD);      //Store 1 / 100th the point value of the hand into fTemp + a dice roll evaluated at the roll 1 through 100 divided by 20.
+                tempRoll = randInt(seedMake);
+                fTemp = (hCards->CountPoints(false) / POINTS_DIV) + (tempRoll / DICE_MOD);          //Store 1 / 100th the point value of the hand into fTemp + a dice roll evaluated at the roll 1 through 100 divided by 20.
                 actionScore = fTemp * perceptionStat;                                               //The hand's value is multiplied by the player's perception stat - this means that great hands will be
                                                                                                     //...generating exponentially more action points than weak hands
 
                 for (int iter = 0; iter < PLAYER_COUNT - 1; iter++) {                       //Goes through each opponent and tries to gather tells from them based on their overt tells and their bluff stat vs your perception stat w/ dice rolling
-                    fTemp = perceptionStat + (randInt(seedMake) / DICE_MOD);
-                    float newTemp = (inBluff[iter] + (randInt(seedMake) / DICE_MOD));
-                    if (fTemp >= newTemp) {
+
+                    tempRoll = randInt(seedMake);
+                    fTemp = perceptionStat + (tempRoll / DICE_MOD);
+                    playerRoll = tempRoll;
+
+                    tempRoll = randInt(seedMake);
+                    float newTemp = (inBluff[iter] + (tempRoll / DICE_MOD));
+                    opponentRoll = tempRoll;
+
+                    if (fTemp >= newTemp || opponentRoll < NAT_ZERO || playerRoll > NAT_TWENTY) {
                         PlayerPerception tempPercept = inPerception[iter];                  //Stores the current opponent's opinion/bluff of itself in a temporary variable
+
+                        tempRoll = randInt(seedMake);
                         double opponentScore = inScores[iter]
-                                - (inBluff[iter] + (randInt(seedMake) / DICE_MOD));       //Stores the opponents hand score slightly obfuscated by the opponents bluff stat and a dice roll
+                                - (inBluff[iter] + (tempRoll / DICE_MOD));       //Stores the opponents hand score slightly obfuscated by the opponents bluff stat and a dice roll
 
                         opponentScore -= hCards->CountPoints();                                                 //Subtracts your score from the opponents score.  The remainder is used to evaluate how much better you think the opponents hand is
                         if (opponentScore >= 5) {
-                            if (opponentScore >= 1000 - (perceptionStat * (randInt(seedMake) * DICE_MOD))) {  //If it's greater than 1000 minus your perception stat multiplied by a dice roll, you think it's a very strong hand you likely won't beat
+
+                            tempRoll = randInt(seedMake);
+                            if (opponentScore >= 1000 - (perceptionStat * (tempRoll * DICE_MOD))) {  //If it's greater than 1000 minus your perception stat multiplied by a dice roll, you think it's a very strong hand you likely won't beat
                                 yourOpinion[iter] = STRONG;
                             }
                             else {                                                                              //If it's greater than 5, it's a strong hand relative to your hand, but you might be able to beat it
@@ -370,7 +437,8 @@ private:
                             }
                         }
                         else if (opponentScore <= -5) {
-                            if (opponentScore <= -1000 + (perceptionStat * (randInt(seedMake) * DICE_MOD))) { //If it's less than negative 1000 plus your perception stat multiplied by a dice roll, you think it's a very weak hand you'll likely beat easily
+                            tempRoll = randInt(seedMake);
+                            if (opponentScore <= -1000 + (perceptionStat * (tempRoll * DICE_MOD))) { //If it's less than negative 1000 plus your perception stat multiplied by a dice roll, you think it's a very weak hand you'll likely beat easily
                                 yourOpinion[iter] = WEAK;
                             }
                             else {                                                                              //If it's less than negative 5, it's a weak hand relative to your hand, but might still be able to beat you
@@ -387,14 +455,16 @@ private:
                         yourOpinion[iter] = inPerception[iter];                                                 //If you cannot see through their bluff, you think their hand is as good as the impression they give you
                     }
 
-                    actionScore -= ((2 * (int(yourOpinion[iter]) - int(opinion)) * (perceptionStat + (randInt(seedMake) / DICE_MOD)))
+                    tempRoll = randInt(seedMake);
+                    actionScore -= ((2 * (int(yourOpinion[iter]) - int(opinion)) * (perceptionStat + (tempRoll / DICE_MOD)))
                                         + (int(yourOpinion[iter]) * (randInt(seedMake) / DICE_MOD)));                                     //This will take away or add to the action score based on how confident you feel about your own hand
                                                                                                                                             //...vs how you feel about the player tells, with a slight modifier based on raw player tell data
                                                                                                                                             //...added to a dice roll
                 }
 
                 for (auto i : inOpinion) {
-                    if ((bluffStat + (randInt(seedMake) / DICE_MOD)) >= 5) {                                                  //Uses bluff stat and a dice roll to see if the player can use information to adjust player action score
+                    tempRoll = randInt(seedMake);
+                    if ((bluffStat + (tempRoll / DICE_MOD)) >= MED_ROLL || tempRoll > NAT_TWENTY) {                           //Uses bluff stat and a dice roll to see if the player can use information to adjust player action score
                         if (i = CANNOT_READ) {
                            actionScore += int (opinion - AVERAGE) * (randInt(seedMake) / DICE_MOD);                           //If the opponent cannot be read or is a player, instead the action is modified based on how good the player's hand is
                         }
@@ -413,9 +483,10 @@ private:
                     }
                 }
 
-                if (actionScore * (randInt(seedMake) / DICE_MOD)
-                * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)) > 30 /*NEED TO MAKE THIS A CONSTANT*/) {
-                    fTempCash = (fCash / 15) * (aggressivenessStat * (randInt(seedMake) / DICE_MOD));
+                tempRoll = randInt(seedMake);
+                if (actionScore * (tempRoll / DICE_MOD)
+                * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)) > BASIC_ACTION /*NEED TO MAKE THIS A CONSTANT*/) {
+                    fTempCash = (fCash / (DICE_MOD * 2)) * (aggressivenessStat * (randInt(seedMake) / DICE_MOD));
                 }
 
                 else {                                                              //If the player bets nothing, they fold their hand
@@ -441,7 +512,7 @@ private:
                        std::vector<double> inScores, std::vector<int> inBluff,
                        std::vector<PlayerPerception> inOpinion) {                               //The CPU chooses how much money to bet on a hand
 
-        float actionScore = 0 - (callValue / 30);               //This score determines if the player will bet or if they will fold
+        float actionScore = 0 - (callValue / BASIC_ACTION);     //This score determines if the player will bet or if they will fold
         double fTemp;                                           //Temporarily hold float values
         int iTemp;                                              //Temporarily hold int values
 
@@ -451,6 +522,9 @@ private:
         std::random_device scoreMake;                           //Random device
         std::mt19937 seedMake(scoreMake());                     //Random device seed
         std::uniform_int_distribution<int> randInt(1, 100);     //The object that produces our random number
+        int tempRoll = 0;                                       //Variable to hold the general dice roll
+        int playerRoll = 0;                                     //Variable to hold the value of the player's dice roll
+        int opponentRoll = 0;                                   //Variable to hold the value of the opponent's dice roll
 
         if (FoldedHand()) {
             std::cout << "\nPlayer " << playerNum << " has folded.\n\n";
@@ -467,17 +541,25 @@ private:
             float fTempCash = CheckCash() + 1;                                      //Sets temp cash just out of range to prime loop
             while (fTempCash > fCash || fTempCash < 0) {                            //Loop repeats until fTempCash is a valid amount (greater than or equal to 0 and less than total cash)
 
-                fTemp = (hCards->CountPoints(false) / 100) + (randInt(seedMake) / DICE_MOD);      //Store 1 / 100th the point value of the hand into fTemp + a dice roll evaluated at the roll 1 through 100 divided by 20.
+                tempRoll = randInt(seedMake);
+                fTemp = (hCards->CountPoints(false) / POINTS_DIV) + (tempRoll / DICE_MOD);      //Store 1 / 100th the point value of the hand into fTemp + a dice roll evaluated at the roll 1 through 100 divided by 20.
                 actionScore = fTemp * perceptionStat;                                               //The hand's value is multiplied by the player's perception stat - this means that great hands will be
                                                                                                     //...generating exponentially more action points than weak hands
 
                 for (int iter = 0; iter < PLAYER_COUNT - 1; iter++) {                       //Goes through each opponent and tries to gather tells from them based on their overt tells and their bluff stat vs your perception stat w/ dice rolling
-                    fTemp = perceptionStat + (randInt(seedMake) / DICE_MOD);
-                    float newTemp = (inBluff[iter] + (randInt(seedMake) / DICE_MOD));
-                    if (fTemp >= newTemp) {
+                    tempRoll = randInt(seedMake);
+                    fTemp = perceptionStat + (tempRoll / DICE_MOD);
+                    playerRoll = tempRoll;
+
+                    tempRoll = randInt(seedMake);
+                    float newTemp = (inBluff[iter] + (tempRoll / DICE_MOD));
+                    opponentRoll = tempRoll;
+
+                    if (fTemp >= newTemp || opponentRoll < NAT_ZERO || playerRoll > NAT_TWENTY) {
                         PlayerPerception tempPercept = inPerception[iter];                  //Stores the current opponent's opinion/bluff of itself in a temporary variable
+                        tempRoll = randInt(seedMake);
                         double opponentScore = inScores[iter]
-                                - (inBluff[iter] + (randInt(seedMake) / DICE_MOD));       //Stores the opponents hand score slightly obfuscated by the opponents bluff stat and a dice roll
+                                - (inBluff[iter] + (tempRoll / DICE_MOD));       //Stores the opponents hand score slightly obfuscated by the opponents bluff stat and a dice roll
 
                         opponentScore -= hCards->CountPoints();                                                 //Subtracts your score from the opponents score.  The remainder is used to evaluate how much better you think the opponents hand is
                         if (opponentScore >= 5) {
@@ -506,14 +588,16 @@ private:
                         yourOpinion[iter] = inPerception[iter];                                                 //If you cannot see through their bluff, you think their hand is as good as the impression they give you
                     }
 
-                    actionScore -= ((2 * (int(yourOpinion[iter]) - int(opinion)) * (perceptionStat + (randInt(seedMake) / DICE_MOD)))
+                    tempRoll = randInt(seedMake);
+                    actionScore -= ((2 * (int(yourOpinion[iter]) - int(opinion)) * (perceptionStat + (tempRoll / DICE_MOD)))
                                         + (int(yourOpinion[iter]) * (randInt(seedMake) / DICE_MOD)));                                     //This will take away or add to the action score based on how confident you feel about your own hand
                                                                                                                                             //...vs how you feel about the player tells, with a slight modifier based on raw player tell data
                                                                                                                                             //...added to a dice roll
                 }
 
                 for (auto i : inOpinion) {
-                    if ((bluffStat + (randInt(seedMake) / DICE_MOD)) >= 5) {                                                  //Uses bluff stat and a dice roll to see if the player can use information to adjust player action score
+                    tempRoll = randInt(seedMake);
+                    if ((bluffStat + (tempRoll / DICE_MOD)) >= MED_ROLL || tempRoll > NAT_TWENTY) {                            //Uses bluff stat and a dice roll to see if the player can use information to adjust player action score
                         if (i = CANNOT_READ) {
                            actionScore += int (opinion - AVERAGE) * (randInt(seedMake) / DICE_MOD);                           //If the opponent cannot be read or is a player, instead the action is modified based on how good the player's hand is
                         }
@@ -534,12 +618,13 @@ private:
                 float tempForIf = (actionScore * (randInt(seedMake) / DICE_MOD)
                         * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)));
                             fTempCash = callValue;
-                if (tempForIf > 30 /*NEED TO MAKE THIS A CONSTANT*/ && tempForIf < 60) {
+                if (tempForIf > BASIC_ACTION /*NEED TO MAKE THIS A CONSTANT*/ && tempForIf <= DECISIVE_ACTION) {
                     fTempCash = callValue;
                     std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
-                } else if (tempForIf > 75) {
-                    fTempCash = (fCash / 15) * (aggressivenessStat *
-                                    (randInt(seedMake) / DICE_MOD));
+                } else if (tempForIf > DECISIVE_ACTION) {
+                    tempRoll = randInt(seedMake);
+                    fTempCash = (fCash / (DICE_MOD * 2)) * (aggressivenessStat * (tempRoll / DICE_MOD));
+
                 } else {                                                              //If the player bets nothing, they fold their hand
                     fTempCash = 0;
                     Fold(dInput);

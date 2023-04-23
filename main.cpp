@@ -68,6 +68,7 @@ int main() {
             std::cout << "\nPlayer " << iter + 1 << " is dealt their cards...";
             if (iter == 0) {
                 playerTells.push_back(AVERAGE);
+                std::cout << "\nYou receive your cards.\n\n";
             } else {
                 CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
                 playerTells.push_back(tempPtr->JudgeHand());
@@ -75,6 +76,22 @@ int main() {
             }
             turnOrder.TraverseNext();
         }
+
+
+
+        turnOrder.TraverseStart();
+        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+            for (int next = 1; next < PLAYER_COUNT; next++) {
+                int temp = iter + next;
+                if (iter > PLAYER_COUNT) {
+                    iter -= PLAYER_COUNT;
+                }
+                turnOrder.GetPlayer()->SetOpinion(playerTells.at(temp));
+            }
+
+        }
+
+
 
         turnOrder.TraverseStart();
         for (int iter = 1; iter < 1 + 1; iter++) {                  //Will show the player's hand (NEEDS TO BE CHANGED)
@@ -98,6 +115,20 @@ int main() {
             turnOrder.TraverseNext();
         }
 
+        turnOrder.TraverseStart();
+        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+            if (iter == 0) {
+                playerTells.push_back(AVERAGE);
+                std::cout << "\nYou look at your cards.\n\n";
+            } else {
+                std::cout << "\nPlayer " << iter + 1 << " looks at their cards...\n";
+                CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
+                playerTells.at(iter) = tempPtr->JudgeHand();
+                tempPtr = nullptr;
+            }
+            turnOrder.TraverseNext();
+        }
+
         vPlayerScore[0].points = playerPtr[0]->HandPoints();        //Evaluates how much each player's hand is worth
         for (int iter = 1; iter < 1 + 1; iter++) {
             std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
@@ -116,8 +147,6 @@ int main() {
         bool callingBets = true;
         int tempBet = currBet;
 
-        //If a player folds, and the next player bets, an error occurs...
-        //WHY DOES THIS HAPPEN?????
 
         while (firstBet) {
             int checkFold = 0;
@@ -135,8 +164,46 @@ int main() {
             std::cout << "\nPlayer " << tempBet + 1 << " is leading the bet this hand\n\n";
             if (firstBet) {
                 if (tempBet > 0) {
+
+                    std::vector<PlayerPerception> tempOpinion;              //A vector of opponents opinions of the player's hand/tells
+                    std::vector<int> inBluff;                               //A vector of opponents bluff stat - position matched with tempOpinion
+                    std::vector<PlayerPerception> tempPerception;           //A vector of opponents opinions of themselves - position matched with the above
+                    std::vector<double> inScores;                           //A vector of opponents hand values; used for player decision making if the player
+                                                                            //...rolls exceptionally well.  Position matched with the above temp variables
+
+                    for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+                        if (iter > 0) {
+
+                            //NEED TO INVESTIGATE THIS IN RELATION TO THE OPINIONS VECTOR FOR EACH PLAYER... MIGHT NOT MAP CORRECTLY!!!
+                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+                            tempOpinion.push_back(turnOrder.GetPlayer()->GetPlayerTells(PLAYER_COUNT - iter));          //UNDEFINED
+                                                                                                                        //Gets opponent opinion of a specific player's tell
+
+                            inBluff.push_back(turnOrder.GetPlayer()->GetBluffStat());                                   //UNDEFINED
+                                                                                                                        //Gets opponent's bluff stat
+
+                            tempPerception.push_back(turnOrder.GetPlayer()->JudgeHand(false));                          //DEFINED
+                                                                                                                        //Gets opponents opinion of their own hand
+
+                            inScores.push_back(turnOrder.GetPlayer()->HandPoints());                                    //DEFINED
+                                                                                                                        //Gets the actual value of a particular opponents hand
+                        }
+                    }
+
                     CPU* temp = dynamic_cast<CPU*>(turnOrder.GetPlayer());
-                    callValue = turnOrder.GetPlayer()->BetCash(/*tempBet + 1,*/ myDeck);
+                    callValue = turnOrder.GetPlayer()->BetCash(tempBet + 1, myDeck, tempPerception,
+                                                                inScores, inBluff, tempOpinion);
                     allCalled.at(tempBet) = true;
                     temp = nullptr;
                 }
