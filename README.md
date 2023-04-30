@@ -1,6 +1,10 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.6.1**
+- Implemented a rough version of the initial betting function for CPU's - this is rough and needs careful attention to how it manipulates iter numbers to make sure that it is selecting the correct player and correct values, but it works at a bare minimal in ideal conditions
+- Need to do the same for raise/calling - the initial bet seems to work just fine, however the player's function for raising/calling is currently used for CPU's in response to the initial bet.
+
 **Version 0.6.0**
 - Begun to refine, define, and implement functionality for CPU calling and betting
 - Change stats to be universal - players have them as well.  They will, howevever, have default values

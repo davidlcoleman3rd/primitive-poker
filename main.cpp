@@ -83,9 +83,12 @@ int main() {
         for (int iter = 0; iter < PLAYER_COUNT; iter++) {
             for (int next = 1; next < PLAYER_COUNT; next++) {
                 int temp = iter + next;
-                if (iter > PLAYER_COUNT) {
-                    iter -= PLAYER_COUNT;
+                std::cout << "\nFirst Temp = " << temp << "\n\n";
+                if (temp >= PLAYER_COUNT) {
+                    temp -= PLAYER_COUNT;
+                    std::cout << "\nSecond Temp = " << temp << "\n\n";
                 }
+                std::cout << "\nThird Temp = " << temp << "\n\n";
                 turnOrder.GetPlayer()->SetOpinion(playerTells.at(temp));
             }
 
@@ -164,7 +167,7 @@ int main() {
             std::cout << "\nPlayer " << tempBet + 1 << " is leading the bet this hand\n\n";
             if (firstBet) {
                 if (tempBet > 0) {
-
+                    CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
                     std::vector<PlayerPerception> tempOpinion;              //A vector of opponents opinions of the player's hand/tells
                     std::vector<int> inBluff;                               //A vector of opponents bluff stat - position matched with tempOpinion
                     std::vector<PlayerPerception> tempPerception;           //A vector of opponents opinions of themselves - position matched with the above
@@ -173,7 +176,6 @@ int main() {
 
                     for (int iter = 0; iter < PLAYER_COUNT; iter++) {
                         if (iter > 0) {
-
                             //NEED TO INVESTIGATE THIS IN RELATION TO THE OPINIONS VECTOR FOR EACH PLAYER... MIGHT NOT MAP CORRECTLY!!!
                             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -186,26 +188,26 @@ int main() {
                             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
+                            int next = iter + tempBet;
+                                if (next >= PLAYER_COUNT) {
+                                    next -= PLAYER_COUNT;
+                                }
+                            tempPerception.push_back(playerTells.at(next));
                             tempOpinion.push_back(turnOrder.GetPlayer()->GetPlayerTells(PLAYER_COUNT - iter));          //UNDEFINED
                                                                                                                         //Gets opponent opinion of a specific player's tell
 
                             inBluff.push_back(turnOrder.GetPlayer()->GetBluffStat());                                   //UNDEFINED
                                                                                                                         //Gets opponent's bluff stat
 
-                            tempPerception.push_back(turnOrder.GetPlayer()->JudgeHand(false));                          //DEFINED
-                                                                                                                        //Gets opponents opinion of their own hand
-
                             inScores.push_back(turnOrder.GetPlayer()->HandPoints());                                    //DEFINED
-                                                                                                                        //Gets the actual value of a particular opponents hand
-                        }
+                        }                                                                                          //Gets the actual value of a particular opponents hand
+                        turnOrder.TraverseNext();
                     }
 
-                    CPU* temp = dynamic_cast<CPU*>(turnOrder.GetPlayer());
-                    callValue = turnOrder.GetPlayer()->BetCash(tempBet + 1, myDeck, tempPerception,
+                    callValue = tempPtr->BetCash(tempBet + 1, myDeck, tempPerception,
                                                                 inScores, inBluff, tempOpinion);
                     allCalled.at(tempBet) = true;
-                    temp = nullptr;
+//                    temp = nullptr;
                 }
                 else {
                     callValue = turnOrder.GetPlayer()->BetCash(myDeck);

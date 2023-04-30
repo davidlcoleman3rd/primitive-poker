@@ -112,6 +112,12 @@ public:
     int GetAggressivenessStat();                //Returns the player's aggressiveness stat to the calling function
 
 //******
+    void SetOpinion(PlayerPerception);          //Pushes an opinion on the back the opinion vector
+
+//******
+    void SetOpinion(PlayerPerception, int);     //Replaces an opinion into a particular location in the opinions vector
+
+//******
     ~Player();                                  //Destructor - currently does nothing
 
 protected:
@@ -122,7 +128,7 @@ protected:
     int perceptionStat;                         //This stat will affect the player's ability to read tells of other players, realize if other players are reading their tells, and how good their hand is
     int aggressivenessStat;                     //This stat will affect the player's willingness to bet very large sums of money, take risks, and put pressure on the rest of the table
     int bluffStat;                              //This stat will affect the player's ability to provide "fake" tells for opponents, and their willingness to make strong bets even with a poor hand (based on their ability to convince opponents of their bluff)
-    PlayerPerception opinions[PLAYER_COUNT];    //This is the opinion the player has over the rest of the table
+    std::vector<PlayerPerception> opinions;    //This is the opinion the player has over the rest of the table
     bool holding;                               //This bool determines if the player will keep a hand no matter what.  This is for advanced behavior where the player's bluff AND aggressiveness are both high enough
                                                 //...for them to decide to make a big bet on a weaker hand
 };
