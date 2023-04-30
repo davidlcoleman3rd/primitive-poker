@@ -35,7 +35,8 @@ const int MED_ROLL = 14;
 const int EASY_ROLL = 12;
 const int TRIVIAL_ROLL = 13;
 
-const int BASIC_ACTION = 30;
+const int EASY_ACTION = 15;
+const int MEDIUM_ACTION = 30;
 const int DECISIVE_ACTION = 75;
 const int POINTS_DIV = 100;
 

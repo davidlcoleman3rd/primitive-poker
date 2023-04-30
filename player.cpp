@@ -490,8 +490,9 @@ private:
                 }
 
                 tempRoll = randInt(seedMake);
+                std::cout << "\nCurrent action score: " << actionScore << "\n\n";
                 if (actionScore * (tempRoll / DICE_MOD)
-                * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)) > BASIC_ACTION /*NEED TO MAKE THIS A CONSTANT*/) {
+                * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)) > EASY_ACTION /*NEED TO MAKE THIS A CONSTANT*/) {
                     fTempCash = (fCash / (DICE_MOD * 2)) * (aggressivenessStat * (randInt(seedMake) / DICE_MOD));
                 }
 
@@ -501,6 +502,7 @@ private:
                     break;
                 }
             }
+            std::cout << "\nPlayer " << playerNum << " bets " << currWager << "\n\n";
             currWager = fTempCash;
             fCash -= fTempCash;                                                     //Subtracts the total amount to be bet from the total cash the player has
             return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
@@ -518,12 +520,12 @@ private:
                        std::vector<double> inScores, std::vector<int> inBluff,
                        std::vector<PlayerPerception> inOpinion) {                               //The CPU chooses how much money to bet on a hand
 
-        float actionScore = 0 - (callValue / BASIC_ACTION);     //This score determines if the player will bet or if they will fold
-        double fTemp;                                           //Temporarily hold float values
-        int iTemp;                                              //Temporarily hold int values
+        float actionScore = 0 - (callValue / MEDIUM_ACTION);     //This score determines if the player will bet or if they will fold
+        double fTemp;                                            //Temporarily hold float values
+        int iTemp;                                               //Temporarily hold int values
 
-        std::vector<PlayerPerception> yourOpinion;              //The opinion this CPU has about each player's hand
-        std::vector<PlayerPerception> theirOpinion;             //The opinions that this CPU believes other player's hold about this CPU
+        std::vector<PlayerPerception> yourOpinion(PLAYER_COUNT - 1);    //The opinion this CPU has about each player's hand
+        std::vector<PlayerPerception> theirOpinion(PLAYER_COUNT - 1);   //The opinions that this CPU believes other player's hold about this CPU
 
         std::random_device scoreMake;                           //Random device
         std::mt19937 seedMake(scoreMake());                     //Random device seed
@@ -624,12 +626,16 @@ private:
                 float tempForIf = (actionScore * (randInt(seedMake) / DICE_MOD)
                         * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)));
                             fTempCash = callValue;
-                if (tempForIf > BASIC_ACTION /*NEED TO MAKE THIS A CONSTANT*/ && tempForIf <= DECISIVE_ACTION) {
+                std::cout << "\nAction score = " << actionScore << "\n"
+                          << "tempForIf = " << tempForIf << "\n\n";
+                if (tempForIf > MEDIUM_ACTION /*NEED TO MAKE THIS A CONSTANT*/ && tempForIf <= DECISIVE_ACTION) {
                     fTempCash = callValue;
                     std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
                 } else if (tempForIf > DECISIVE_ACTION) {
                     tempRoll = randInt(seedMake);
                     fTempCash = (fCash / (DICE_MOD * 2)) * (aggressivenessStat * (tempRoll / DICE_MOD));
+                    fTempCash += callValue;
+                    std::cout << "\nPlayer " << playerNum << " raises the bet by " << fTempCash - callValue << "\n\n";
 
                 } else {                                                              //If the player bets nothing, they fold their hand
                     fTempCash = 0;

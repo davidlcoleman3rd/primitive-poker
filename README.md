@@ -1,6 +1,17 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+
+
+**Version 0.6.2**
+- Betting and calling by CPU are now automated and are performed autonomously
+   - Bugs and errors need to be worked out, however.
+   - There is an error where a segmentation fault occurs if a player other than the first player leads the bet; when player 4 tries to call/raise, this error occurs. BELIEVED TO BE THE RESULT OF THE FUNCTION SELECTING PAST THE PLAYER VECTOR
+   - There is an intermittent error with betting, where it will constantly cycle to player 1 to lead the bet.  This may have been fixed already while ironing out functionality of 0.6.2, but one should still be aware of this issue in case it surfaces in further development
+   - The function for player betting and calling is very strict, absurdly so - some action scores get as low as lower than negative 100,000.  I'm not sure if this is behaving as intended or not, and it should be investigated further.
+      - Likewise, tweaking the "action" consts might be a good idea after testing.  It's a bit difficult to gauge if the CPU is being overly-cautious; they fold very often.
+      - THE ABOVE NEEDS TO BE RE-ANALYZED AFTER ANALYZING ACTUAL POKER GAMES TO SEE HOW MUCH FOLDING IS DONE
+
 **Version 0.6.1**
 - Implemented a rough version of the initial betting function for CPU's - this is rough and needs careful attention to how it manipulates iter numbers to make sure that it is selecting the correct player and correct values, but it works at a bare minimal in ideal conditions
 - Need to do the same for raise/calling - the initial bet seems to work just fine, however the player's function for raising/calling is currently used for CPU's in response to the initial bet.
@@ -14,7 +25,7 @@ A simple text-based poker game WIP.
 
 ============
 
-**Version 0.5.0**
+***Version 0.5.0***
 - Fixed the unorthodox behavior by simplifying the discard function for CPU's by which is selects the cards that it would like to discard.  This causes the known unorthodox behavior to cease.
 - Fully defined the selection and discard functions for the CPU
    - There is unorthodox behavior where if the first two cards are to be discarded as well as the last card, sometimes unintended cards are selected for discard.  I don't know exactly why this is the case, but it doesn't cause that many problems with gameplay, and if need be is servicable although not optimal.  Will investigate further during the MVP phase of release.
@@ -33,7 +44,7 @@ A simple text-based poker game WIP.
 ============
 
 
-**Version 0.4.0**
+***Version 0.4.0***
 - Defined an (untested) method for which the CPU player can determine which cards are "good" and which cards are "bad" and should be discarded.
    - The CPU will prioritize "low-hanging fruit."  If it finds any matching cards, it will try and go for pairs, three-of-a-kind, full houses, and etc.
    - If it cannot find any matching cards, it will go for flushes, as they are statistically more likely than straights - it will see how many cards of matching suits it has, and then see how many cards "within range" of a straight it has.  If among the candidate sets of cards (using a vector of card vectors) it finds, it will pick the largest, unless there is a tie between a flush and a straight, in which it will pick the flush - as it is statistically a better bet (and statistically, the odds of winning with a flush are much higher than the odds of them beating your flush with a straight and beyond
@@ -49,7 +60,7 @@ A simple text-based poker game WIP.
 
 ============
 
-**Version 0.3.0**
+***Version 0.3.0***
 - Small update to function that prints a player's hand when they have folded - older version had incorrect player numbers printing.  Fixed now.
 - Fixed the mysterious 4th player calling bug by fixing a for loop that assigns point values to a player based on their hand contents
 - Fixed a bug where a player's points persisted even after folding
@@ -81,7 +92,7 @@ A simple text-based poker game WIP.
 
 ============
 
-***Version 0.2***
+***Version 0.2.0***
 
 - Added the <math.h> library to allow for exponent arithmetic
 - Changed the scoring system to use doubles and an accelerated multiplier; makes sure that the correct victor is always chosen when a hand is won
