@@ -2,8 +2,32 @@
 A simple text-based poker game WIP.
 
 
+**Version 0.7.0**
+- Project has entered the bug searching and refining phase
+- *KNOWN PROBLEMS*
+   - CPU Players will sometimes bet 0 dollars and succeed
+   - CPU players will bet money and lose, and this value will not payout from the pot
+      - Perhaps this money being wagered isn't actually entering the pot to begin with? The money is being subtracted twice?
+   - Need error/buffer checking for I/O.  Currently the game can be softlocked by using the wrong input values when entering inputs
+---
+- *CURRENT GOALS*
+   - Need advanced bluff behavior for the CPU
+      - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
+      - CPU that pretends to be happy will discard *no more* than 2 cards to maintain the facade
+   - Need lots of testing to get the statistical likeliness of player behavior
+      - How often do CPU's fold?  How much does aggressiveness affect this?
+      - How strict is action score?  Can it be further modified to be effective but not so strict?
+      - Player bluffs, more often than not, should be inability to read their face - this should be very common behavior.
+   - Need to implement an Ace's ability to go both high and low - it should play as a "low" card in a A-2-3-4-5 straight/straight-flush
+   - Need to add comments to all routines in the project
+   - Need to extract main's code into functions
+   - Need to extract main's code from functions into the Game class
+      - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
 
-**Version 0.6.2**
+============
+
+***Version 0.6.0***
+- Segmentation fault errors have been rectified in CPU betting and calling.  Proper traversal of the circular linked list has fixed most of these issues, and error watching can be performed easily thanks to a new console output that prints which player is currently selected in the circular list
 - Betting and calling by CPU are now automated and are performed autonomously
    - Bugs and errors need to be worked out, however.
    - There is an error where a segmentation fault occurs if a player other than the first player leads the bet; when player 4 tries to call/raise, this error occurs. BELIEVED TO BE THE RESULT OF THE FUNCTION SELECTING PAST THE PLAYER VECTOR
@@ -11,12 +35,8 @@ A simple text-based poker game WIP.
    - The function for player betting and calling is very strict, absurdly so - some action scores get as low as lower than negative 100,000.  I'm not sure if this is behaving as intended or not, and it should be investigated further.
       - Likewise, tweaking the "action" consts might be a good idea after testing.  It's a bit difficult to gauge if the CPU is being overly-cautious; they fold very often.
       - THE ABOVE NEEDS TO BE RE-ANALYZED AFTER ANALYZING ACTUAL POKER GAMES TO SEE HOW MUCH FOLDING IS DONE
-
-**Version 0.6.1**
 - Implemented a rough version of the initial betting function for CPU's - this is rough and needs careful attention to how it manipulates iter numbers to make sure that it is selecting the correct player and correct values, but it works at a bare minimal in ideal conditions
 - Need to do the same for raise/calling - the initial bet seems to work just fine, however the player's function for raising/calling is currently used for CPU's in response to the initial bet.
-
-**Version 0.6.0**
 - Begun to refine, define, and implement functionality for CPU calling and betting
 - Change stats to be universal - players have them as well.  They will, howevever, have default values
 - Begun to implement vectors for passing values into the CPU betting and calling/raising functions

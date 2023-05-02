@@ -11,6 +11,8 @@
 //  on  01 - 24 - 23                            *
 //***********************************************
 
+    #include <math.h>
+
     #include "player.h"
 
 //******
@@ -43,6 +45,7 @@
                     std::cout << "\nInvalid input.  Only enter a value within your cash amount, or fold.\n";
                 }
             }
+            fTempCash = std::round(fTempCash);
             fCash -= fTempCash;                                                     //Subtracts the total amount to be bet from the total cash the player has
             currWager = fTempCash;                                                  //Sets the current amount of money the player is betting to fTempCash
             return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
@@ -50,7 +53,7 @@
         else {
             std::cout << "\nOut of the money!\n\n";
             Fold(dInput);
-            return -1;
+            return 0;
         }
     }
 
@@ -87,6 +90,7 @@
                 else {
                         if (fCash >= (callValue + playerInput)) {
                             temp = callValue + playerInput;
+                            temp = std::round(temp);
                             betting = false;
                         }
                         else {
@@ -121,7 +125,7 @@
 //     void Player::Drop(Deck&/*inandout*/) {                          //The player can drop up to 3 cards - 4 if holding an ace - and draw that many
 /*
         vector<int> vCardsToDrop;
-        vector<Card>::iterator vIter = hCards.vCards.begin();
+        vector<Card>::iterator vIter turnOrder.TraverseNext();= hCards.vCards.begin();
         int iMaxDrop = 3;
         int iDropCount = -1;
         for (vIter; vIter < hCards.vCards.end(); vIter++) {
@@ -390,8 +394,8 @@ private:
         double fTemp;                                           //Temporarily hold float values
         int iTemp;                                              //Temporarily hold int values
 
-        std::vector<PlayerPerception> yourOpinion(4);              //The opinion this CPU has about each player's hand
-        std::vector<PlayerPerception> theirOpinion(4);             //The opinions that this CPU believes other player's hold about this CPU
+        std::vector<PlayerPerception> yourOpinion(PLAYER_COUNT- 1);              //The opinion this CPU has about each player's hand
+        std::vector<PlayerPerception> theirOpinion(PLAYER_COUNT - 1);             //The opinions that this CPU believes other player's hold about this CPU
 
         std::random_device scoreMake;                           //Random device
         std::mt19937 seedMake(scoreMake());                     //Random device seed
@@ -399,8 +403,9 @@ private:
         int tempRoll = 0;                                       //Variable used to hold dicerolls
         int playerRoll = 0;                                     //Variable used to hold player dicerolls
         int opponentRoll = 0;                                   //Variable used to hold opponent dicerolls
-
+        std::cout << "\nCPU test 01\n";
         if (CheckCash() > 0) {
+            std::cout << "\nCPU test 02\n";
             float fTempCash = CheckCash() + 1;                                      //Sets temp cash just out of range to prime loop
             while (fTempCash > fCash || fTempCash < 0) {                            //Loop repeats until fTempCash is a valid amount (greater than or equal to 0 and less than total cash)
 
@@ -494,23 +499,24 @@ private:
                 if (actionScore * (tempRoll / DICE_MOD)
                 * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)) > EASY_ACTION /*NEED TO MAKE THIS A CONSTANT*/) {
                     fTempCash = (fCash / (DICE_MOD * 2)) * (aggressivenessStat * (randInt(seedMake) / DICE_MOD));
+                    currWager = std::round(fTempCash);
+                    std::cout << "\nPlayer " << playerNum << " bets $" << currWager << "\n\n";
                 }
 
                 else {                                                              //If the player bets nothing, they fold their hand
                     fTempCash = 0;
+                    std::cout << "\nPlayer " << playerNum << " has folded.\n\n";
                     Fold(dInput);
                     break;
                 }
             }
-            std::cout << "\nPlayer " << playerNum << " bets " << currWager << "\n\n";
-            currWager = fTempCash;
             fCash -= fTempCash;                                                     //Subtracts the total amount to be bet from the total cash the player has
             return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
         }
         else {
             std::cout << "\nPlayer " << playerNum << " is out of the money!\n\n";
             Fold(dInput);
-            return -1;
+            return 0;
         }
     }
 

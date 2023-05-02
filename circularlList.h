@@ -17,6 +17,8 @@
 #ifndef CIRCULARLIST_H
 #define CIRCULARLIST_H
 
+#include <iostream>
+
 #include "node.h"
 
 //************************************************
@@ -79,6 +81,18 @@ public:
         curr = curr->GetNext();
         prev = curr->GetPrev();
         next = curr->GetNext();
+        std::cout << "\n\nCurrent player selected: " << CurrPos() + 1 << "\n\n";
+    }
+
+//******
+    int CurrPos() {
+        int pos = 0;
+        Node<Type>* temp = head;
+        while (temp != curr) {
+            temp = temp->GetNext();
+            pos++;
+        }
+        return pos;
     }
 
 //******
