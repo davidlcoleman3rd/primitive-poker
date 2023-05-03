@@ -1,6 +1,35 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.7.1**
+- *RESOLVED ISSUES*
+   - CPU Players will sometimes bet 0 dollars and succeed
+      - Betting 0 dollars is still an issue; it, however, is caught by the loop to prevent further undefined behavior
+   - CPU players will bet money and lose, and this value will not payout from the pot
+      - This is resolved aside from other errors dealing with betting
+---
+- *KNOWN PROBLEMS*
+   - Need error/buffer checking for I/O.  Currently the game can be softlocked by using the wrong input values when entering inputs
+      - It can also crash from the lack of a buffer and an invalid input bypassing the input check when trying to replay a game
+   - CPU players will still bet 0 dollars and softlock the game in perpetual loop
+      - There seems to be further refinement needed on the function that lets the CPU choose how much they'd like to bet.
+   - Cash being bet in currWager does not accurately reflect the inputs given
+   - Sometimes when in a series of calls and raises, calls and raises will not properly reflect on the table and will cause strange issues, like an opponent folding but the player still in a call/raise/fold cycle, and the player folding resulting in all 4 players folding
+      - I believe this error and the previous error are connect - not sure how.  Need to look at the method by which money is passed from function to the calling function and see how this behaves in detail
+---
+- *CURRENT GOALS*
+   - Need advanced bluff behavior for the CPU
+      - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
+      - CPU that pretends to be happy will discard *no more* than 2 cards to maintain the facade
+   - Need lots of testing to get the statistical likeliness of player behavior
+      - How often do CPU's fold?  How much does aggressiveness affect this?
+      - How strict is action score?  Can it be further modified to be effective but not so strict?
+      - Player bluffs, more often than not, should be inability to read their face - this should be very common behavior.
+   - Need to implement an Ace's ability to go both high and low - it should play as a "low" card in a A-2-3-4-5 straight/straight-flush
+   - Need to add comments to all routines in the project
+   - Need to extract main's code into functions
+   - Need to extract main's code from functions into the Game class
+      - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
 
 **Version 0.7.0**
 - Project has entered the bug searching and refining phase

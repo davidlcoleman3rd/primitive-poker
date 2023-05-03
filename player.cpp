@@ -47,7 +47,7 @@
             }
             fTempCash = std::round(fTempCash);
             fCash -= fTempCash;                                                     //Subtracts the total amount to be bet from the total cash the player has
-            currWager = fTempCash;                                                  //Sets the current amount of money the player is betting to fTempCash
+            currWager += fTempCash;                                                  //Sets the current amount of money the player is betting to fTempCash
             return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
         }
         else {
@@ -76,11 +76,13 @@
                 std::cout << "\nDo you raise, call, or fold? \n"
                           << "To call, type 0. To raise, type the amount you bet over the call\n"
                           << "To fold, type a negative value.\n\n"
-                          << "Current call is:    " << callValue << "\n\n";
+                          << "Current call is:                  " << callValue << "\n"
+                          << "Current cash is:                  " << fCash << "\n"
+                          << "Current money you've wagered:     " << currWager << "\n\n\n";
                 std::cin >> playerInput;
                 if (playerInput == 0) {
                     std::cout << "\nPlayer 1 calls the bet.\n\n";
-                    return callValue;
+                    return callValue - currWager;
                 }
                 else if (playerInput < 0) {
                     std::cout << "\nPlayer 1 folds.\n\n";
@@ -88,8 +90,8 @@
                     return 0;
                 }
                 else {
-                        if (fCash >= (callValue + playerInput)) {
-                            temp = callValue + playerInput;
+                        if (fCash >= (callValue - currWager) + playerInput) {
+                            temp = callValue + playerInput - currWager;
                             temp = std::round(temp);
                             betting = false;
                         }
@@ -109,7 +111,7 @@
 
 //******
     float Player::TakeWager(float fCashIn/*in*/) {
-        int temp = fCashIn - currWager;
+        int temp = fCashIn;
         currWager += temp;
         fCash -= temp;
         return temp;
@@ -238,8 +240,7 @@
     Player::~Player() {
         delete hCards;
         hCards = nullptr;
-        std::cout << "\nDestructor test - Player\n\n";
-    }                      //Destructor - currently does nothing
+    }                                             //Destructor - deallocates the player's hand and frees its memory
 
 /*
 private:
@@ -404,7 +405,7 @@ private:
         int playerRoll = 0;                                     //Variable used to hold player dicerolls
         int opponentRoll = 0;                                   //Variable used to hold opponent dicerolls
         std::cout << "\nCPU test 01\n";
-        if (CheckCash() > 0) {
+        if (CheckCash()) {
             std::cout << "\nCPU test 02\n";
             float fTempCash = CheckCash() + 1;                                      //Sets temp cash just out of range to prime loop
             while (fTempCash > fCash || fTempCash < 0) {                            //Loop repeats until fTempCash is a valid amount (greater than or equal to 0 and less than total cash)
@@ -494,12 +495,34 @@ private:
                     }
                 }
 
+                int actionMod = 0;
+                if (actionScore > MEDIUM_ACTION) {
+                    if (actionScore >= DECISIVE_ACTION * 10) {
+                        actionMod = 10;
+                    }
+                    else {
+                        int temp = (10 * DECISIVE_ACTION) - actionScore;
+                        if (temp < 1) {
+                            temp = 1;
+                        }
+                        actionMod = 10 / (temp);
+                    }
+                }
+
+
                 tempRoll = randInt(seedMake);
                 std::cout << "\nCurrent action score: " << actionScore << "\n\n";
                 if (actionScore * (tempRoll / DICE_MOD)
                 * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)) > EASY_ACTION /*NEED TO MAKE THIS A CONSTANT*/) {
-                    fTempCash = (fCash / (DICE_MOD * 2)) * (aggressivenessStat * (randInt(seedMake) / DICE_MOD));
-                    currWager = std::round(fTempCash);
+                    fTempCash = (fCash / (DICE_MOD * 5)) * ((aggressivenessStat) + ((randInt(seedMake) / DICE_MOD)) + ((aggressivenessStat / DICE_MOD) * ((randInt(seedMake) / DICE_MOD)))
+                                                            + (actionMod) + ((perceptionStat / (DICE_MOD * 2)) * (actionMod + (randInt(seedMake) / DICE_MOD))));
+
+
+                    if (fTempCash < 1) {
+                        fTempCash = 1;
+                    }
+                    fTempCash = std::round(fTempCash);
+                    currWager = fTempCash;
                     std::cout << "\nPlayer " << playerNum << " bets $" << currWager << "\n\n";
                 }
 
@@ -629,28 +652,51 @@ private:
                         actionScore += int (opinions[0] - AVERAGE) * (randInt(seedMake) / DICE_MOD);
                     }
                 }
-                float tempForIf = (actionScore * (randInt(seedMake) / DICE_MOD)
-                        * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)));
-                            fTempCash = callValue;
+                float tempForIf = actionScore;
+
                 std::cout << "\nAction score = " << actionScore << "\n"
-                          << "tempForIf = " << tempForIf << "\n\n";
+                          << "tempForIf =      " << tempForIf << "\n\n"
+                          << "aggressiveness = " << aggressivenessStat << "\n"
+                          << "perception =     " << perceptionStat << "\n"
+                          << "bluff =          " << bluffStat << "\n"
+                          << "currWager =      " << currWager << "\n"
+                          << "Cash =           " << fCash << "\n"
+                          << "Current call =   " << callValue << "\n\n\n";
+
+                int actionMod = 0;
+                if (actionScore > MEDIUM_ACTION) {
+                    if (actionScore >= DECISIVE_ACTION * 10) {
+                        actionMod = 10;
+                    }
+                    else {
+                        int temp = (10 * DECISIVE_ACTION) - actionScore;
+                        if (temp < 1) {
+                            temp = 1;
+                        }
+                        actionMod = 10 / (temp);
+                    }
+                }
+
                 if (tempForIf > MEDIUM_ACTION /*NEED TO MAKE THIS A CONSTANT*/ && tempForIf <= DECISIVE_ACTION) {
-                    fTempCash = callValue;
+                    fTempCash = callValue - currWager;
                     std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
+                    std::cout << "\nPlayer " << playerNum << " cash:   " << fCash << "\n\n\n";
                 } else if (tempForIf > DECISIVE_ACTION) {
                     tempRoll = randInt(seedMake);
-                    fTempCash = (fCash / (DICE_MOD * 2)) * (aggressivenessStat * (tempRoll / DICE_MOD));
+                    int checkCash = fCash - (callValue - currWager);
+                    fTempCash = ((checkCash) / (DICE_MOD * 5)) * ((aggressivenessStat) + (randInt(seedMake) / DICE_MOD) + (aggressivenessStat / DICE_MOD * (randInt(seedMake) / DICE_MOD))
+                                                            + (actionMod) + ((perceptionStat / (DICE_MOD * 2)) * (actionMod + (randInt(seedMake) / DICE_MOD))));
+                    fTempCash = std::round(fTempCash);
+                    std::cout << "\nPlayer " << playerNum << " raises the bet by " << fTempCash << "\n\n";
                     fTempCash += callValue;
-                    std::cout << "\nPlayer " << playerNum << " raises the bet by " << fTempCash - callValue << "\n\n";
 
                 } else {                                                              //If the player bets nothing, they fold their hand
                     fTempCash = 0;
                     Fold(dInput);
+                    std::cout << "\nPlayer " << playerNum << " has folded.\n\n";
                     break;
                 }
             }
-            currWager = fTempCash;
-            fCash -= fTempCash;                                                     //Subtracts the total amount to be bet from the total cash the player has
             return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
         }
     }
@@ -666,6 +712,3 @@ private:
     }
 
 //******
-    CPU::~CPU() {
-        std::cout << "\nDestructor test - CPU\n\n";
-    }

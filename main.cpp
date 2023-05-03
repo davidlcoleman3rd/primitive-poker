@@ -152,12 +152,12 @@ int main() {
         std::cout << "\ncurrBet check = " << currBet << "\n\n";
         int tempBet = currBet;
 
-        std::cout << "\nTest 01\n";
+        //std::cout << "\nTest 01\n";
 
         while (firstBet) {
             int checkFold = 0;
             turnOrder.TraverseNext();
-            std::cout << "\nTest 02\n";
+            //std::cout << "\nTest 02\n";
             for (int iter = 0; iter < PLAYER_COUNT - 1; iter++) {
                 if (turnOrder.GetPlayer()->FoldedHand()) {
                     checkFold++;
@@ -167,46 +167,35 @@ int main() {
                     firstBet = false;
                 }
                 turnOrder.TraverseNext();
-                std::cout << "\nTest 03\n";
+                //std::cout << "\nTest 03\n";
             }
             std::cout << "\nPlayer " << tempBet + 1 << " is leading the bet this hand\n\n";
-            std::cout << "\nTest 04\n";
+            //std::cout << "\nTest 04\n";
             if (firstBet) {
-                std::cout << "\nTest 05\n";
+                //std::cout << "\nTest 05\n";
                 if (tempBet > 0) {
-                    std::cout << "\nTest 06\n";
-                    std::cout << "\nCash 1 = " << turnOrder.GetPlayer()->CheckCash() << "\n\n";
+                    //std::cout << "\nTest 06\n";
+                    //std::cout << "\nCash 1 = " << turnOrder.GetPlayer()->CheckCash() << "\n\n";
                     CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
-                    std::cout << "\nCash 2 = " << tempPtr->CheckCash() << "\n\n";
+                    //std::cout << "\nCash 2 = " << tempPtr->CheckCash() << "\n\n";
                     std::vector<PlayerPerception> tempOpinion;              //A vector of opponents opinions of the player's hand/tells
                     std::vector<int> inBluff;                               //A vector of opponents bluff stat - position matched with tempOpinion
                     std::vector<PlayerPerception> tempPerception;           //A vector of opponents opinions of themselves - position matched with the above
                     std::vector<double> inScores;                           //A vector of opponents hand values; used for player decision making if the player
                                                                             //...rolls exceptionally well.  Position matched with the above temp variables
-                    std::cout << "\nTest 07\n";
+                    //std::cout << "\nTest 07\n";
 
                     for (int iter = 0; iter < PLAYER_COUNT; iter++) {
-                        std::cout << "\nTest 08\n";
+                       // std::cout << "\nTest 08\n";
                         if (iter > 0) {
-                            std::cout << "\nTest 09\n";
-                            //NEED TO INVESTIGATE THIS IN RELATION TO THE OPINIONS VECTOR FOR EACH PLAYER... MIGHT NOT MAP CORRECTLY!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                           // std::cout << "\nTest 09\n";
 
                             int next = iter + tempBet;
                                 if (next >= PLAYER_COUNT) {
                                     next -= PLAYER_COUNT;
-                                    std::cout << "\nTest 10\n";
+                                   // std::cout << "\nTest 10\n";
                                 }
-                                std::cout << "\nTest 11\n";
+                                //std::cout << "\nTest 11\n";
                             tempPerception.push_back(playerTells.at(next));
                             tempOpinion.push_back(turnOrder.GetPlayer()->GetPlayerTells(PLAYER_COUNT - iter));          //UNDEFINED
                                                                                                                         //Gets opponent opinion of a specific player's tell
@@ -219,83 +208,87 @@ int main() {
 
                         }
                         turnOrder.TraverseNext();
-                        std::cout << "\nTest 12\n";
+                       // std::cout << "\nTest 12\n";
                     }
-                    std::cout << "\nTest 51\n";
+                   // std::cout << "\nTest 51\n";
                     callValue = tempPtr->BetCash(tempBet + 1, myDeck, tempPerception,
                                                                 inScores, inBluff, tempOpinion);
-                    std::cout << "\nTest 52\n";
+                   // std::cout << "\nTest 52\n";
                     allCalled.at(tempBet) = true;
-                    std::cout << "\nTest 53\n";
+                   // std::cout << "\nTest 53\n";
                     tempPtr = nullptr;
-                    std::cout << "\nTest 13\n";
+                    //std::cout << "\nTest 13\n";
                 }
                 else {
                     callValue = turnOrder.GetPlayer()->BetCash(myDeck);
                     allCalled.at(tempBet) = true;
-                    std::cout << "\nTest 14\n";
+                    //std::cout << "\nTest 14\n";
                 }
             }
             if (turnOrder.GetPlayer()->FoldedHand()) {
                 tempBet++;
-                std::cout << "\nTest 15\n";
+                //std::cout << "\nTest 15\n";
 
                 if (tempBet >= PLAYER_COUNT) {
                     tempBet = 0;
-                    std::cout << "\nTest 16\n";
+                   // std::cout << "\nTest 16\n";
                 }
-                std::cout << "\nTest 17\n";
+                //std::cout << "\nTest 17\n";
             }
             else {
                 firstBet = false;
-                std::cout << "\nTest 18\n";
+                //std::cout << "\nTest 18\n";
             }
             turnOrder.TraverseNext();
         }
 
         myPot += callValue;
         betIteration = tempBet;
+
         while (callingBets) {
+            //std::cout << "\n\nPrev call value = " << callValue << "\n";
+            callValue = std::round(callValue);
+            //std::cout << "\nPost call value = " << callValue << "\n\n";
             tempBet++;
-            if (tempBet > PLAYER_COUNT) {
+            if (tempBet >= PLAYER_COUNT) {
                 tempBet -= PLAYER_COUNT;
             }
-            std::cout << "\nTest 19\n";
+            //std::cout << "\nTest 19\n";
             float temp = 0;
             betIteration++;
             if (betIteration == PLAYER_COUNT) {
                 betIteration = 0;
-                std::cout << "\nTest 20\n";
+               // std::cout << "\nTest 20\n";
             }
             if (!(turnOrder.GetPlayer()->FoldedHand())) {
-                std::cout << "\nTest 21\n";
+                //std::cout << "\nTest 21\n";
                 std::cout << "\nPlayer " << betIteration + 1 << " can choose to call, raise, or fold.\n\n";
                 if (betIteration == 0) {
                     temp = turnOrder.GetPlayer()->CallBet(callValue, myDeck);           //FUNCTION NEEDS DEFINITION
                     if (turnOrder.GetPlayer()->FoldedHand()) {                          //FUNCTION NEEDS DEFINITION
                         allCalled.at(betIteration) = true;
-                        std::cout << "\nTest 22\n";
+                       // std::cout << "\nTest 22\n";
                     }
                     else if (temp > callValue) {
                         callValue = temp;
-                        std::cout << "\nTest 23\n";
+                       // std::cout << "\nTest 23\n";
                         for (auto i : allCalled) {
                             i = false;
                         }
-                        std::cout << "\nTest 24\n";
+                        //std::cout << "\nTest 24\n";
                         allCalled.at(betIteration) = true;
                         myPot += turnOrder.GetPlayer()->TakeWager(temp);                //FUNCTION NEEDS DEFINITION
                     }
                     else if (temp == callValue) {
-                        std::cout << "\nTest 25\n";
+                        //std::cout << "\nTest 25\n";
                         allCalled.at(betIteration) = true;
                         myPot += turnOrder.GetPlayer()->TakeWager(temp);
                     }
                     turnOrder.TraverseNext();
-                    std::cout << "\nTest 26\n";
+                    //std::cout << "\nTest 26\n";
                 }
                 else {
-                    std::cout << "\nTest 27\n";
+                    //std::cout << "\nTest 27\n";
                     CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
                     std::vector<PlayerPerception> tempOpinion;              //A vector of opponents opinions of the player's hand/tells
                     std::vector<int> inBluff;                               //A vector of opponents bluff stat - position matched with tempOpinion
@@ -303,24 +296,13 @@ int main() {
                     std::vector<double> inScores;                           //A vector of opponents hand values; used for player decision making if the player
                                                                             //...rolls exceptionally well.  Position matched with the above temp variables
                     for (int iter = 0; iter < PLAYER_COUNT; iter++) {
-                            //NEED TO INVESTIGATE THIS IN RELATION TO THE OPINIONS VECTOR FOR EACH PLAYER... MIGHT NOT MAP CORRECTLY!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
                         int next = iter + tempBet;
                         if (next >= PLAYER_COUNT) {
                             next -= PLAYER_COUNT;
-                        std::cout << "\nTest 27\n";
+                      //  std::cout << "\nTest 27\n";
                         }
-                        std::cout << "\nTest 28\n";
+                       // std::cout << "\nTest 28\n";
                         tempPerception.push_back(playerTells.at(next));
                         tempOpinion.push_back(turnOrder.GetPlayer()->GetPlayerTells(PLAYER_COUNT - iter));          //UNDEFINED
                                                                                                                         //Gets opponent opinion of a specific player's tell
@@ -331,23 +313,23 @@ int main() {
                         inScores.push_back(turnOrder.GetPlayer()->HandPoints());                                    //DEFINED
                                                                                                       //Gets the actual value of a particular opponents hand
                         turnOrder.TraverseNext();
-                        std::cout << "\nTest 29\n";
+                        //std::cout << "\nTest 29\n";
                     }
-                    std::cout << "\nTest 30\n";
+                  //  std::cout << "\nTest 30\n";
                     temp = tempPtr->CallBet(callValue, tempBet + 1, myDeck, tempPerception,
                                                                 inScores, inBluff, tempOpinion);
-                    std::cout << "\nTest 31\n";
+                  //  std::cout << "\nTest 31\n";
 
                     if (turnOrder.GetPlayer()->FoldedHand()) {
                         allCalled.at(betIteration) = true;
-                        std::cout << "\nTest 32\n";
+                      //  std::cout << "\nTest 32\n";
                     }
                     else if (temp > callValue) {
                         callValue = temp;
                         for (auto i : allCalled) {
                             i = false;
                         }
-                        std::cout << "\nTest 33\n";
+                      //  std::cout << "\nTest 33\n";
                         allCalled.at(betIteration) = true;
                         myPot += turnOrder.GetPlayer()->TakeWager(temp);
                     }
@@ -357,31 +339,31 @@ int main() {
                     }
                     tempPtr = nullptr;
                     turnOrder.TraverseNext();
-                    std::cout << "\nTest 34\n";
+                   // std::cout << "\nTest 34\n";
                 }
             }
             else {
-                std::cout << "\nTest 35\n";
+               // std::cout << "\nTest 35\n";
                 std::cout << "\nPlayer " << tempBet + 1 << " has folded.\n\n";
                 allCalled.at(betIteration) = true;
                 turnOrder.TraverseNext();
-                std::cout << "\nTest 36\n";
+               // std::cout << "\nTest 36\n";
             }
             callingBets = false;
             for (auto i : allCalled) {
                 if (i == false) {
                     callingBets = true;
-                    std::cout << "\nTest 37\n";
+                   // std::cout << "\nTest 37\n";
                 }
             }
         }
-        std::cout << "\nTest 38\n";
+        //std::cout << "\nTest 38\n";
         currBet++;
         std::cout << "\nCurrBet iteration = " << currBet << "\n\n";
         if (currBet >= (PLAYER_COUNT)) {
             currBet -= PLAYER_COUNT;
         }
-        std::cout << "\nTest 39\n";
+      //  std::cout << "\nTest 39\n";
 
         //std::cout << "\nHow much do you bet on this hand?\n\n";
 
@@ -452,8 +434,9 @@ int main() {
                 std::cin.ignore(1000, '\n');
             }
             getline(std::cin, playerChoice);
+            //error here if buffer isn't cleared - can skip input and try to find value at a null string??????n
+
             char choiceAuto = playerChoice.at(0);
-            tolower(choiceAuto);
             switch(choiceAuto) {
                 case 'y' : {
                     for (auto i : playerPtr) {
@@ -480,8 +463,8 @@ int main() {
                     }
                     myDeck.Reshuffle();
                     playerPtr.clear();
-                    std::cout << "\n\nCards in deck = " << myDeck.GetSize() << "\n"
-                                  << "Cards in discard = " << myDeck.DiscardSize() << "\n\n";
+                   // std::cout << "\n\nCards in deck = " << myDeck.GetSize() << "\n"
+                    //              << "Cards in discard = " << myDeck.DiscardSize() << "\n\n";
                     break;
                 }
                 default : {
