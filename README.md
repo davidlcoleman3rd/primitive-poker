@@ -1,22 +1,20 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
-**Version 0.7.1**
+**Version 0.7.2**
 - *RESOLVED ISSUES*
-   - CPU Players will sometimes bet 0 dollars and succeed
-      - Betting 0 dollars is still an issue; it, however, is caught by the loop to prevent further undefined behavior
-   - CPU players will bet money and lose, and this value will not payout from the pot
-      - This is resolved aside from other errors dealing with betting
----
+   - Cash being bet in currWager does not accurately reflect the inputs given
+      - There were some logical errors when it came to assigning values when betting, allowing the CPU to bet over their cash value
+   - Sometimes when in a series of calls and raises, calls and raises will not properly reflect on the table and will cause strange issues, like an opponent folding but the player still in a call/raise/fold cycle, and the player folding resulting in all 4 players folding
+      - While this does not surface, multiple CPU's can raise/call at 0 dollars in perpetuity.  I think that CPU's calling are not flipping their "allCalled" switches on like they should.  Possibly an easy fix
+   - The entire primary logic of the program is solved outisde of bug fixing.  The game loop completes as expected unless the CPU's are caught in a call loop
+
 - *KNOWN PROBLEMS*
    - Need error/buffer checking for I/O.  Currently the game can be softlocked by using the wrong input values when entering inputs
       - It can also crash from the lack of a buffer and an invalid input bypassing the input check when trying to replay a game
    - CPU players will still bet 0 dollars and softlock the game in perpetual loop
       - There seems to be further refinement needed on the function that lets the CPU choose how much they'd like to bet.
-   - Cash being bet in currWager does not accurately reflect the inputs given
-   - Sometimes when in a series of calls and raises, calls and raises will not properly reflect on the table and will cause strange issues, like an opponent folding but the player still in a call/raise/fold cycle, and the player folding resulting in all 4 players folding
-      - I believe this error and the previous error are connect - not sure how.  Need to look at the method by which money is passed from function to the calling function and see how this behaves in detail
----
+
 - *CURRENT GOALS*
    - Need advanced bluff behavior for the CPU
       - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
@@ -30,15 +28,36 @@ A simple text-based poker game WIP.
    - Need to extract main's code into functions
    - Need to extract main's code from functions into the Game class
       - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
+   - Want to institute multi-pots, allowing a player to still be apart of the betting, but be excluded from wagers above their paygrade
+      - Turn the myPot int into a vector of ints.  When *any* player is out of the money...
+         - New bets are pushed_back onto a new element in the myPot vector
+         - A position is saved and attached to the logic for each player... make each pot that the player plays in store in an int called "playerPots?"
+            - Each player starts out with a 0 value for the first pot.  When a player is out of the money, each other player increments this variable and the pot pushes back a new element
+         - When payouts are evaluated, hand scoring is evaluated on a pot-by-pot basis
+            - Pot 1 will have all 4 players
+            - Pot 2 will have the 3 best performers
+            - Pot 3 will have the 2 best performers
+            - Pot 4 will do nothing but return money back to the top player
 
-**Version 0.7.0**
-- Project has entered the bug searching and refining phase
-- *KNOWN PROBLEMS*
+
+============
+
+**Version 0.7.1**
+- *RESOLVED ISSUES*
    - CPU Players will sometimes bet 0 dollars and succeed
+      - Betting 0 dollars is still an issue; it, however, is caught by the loop to prevent further undefined behavior
    - CPU players will bet money and lose, and this value will not payout from the pot
-      - Perhaps this money being wagered isn't actually entering the pot to begin with? The money is being subtracted twice?
+      - This is resolved aside from other errors dealing with betting
+
+- *KNOWN PROBLEMS*
    - Need error/buffer checking for I/O.  Currently the game can be softlocked by using the wrong input values when entering inputs
----
+      - It can also crash from the lack of a buffer and an invalid input bypassing the input check when trying to replay a game
+   - CPU players will still bet 0 dollars and softlock the game in perpetual loop
+      - There seems to be further refinement needed on the function that lets the CPU choose how much they'd like to bet.
+   - Cash being bet in currWager does not accurately reflect the inputs given
+   - Sometimes when in a series of calls and raises, calls and raises will not properly reflect on the table and will cause strange issues, like an opponent folding but the player still in a call/raise/fold cycle, and the player folding resulting in all 4 players folding
+      - I believe this error and the previous error are connect - not sure how.  Need to look at the method by which money is passed from function to the calling function and see how this behaves in detail
+
 - *CURRENT GOALS*
    - Need advanced bluff behavior for the CPU
       - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
@@ -54,6 +73,30 @@ A simple text-based poker game WIP.
       - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
 
 ============
+
+**Version 0.7.0**
+- Project has entered the bug searching and refining phase
+- *KNOWN PROBLEMS*
+   - CPU Players will sometimes bet 0 dollars and succeed
+   - CPU players will bet money and lose, and this value will not payout from the pot
+      - Perhaps this money being wagered isn't actually entering the pot to begin with? The money is being subtracted twice?
+   - Need error/buffer checking for I/O.  Currently the game can be softlocked by using the wrong input values when entering inputs
+
+- *CURRENT GOALS*
+   - Need advanced bluff behavior for the CPU
+      - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
+      - CPU that pretends to be happy will discard *no more* than 2 cards to maintain the facade
+   - Need lots of testing to get the statistical likeliness of player behavior
+      - How often do CPU's fold?  How much does aggressiveness affect this?
+      - How strict is action score?  Can it be further modified to be effective but not so strict?
+      - Player bluffs, more often than not, should be inability to read their face - this should be very common behavior.
+   - Need to implement an Ace's ability to go both high and low - it should play as a "low" card in a A-2-3-4-5 straight/straight-flush
+   - Need to add comments to all routines in the project
+   - Need to extract main's code into functions
+   - Need to extract main's code from functions into the Game class
+      - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
+
+---
 
 ***Version 0.6.0***
 - Segmentation fault errors have been rectified in CPU betting and calling.  Proper traversal of the circular linked list has fixed most of these issues, and error watching can be performed easily thanks to a new console output that prints which player is currently selected in the circular list
@@ -72,7 +115,7 @@ A simple text-based poker game WIP.
    - This will require further investigation as far as mapping goes - Not sure if these map entirely appropriately
 - Declared functions for getting values from each player in order to use them for CPU betting.  Need to define and refine them.
 
-============
+---
 
 ***Version 0.5.0***
 - Fixed the unorthodox behavior by simplifying the discard function for CPU's by which is selects the cards that it would like to discard.  This causes the known unorthodox behavior to cease.
@@ -90,7 +133,7 @@ A simple text-based poker game WIP.
       - This involved the arduous process of ironing out an error with a pointer to an iterator - the pointer always pointed to where the iterator was pointing, resulting in issues.  Range-based for-loops don't appear to be the play when it comes to functions that take a previous card and compare it to a current card - could possibly be a hint for further errors and bugs
    - Have not yet attempted to test and/or implement the CPU's betting and calling/raising function
 
-============
+---
 
 
 ***Version 0.4.0***
@@ -107,7 +150,7 @@ A simple text-based poker game WIP.
    - Also need to generate a similar function for deciding on raises and calls - the math for determining how "worth it" a call is vs folding as well as based on how much money they've already put into the pot need to be formulated
 - Begun to define the CPU's betting functionality using a convergent decision-tree algorithm that will allow the CPU to use its perception, bluff, and aggressiveness stats to evaluate other players' tells and bluffs, its own hand value, the likeliness it thinks it has to win a hand, how much it's willing to bet on a good or bad hand, and how likely it is to fold given the circumstances
 
-============
+---
 
 ***Version 0.3.0***
 - Small update to function that prints a player's hand when they have folded - older version had incorrect player numbers printing.  Fixed now.
@@ -139,7 +182,7 @@ A simple text-based poker game WIP.
 - Added discard functionality
 - Added game loops; allow the player to make decisions in games and choose to continue playing or to quit.
 
-============
+---
 
 ***Version 0.2.0***
 
@@ -153,7 +196,7 @@ A simple text-based poker game WIP.
 - Implemented the circularlList class and the Player class to allow for mulitple players to draw hands of cards from the same deck, printing all hands in order with their score values
 - Fixed logic issues with this implementation in order to print all hands without error
 
-============
+---
 
 ***Version 0.1.0***
 - Created a graphical display of a player’s hand when showing hand

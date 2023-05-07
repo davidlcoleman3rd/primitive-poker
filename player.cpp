@@ -45,7 +45,7 @@
                     std::cout << "\nInvalid input.  Only enter a value within your cash amount, or fold.\n";
                 }
             }
-            fTempCash = std::round(fTempCash);
+            fTempCash = std::floor(fTempCash);
             fCash -= fTempCash;                                                     //Subtracts the total amount to be bet from the total cash the player has
             currWager += fTempCash;                                                  //Sets the current amount of money the player is betting to fTempCash
             return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
@@ -82,7 +82,7 @@
                 std::cin >> playerInput;
                 if (playerInput == 0) {
                     std::cout << "\nPlayer 1 calls the bet.\n\n";
-                    return callValue - currWager;
+                    return callValue;
                 }
                 else if (playerInput < 0) {
                     std::cout << "\nPlayer 1 folds.\n\n";
@@ -91,8 +91,8 @@
                 }
                 else {
                         if (fCash >= (callValue - currWager) + playerInput) {
-                            temp = callValue + playerInput - currWager;
-                            temp = std::round(temp);
+                            temp = callValue + playerInput;
+                            temp = std::floor(temp);
                             betting = false;
                         }
                         else {
@@ -111,10 +111,14 @@
 
 //******
     float Player::TakeWager(float fCashIn/*in*/) {
-        int temp = fCashIn;
-        currWager += temp;
-        fCash -= temp;
-        return temp;
+        std::cout << "\n\nRunning takewager... fCash = " << fCash << "\n"
+                  << "\ncurrWager =                  " << currWager << "\n";
+        int temp = currWager;
+        currWager = fCashIn;
+        fCash -= (currWager - temp);
+        std::cout << "\n\nNew fCash = " << fCash << "\n"
+                  << "\nNew Wager =  " << currWager << "\n\n";
+        return fCashIn - temp;
     }
 
 //******
@@ -158,7 +162,7 @@
 */
 
 //******
-    void Player::Fold(Deck& dInput/*out*/){                  //The player can forfeit their hand until the end of the round and get a new hand
+    void Player::Fold(Deck& dInput/*out*/){                  //The player can forfeit their hand until the end of the floor and get a new hand
         DiscardHand(dInput);
         bFolded = true;
 }
@@ -511,17 +515,29 @@ private:
 
 
                 tempRoll = randInt(seedMake);
+                int tempRoll2 = randInt(seedMake);
+                int tempRoll3 = randInt(seedMake);
                 std::cout << "\nCurrent action score: " << actionScore << "\n\n";
                 if (actionScore * (tempRoll / DICE_MOD)
                 * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)) > EASY_ACTION /*NEED TO MAKE THIS A CONSTANT*/) {
-                    fTempCash = (fCash / (DICE_MOD * 5)) * ((aggressivenessStat) + ((randInt(seedMake) / DICE_MOD)) + ((aggressivenessStat / DICE_MOD) * ((randInt(seedMake) / DICE_MOD)))
-                                                            + (actionMod) + ((perceptionStat / (DICE_MOD * 2)) * (actionMod + (randInt(seedMake) / DICE_MOD))));
+
+
+                    std::cout << "var0 =   " << fCash / (DICE_MOD * 5.0) << "\n"
+                              << "var1 =   " << aggressivenessStat << "\n"
+                              << "var2 =   " << (tempRoll / DICE_MOD) << "\n"
+                              << "var3 =   " << (aggressivenessStat / DICE_MOD) * ((tempRoll2 / DICE_MOD)) << "\n"
+                              << "var4 =   " << actionMod << "\n"
+                              << "var5 =   " << ((perceptionStat / (DICE_MOD * 2)) * (actionMod + tempRoll3 / DICE_MOD)) << "\n\n\n\n";
+
+
+                    fTempCash = (fCash / (DICE_MOD * 5.0)) * (((aggressivenessStat) + ((tempRoll / DICE_MOD)) + ((aggressivenessStat / DICE_MOD) * ((tempRoll2 / DICE_MOD)))
+                                                            + (actionMod) + ((perceptionStat / (DICE_MOD * 2)) * (actionMod + tempRoll3 / DICE_MOD))));
 
 
                     if (fTempCash < 1) {
                         fTempCash = 1;
                     }
-                    fTempCash = std::round(fTempCash);
+                    fTempCash = std::floor(fTempCash);
                     currWager = fTempCash;
                     std::cout << "\nPlayer " << playerNum << " bets $" << currWager << "\n\n";
                 }
@@ -568,7 +584,7 @@ private:
             return 0;
         }
 
-        else if (fCash < callValue - currWager) {
+        else if (fCash < (callValue - currWager)) {
             std::cout << "\nPlayer " << playerNum << " is out of the money.\n\n";
             Fold(dInput);
             return 0;
@@ -577,7 +593,12 @@ private:
         else {
             float fTempCash = CheckCash() + 1;                                      //Sets temp cash just out of range to prime loop
             while (fTempCash > fCash || fTempCash < 0) {                            //Loop repeats until fTempCash is a valid amount (greater than or equal to 0 and less than total cash)
-
+                std::cout << "\n\nTEST INPUT\n\n";
+                std::cin >> tempRoll;
+                if (fCash < 0) {
+                    std::cout << "\n\nSOME KIND OF ERROR HAPPENED...\n\n";
+                    std::cin >> tempRoll;
+                }
                 tempRoll = randInt(seedMake);
                 fTemp = (hCards->CountPoints(false) / POINTS_DIV) + (tempRoll / DICE_MOD);      //Store 1 / 100th the point value of the hand into fTemp + a dice roll evaluated at the roll 1 through 100 divided by 20.
                 actionScore = fTemp * perceptionStat;                                               //The hand's value is multiplied by the player's perception stat - this means that great hands will be
@@ -665,6 +686,7 @@ private:
 
                 int actionMod = 0;
                 if (actionScore > MEDIUM_ACTION) {
+                    std::cout << "\n\nThis is a test\n\n";
                     if (actionScore >= DECISIVE_ACTION * 10) {
                         actionMod = 10;
                     }
@@ -678,25 +700,48 @@ private:
                 }
 
                 if (tempForIf > MEDIUM_ACTION /*NEED TO MAKE THIS A CONSTANT*/ && tempForIf <= DECISIVE_ACTION) {
-                    fTempCash = callValue - currWager;
+                    fTempCash = callValue;
                     std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
                     std::cout << "\nPlayer " << playerNum << " cash:   " << fCash << "\n\n\n";
                 } else if (tempForIf > DECISIVE_ACTION) {
-                    tempRoll = randInt(seedMake);
-                    int checkCash = fCash - (callValue - currWager);
-                    fTempCash = ((checkCash) / (DICE_MOD * 5)) * ((aggressivenessStat) + (randInt(seedMake) / DICE_MOD) + (aggressivenessStat / DICE_MOD * (randInt(seedMake) / DICE_MOD))
-                                                            + (actionMod) + ((perceptionStat / (DICE_MOD * 2)) * (actionMod + (randInt(seedMake) / DICE_MOD))));
-                    fTempCash = std::round(fTempCash);
-                    std::cout << "\nPlayer " << playerNum << " raises the bet by " << fTempCash << "\n\n";
-                    fTempCash += callValue;
+                    if (fCash > (callValue - currWager)) {
+                        tempRoll = randInt(seedMake);
+                        int tempRoll2 = randInt(seedMake);
+                        int tempRoll3 = randInt(seedMake);
+                        std::cout << "var0 =   " << fCash / (DICE_MOD * 5.0) << "\n"
+                                  << "var1 =   " << aggressivenessStat << "\n"
+                                  << "var2 =   " << (tempRoll / DICE_MOD) << "\n"
+                                  << "var3 =   " << (aggressivenessStat / DICE_MOD) * ((tempRoll2 / DICE_MOD)) << "\n"
+                                  << "var4 =   " << actionMod << "\n"
+                                  << "var5 =   " << ((perceptionStat / (DICE_MOD * 2)) * (actionMod + tempRoll3 / DICE_MOD)) << "\n\n\n\n";
+                        float checkCash = fCash - (callValue - currWager);
+                        fTempCash = ((checkCash) / (DICE_MOD * 5)) * ((aggressivenessStat) + (tempRoll / DICE_MOD) + (aggressivenessStat / DICE_MOD * (tempRoll2 / DICE_MOD))
+                                                            + (actionMod) + ((perceptionStat / (DICE_MOD * 2)) * (actionMod + (tempRoll3 / DICE_MOD))));
 
+                        std::cout << "THIS IS A TEST:   " << "\n\n"
+                                  << "pre = " << fTempCash << "\n\n";
+
+                        fTempCash = std::floor(fTempCash);
+                        if (fTempCash < 1) {
+                            fTempCash = 1;
+                        }
+                        std::cout << "\nPlayer " << playerNum << " raises the bet by " << fTempCash << "\n\n";
+                        fTempCash += callValue;
+                    } else {
+                        fTempCash = callValue;
+                        std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
+                        std::cout << "\nPlayer " << playerNum << " cash:   " << fCash << "\n\n\n";
+                    }
                 } else {                                                              //If the player bets nothing, they fold their hand
                     fTempCash = 0;
                     Fold(dInput);
                     std::cout << "\nPlayer " << playerNum << " has folded.\n\n";
-                    break;
+                    return 0;
                 }
+                std::cout << "\n\nFTEMPCASH:    " << fTempCash << "\n\n";
+                fTempCash -= currWager;
             }
+            fTempCash += callValue + currWager;
             return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
         }
     }

@@ -23,15 +23,15 @@ const int ANTE = 5;                 //Constant for ante - the amount of money ea
 
 
 int main() {
-    bool gameLoop = true;           //Bool that makes sure the game continues to run even after a round has completed
+    bool gameLoop = true;           //Bool that makes sure the game continues to run even after a floor has completed
     Deck myDeck;                    //Stack structure - is both the games stack of cards and the games discard pile
     myDeck.Shuffle();               //Shuffles the deck into a random order
     float myPot = 0;                                //The pot - serves as the storage place for all money wagered by the player
     std::vector<Score> vPlayerScore(PLAYER_COUNT);  //A vector of playerScores - one for each player
     std::vector<Player*> playerPtr(PLAYER_COUNT);   //A vector of player pointers - used to generate circular linked list
     std::vector<PlayerPerception> playerTells;
-    int currBet = 0;                                //This will be used to rotate the active betting player clockwise each round
-    int betIteration = 0;                           //This will be used to move around the table during the rais and call phase of betting
+    int currBet = 0;                                //This will be used to rotate the active betting player clockwise each floor
+    int betIteration = 0;                           //This will be used to move afloor the table during the rais and call phase of betting
 
     for (int iter = 0; iter < PLAYER_COUNT; iter++) {           //This loop will generate the players at the table - one physical, and 3 CPU
             if (iter == 0) {
@@ -247,7 +247,9 @@ int main() {
 
         while (callingBets) {
             //std::cout << "\n\nPrev call value = " << callValue << "\n";
-            callValue = std::round(callValue);
+            std::cout << "\n\nCallValTest 01     " << callValue << "\n\n";
+            callValue = std::floor(callValue);
+            std::cout << "\n\nCallValTest 02     " << callValue << "\n\n";
             //std::cout << "\nPost call value = " << callValue << "\n\n";
             tempBet++;
             if (tempBet >= PLAYER_COUNT) {
@@ -260,17 +262,22 @@ int main() {
                 betIteration = 0;
                // std::cout << "\nTest 20\n";
             }
+            std::cout << "\n\nBet iteration = " << betIteration + 1 << "\n\n";
             if (!(turnOrder.GetPlayer()->FoldedHand())) {
                 //std::cout << "\nTest 21\n";
                 std::cout << "\nPlayer " << betIteration + 1 << " can choose to call, raise, or fold.\n\n";
                 if (betIteration == 0) {
-                    temp = turnOrder.GetPlayer()->CallBet(callValue, myDeck);           //FUNCTION NEEDS DEFINITION
-                    if (turnOrder.GetPlayer()->FoldedHand()) {                          //FUNCTION NEEDS DEFINITION
+                    std::cout << "\n\n\nUSER PLAYER\n\n\n";
+                    temp = turnOrder.GetPlayer()->CallBet(callValue, myDeck);
+                    std::cout << "\n\nCallValTest 03     " << callValue << "\n\n";
+
+                    if (turnOrder.GetPlayer()->FoldedHand()) {
                         allCalled.at(betIteration) = true;
                        // std::cout << "\nTest 22\n";
                     }
                     else if (temp > callValue) {
                         callValue = temp;
+                        std::cout << "\n\nCallValTest 04     " << callValue << "\n\n";
                        // std::cout << "\nTest 23\n";
                         for (auto i : allCalled) {
                             i = false;
@@ -283,11 +290,14 @@ int main() {
                         //std::cout << "\nTest 25\n";
                         allCalled.at(betIteration) = true;
                         myPot += turnOrder.GetPlayer()->TakeWager(temp);
+                        std::cout << "\n\nCallValTest 05     " << callValue << "\n\n";
                     }
                     turnOrder.TraverseNext();
                     //std::cout << "\nTest 26\n";
                 }
                 else {
+                    std::cout << "\n\nCallValTest 06     " << callValue << "\n\n";
+                    std::cout << "\n\n\nCPU PLAYER\n\n\n";
                     //std::cout << "\nTest 27\n";
                     CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
                     std::vector<PlayerPerception> tempOpinion;              //A vector of opponents opinions of the player's hand/tells
@@ -316,8 +326,10 @@ int main() {
                         //std::cout << "\nTest 29\n";
                     }
                   //  std::cout << "\nTest 30\n";
+                    std::cout << "\n\nCallValTest 07     " << callValue << "\n\n";
                     temp = tempPtr->CallBet(callValue, tempBet + 1, myDeck, tempPerception,
                                                                 inScores, inBluff, tempOpinion);
+                    std::cout << "\n\nCallValTest 08     " << callValue << "\n\n";
                   //  std::cout << "\nTest 31\n";
 
                     if (turnOrder.GetPlayer()->FoldedHand()) {
@@ -325,29 +337,39 @@ int main() {
                       //  std::cout << "\nTest 32\n";
                     }
                     else if (temp > callValue) {
-                        callValue = temp;
+                        std::cout << "\n\nCallValTest 09     " << callValue << "\n\n";
+                        std::cout << "\nTemp =        " << temp << "\n"
+                                  << "\nCallValue =   " << callValue << "\n";
+                        callValue = temp - callValue;
+                        std::cout << "\nNew Call =    " << callValue << "\n\n";
                         for (auto i : allCalled) {
                             i = false;
                         }
                       //  std::cout << "\nTest 33\n";
                         allCalled.at(betIteration) = true;
-                        myPot += turnOrder.GetPlayer()->TakeWager(temp);
+                        myPot += turnOrder.GetPlayer()->TakeWager(callValue);
+                    std::cout << "\n\nCallValTest 10     " << callValue << "\n\n";
                     }
                     else if (temp == callValue) {
+                        std::cout << "\n\nCallValTest 11     " << callValue << "\n\n";
                         allCalled.at(betIteration) = true;
-                        myPot += turnOrder.GetPlayer()->TakeWager(temp);
+                        myPot += turnOrder.GetPlayer()->TakeWager(callValue);
+                        std::cout << "\n\nCallValTest 12     " << callValue << "\n\n";
                     }
                     tempPtr = nullptr;
                     turnOrder.TraverseNext();
                    // std::cout << "\nTest 34\n";
+                   std::cout << "\n\nCallValTest 13     " << callValue << "\n\n";
                 }
             }
             else {
                // std::cout << "\nTest 35\n";
+               std::cout << "\n\nCallValTest 14     " << callValue << "\n\n";
                 std::cout << "\nPlayer " << tempBet + 1 << " has folded.\n\n";
                 allCalled.at(betIteration) = true;
                 turnOrder.TraverseNext();
                // std::cout << "\nTest 36\n";
+               std::cout << "\n\nCallValTest 15     " << callValue << "\n\n";
             }
             callingBets = false;
             for (auto i : allCalled) {
@@ -356,6 +378,7 @@ int main() {
                    // std::cout << "\nTest 37\n";
                 }
             }
+            std::cout << "\n\nCallValTest 16     " << callValue << "\n\n";
         }
         //std::cout << "\nTest 38\n";
         currBet++;

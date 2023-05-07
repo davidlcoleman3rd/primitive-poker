@@ -68,7 +68,7 @@ public:
     float CheckCash();                          //Checks the amount of cash a player has
 
 //******
-    void Fold(Deck&);                           //The player can forfeit their hand until the end of the round and get a new hand
+    void Fold(Deck&);                           //The player can forfeit their hand until the end of the floor and get a new hand
 
 //******
     void PlayHand();                             //The player plays their sorted hand
