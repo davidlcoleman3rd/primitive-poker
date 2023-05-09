@@ -541,7 +541,7 @@
         while (discardCount < 1 || discardCount > 5) {
             std::cout << "How many cards would you like to discard?\n\n";
             std::cin >> discardCount;
-            if (discardCount == 0) {
+            if (discardCount == 0 && std::cin) {
                 return;
             }
             else if (discardCount == 4) {
@@ -556,9 +556,11 @@
                     std::cout << "\nCannot discard 4 - no aces\n";
                 }
             }
-            else if (discardCount > 4 || discardCount < 1) {
+            else if (discardCount > 4 || discardCount < 1 || !std::cin) {
                 discardCount = 0;
                 std::cout << "\nInvalid entry - enter a number between 1 and 3, or up to 4 if you have an ace\n";
+                std::cin.clear();
+                std::cin.ignore(1000, '\n');
             }
         }
         if (hasAce) {
@@ -584,14 +586,16 @@
                 std::cout << "\nChoose card #" << iter + 1 << " to discard.\n"
                           << "Enter 0 to stop discarding cards\n\n";
                 std::cin >> discardChoice;
-                if (discardChoice == 0) {
+                if (discardChoice == 0 && std::cin) {
                     discardCount = discardCount - (iter + 1);
                     cancelEarly = true;
                     break;
                 }
-                else if (discardChoice < 1 || discardChoice > handSize) {
+                else if (discardChoice < 1 || discardChoice > handSize || !std::cin) {
                     discardChoice = -1;
                     std::cout << "\nInvalid entry - enter a number between 1 and " << vCards.size() << "\n";
+                    std::cin.clear();
+                    std::cin.ignore(1000, '\n');
                 }
                 else if (hasAce) {
                     if (*(tempCard) == vCards.at(discardChoice - 1)) {

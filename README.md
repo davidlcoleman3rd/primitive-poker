@@ -1,6 +1,40 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.7.3**
+- *RESOLVED ISSUES*
+   - Need error/buffer checking for I/O.  Currently the game can be softlocked by using the wrong input values when entering inputs
+      - Added std::cin error checking as well as buffer clears and input ignores to allow the input to "refresh"
+   - CPU players will still bet 0 dollars and softlock the game in perpetual loop
+      - This is believed to be resolved now thanks to forcing the CPU to call if they run out of money.  If the CPU bets all of their cash and has 0 dollars, they will call instead of continuing to try and fail to raise the bet.
+
+- *CURRENT GOALS*
+   - Need advanced bluff behavior for the CPU
+      - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
+      - CPU that pretends to be happy will discard *no more* than 2 cards to maintain the facade
+   - Need lots of testing to get the statistical likeliness of player behavior
+      - How often do CPU's fold?  How much does aggressiveness affect this?
+      - How strict is action score?  Can it be further modified to be effective but not so strict?
+      - Player bluffs, more often than not, should be inability to read their face - this should be very common behavior.
+   - Need to implement an Ace's ability to go both high and low - it should play as a "low" card in a A-2-3-4-5 straight/straight-flush
+   - Need to add comments to all routines in the project
+   - Need to extract main's code into functions
+   - Need to extract main's code from functions into the Game class
+      - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
+   - Want to institute multi-pots, allowing a player to still be apart of the betting, but be excluded from wagers above their paygrade
+      - Turn the myPot int into a vector of ints.  When *any* player is out of the money...
+         - New bets are pushed_back onto a new element in the myPot vector
+         - A position is saved and attached to the logic for each player... make each pot that the player plays in store in an int called "playerPots?"
+            - Each player starts out with a 0 value for the first pot.  When a player is out of the money, each other player increments this variable and the pot pushes back a new element
+         - When payouts are evaluated, hand scoring is evaluated on a pot-by-pot basis
+            - Pot 1 will have all 4 players
+            - Pot 2 will have the 3 best performers
+            - Pot 3 will have the 2 best performers
+            - Pot 4 will do nothing but return money back to the top player
+   - Need to remove testing comments
+
+============
+
 **Version 0.7.2**
 - *RESOLVED ISSUES*
    - Cash being bet in currWager does not accurately reflect the inputs given

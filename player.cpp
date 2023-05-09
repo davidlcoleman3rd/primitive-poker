@@ -41,8 +41,10 @@
                     Fold(dInput);
                     break;
                 }
-                else if (fTempCash > fCash || fTempCash < 0) {
+                else if (fTempCash > fCash || fTempCash < 0 || !std::cin) {
                     std::cout << "\nInvalid input.  Only enter a value within your cash amount, or fold.\n";
+                    std::cin.clear();
+                    std::cin.ignore(1000, '\n');
                 }
             }
             fTempCash = std::floor(fTempCash);
@@ -80,7 +82,7 @@
                           << "Current cash is:                  " << fCash << "\n"
                           << "Current money you've wagered:     " << currWager << "\n\n\n";
                 std::cin >> playerInput;
-                if (playerInput == 0) {
+                if (playerInput == 0 && std::cin) {
                     std::cout << "\nPlayer 1 calls the bet.\n\n";
                     return callValue;
                 }
@@ -94,8 +96,11 @@
                             temp = callValue + playerInput;
                             temp = std::floor(temp);
                             betting = false;
-                        }
-                        else {
+                        } else if (!std::cin) {
+                            std::cout << "\nInvalid input.  Please try again.\n\n";
+                            std::cin.clear();
+                            std::cin.ignore(1000, '\n');
+                        } else {
                             std::cout << "\nPlayer 1 does not have enough money for that raise.  Please try again.\n";
                         }
                     }
@@ -593,12 +598,7 @@ private:
         else {
             float fTempCash = CheckCash() + 1;                                      //Sets temp cash just out of range to prime loop
             while (fTempCash > fCash || fTempCash < 0) {                            //Loop repeats until fTempCash is a valid amount (greater than or equal to 0 and less than total cash)
-                std::cout << "\n\nTEST INPUT\n\n";
-                std::cin >> tempRoll;
-                if (fCash < 0) {
-                    std::cout << "\n\nSOME KIND OF ERROR HAPPENED...\n\n";
-                    std::cin >> tempRoll;
-                }
+
                 tempRoll = randInt(seedMake);
                 fTemp = (hCards->CountPoints(false) / POINTS_DIV) + (tempRoll / DICE_MOD);      //Store 1 / 100th the point value of the hand into fTemp + a dice roll evaluated at the roll 1 through 100 divided by 20.
                 actionScore = fTemp * perceptionStat;                                               //The hand's value is multiplied by the player's perception stat - this means that great hands will be

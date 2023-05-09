@@ -336,7 +336,8 @@ int main() {
                         allCalled.at(betIteration) = true;
                       //  std::cout << "\nTest 32\n";
                     }
-                    else if (temp > callValue) {
+                    else if (temp > callValue && turnOrder.GetPlayer()->CheckCash() > 0) {
+                        std::cout << "\n\nRaise Test\n\n";
                         std::cout << "\n\nCallValTest 09     " << callValue << "\n\n";
                         std::cout << "\nTemp =        " << temp << "\n"
                                   << "\nCallValue =   " << callValue << "\n";
@@ -350,7 +351,8 @@ int main() {
                         myPot += turnOrder.GetPlayer()->TakeWager(callValue);
                     std::cout << "\n\nCallValTest 10     " << callValue << "\n\n";
                     }
-                    else if (temp == callValue) {
+                    else if (temp == callValue || turnOrder.GetPlayer()->CheckCash() == 0) {
+                        std::cout << "\n\nCall test\n\n";
                         std::cout << "\n\nCallValTest 11     " << callValue << "\n\n";
                         allCalled.at(betIteration) = true;
                         myPot += turnOrder.GetPlayer()->TakeWager(callValue);
@@ -453,13 +455,12 @@ int main() {
         while (choiceLoop) {
             std::cout << "Would you like to play again?\n"
                       << "Type <yes> to play again, or <no> to quit\n\n";
-            if(playerChoice == "") {
-                std::cin.ignore(1000, '\n');
-            }
-            getline(std::cin, playerChoice);
+            std::cin >> playerChoice;
             //error here if buffer isn't cleared - can skip input and try to find value at a null string??????n
-
-            char choiceAuto = playerChoice.at(0);
+            char choiceAuto = 'p';
+            if (playerChoice.size() > 0) {
+                choiceAuto = playerChoice.at(0);
+            }
             switch(choiceAuto) {
                 case 'y' : {
                     for (auto i : playerPtr) {
@@ -492,6 +493,8 @@ int main() {
                 }
                 default : {
                     std::cout << "\nInvalid entry, try again\n";
+                    std::cin.clear();
+                    std::cin.ignore(1000, '\n');
                     break;
                 }
             }
