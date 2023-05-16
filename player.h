@@ -40,6 +40,8 @@ const int MEDIUM_ACTION = 30;
 const int DECISIVE_ACTION = 75;
 const int POINTS_DIV = 100;
 
+const int ANTE = 5;                 //Constant for ante - the amount of money each player has to put into the pot in order to participate
+
 //***********************************************
 
 class Player {
@@ -47,7 +49,7 @@ public:
     Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, gives them a hand of 5 cards and a sum of cash
 
 //******
-    float AnteUp(int);                          //The player wagers the ante for the hand
+    float AnteUp(int, Deck&);                          //The player wagers the ante for the hand
 
 //******
     virtual float BetCash(Deck&);               //The player chooses how much money to bet on a hand - Redefined if used by a CPU

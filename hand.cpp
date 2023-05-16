@@ -697,10 +697,7 @@
             prevCard = i;
             i = nullptr;                                                                                    //i free'd appropriately
         }
-        std::cout << "\nGood cards - " << goodCards.size()
-                  << "\nBad cards  - " << badCards.size()
-                  << "\n\n\n";
-        //**
+
 
         //std::cout << "\n\nTest 05\n\n";
                                                                                                             //NEED TO REANLYZE ALL OF THIS - THE WRONG VALUES ARE BEING SELECTED WHEN SORTING THROUGH THE VECTORS
@@ -926,9 +923,9 @@
 //******
     void Hand::CPUDiscard(Deck& dInput, std::vector<int>& selections) {               //NEED TO CHANGE THIS FUNCTIONS LOGIC TO ALLOW FOR PLAYER STATS TO COME INTO PLAY!!!!!!!
         std::vector<int> cardNums;
-        std::cout << "\n\nselections = " << selections.size() << "\n\n";
+        //std::cout << "\n\nselections = " << selections.size() << "\n\n";
         for (int iter = 0; iter < selections.size(); iter++) {          //MIGHT NOT BE NECESSARY!!
-            std::cout << "\n\nIter = " << iter << "\n\n";               //!!!!!!!!!!!!!!
+          //  std::cout << "\n\nIter = " << iter << "\n\n";               //!!!!!!!!!!!!!!
             if (cardNums.size() > 0) {                                  //!!!!!!!!!!!!!!
                 /*for (auto i : cardNums) {                               //!!!!!!!!!!!!!!
                      for (auto &k : selections) {
@@ -943,7 +940,7 @@
 
                 selections.at(iter) -= iter;
             }
-            std::cout << selections.at(iter);
+           // std::cout << selections.at(iter);
             if (selections.at(iter) < vCards.size()) {
                 dInput.ToDiscard(vCards.at(selections.at(iter)));
                 vCards.erase(vCards.begin() + (selections.at(iter)));

@@ -25,9 +25,15 @@
     }
 
 //******
-    float Player::AnteUp(int anteSize) {
-        fCash -= anteSize;
-        return anteSize;
+    float Player::AnteUp(int anteSize, Deck& dInput) {
+        if (fCash >= 5) {
+            fCash -= anteSize;
+            return anteSize;
+        }
+        else {
+            Fold(dInput);
+            return 0;
+        }
     }
 
 //******
@@ -75,12 +81,10 @@
             int playerInput;
             bool betting = true;
             while (betting) {
-                std::cout << "\nDo you raise, call, or fold? \n"
-                          << "To call, type 0. To raise, type the amount you bet over the call\n"
-                          << "To fold, type a negative value.\n\n"
-                          << "Current call is:                  " << callValue << "\n"
-                          << "Current cash is:                  " << fCash << "\n"
-                          << "Current money you've wagered:     " << currWager << "\n\n\n";
+                std::cout << "\n\nCurrent call value:        " << callValue
+                          <<   "\nMoney you have in the pot: " << currWager + ANTE
+                          <<   "\nMoney to bet to call:      " << callValue - currWager
+                          <<   "\nCash:                      " << fCash << "\n\n";
                 std::cin >> playerInput;
                 if (playerInput == 0 && std::cin) {
                     std::cout << "\nPlayer 1 calls the bet.\n\n";
@@ -116,13 +120,9 @@
 
 //******
     float Player::TakeWager(float fCashIn/*in*/) {
-        std::cout << "\n\nRunning takewager... fCash = " << fCash << "\n"
-                  << "\ncurrWager =                  " << currWager << "\n";
         int temp = currWager;
         currWager = fCashIn;
         fCash -= (currWager - temp);
-        std::cout << "\n\nNew fCash = " << fCash << "\n"
-                  << "\nNew Wager =  " << currWager << "\n\n";
         return fCashIn - temp;
     }
 
@@ -353,25 +353,35 @@ private:
 
 //******
     void CPU::GetTell(PlayerPerception opinion) {
-        switch(opinion) {
-            case WEAK:      std::cout << "\nThey don't look too happy with the cards they were dealt.\n\n"; break;
-            case SUBPAR:    std::cout << "\nThey look as though their cards could be better.\n\n"; break;
-            case AVERAGE:   std::cout << "\nThey look indifferent; their hand must be serviceable.\n\n"; break;
-            case DECENT:    std::cout << "\nThey look happy; they must have good cards in their hand.\n\n"; break;
-            case STRONG:    std::cout << "\nThey almost look estactic - their hand must be excellent.\n\n"; break;
-            default:        std::cout << "\nYou can't really get a good read on their face.  They could have anything.\n\n"; break;
+        if (FoldedHand()) {
+            std::cout << "\nThey have folded.\n\n";
+        }
+        else {
+            switch(opinion) {
+                case WEAK:      std::cout << "\nThey don't look too happy with the cards they were dealt.\n\n"; break;
+                case SUBPAR:    std::cout << "\nThey look as though their cards could be better.\n\n"; break;
+                case AVERAGE:   std::cout << "\nThey look indifferent; their hand must be serviceable.\n\n"; break;
+                case DECENT:    std::cout << "\nThey look happy; they must have good cards in their hand.\n\n"; break;
+                case STRONG:    std::cout << "\nThey almost look estactic - their hand must be excellent.\n\n"; break;
+                default:        std::cout << "\nYou can't really get a good read on their face.  They could have anything.\n\n"; break;
+            }
         }
     }
 
 //******
     void CPU::GetTell() {
-        switch(opinions[0]) {
-            case WEAK:      std::cout << "\nThey don't look too happy with the cards they were dealt.\n\n"; break;
-            case SUBPAR:    std::cout << "\nThey look as though their cards could be better.\n\n"; break;
-            case AVERAGE:   std::cout << "\nThey look indifferent; their hand must be serviceable.\n\n"; break;
-            case DECENT:    std::cout << "\nThey look happy; they must have good cards in their hand.\n\n"; break;
-            case STRONG:    std::cout << "\nThey almost look estactic - their hand must be excellent.\n\n"; break;
-            default:        std::cout << "\nYou can't really get a good read on their face.  They could have anything.\n\n"; break;
+        if (FoldedHand()) {
+            std::cout << "\nThey have folded.\n\n";
+        }
+        else {
+            switch(opinions[0]) {
+                case WEAK:      std::cout << "\nThey don't look too happy with the cards they were dealt.\n\n"; break;
+                case SUBPAR:    std::cout << "\nThey look as though their cards could be better.\n\n"; break;
+                case AVERAGE:   std::cout << "\nThey look indifferent; their hand must be serviceable.\n\n"; break;
+                case DECENT:    std::cout << "\nThey look happy; they must have good cards in their hand.\n\n"; break;
+                case STRONG:    std::cout << "\nThey almost look estactic - their hand must be excellent.\n\n"; break;
+                default:        std::cout << "\nYou can't really get a good read on their face.  They could have anything.\n\n"; break;
+            }
         }
     }
 
@@ -383,16 +393,14 @@ private:
 
         if (opinions[0] < STRONG) {
             std::vector<int> selections;
-            std::cout << "\nThis is a test.\n\n";
+            //std::cout << "\nThis is a test.\n\n";
             hCards->SelectCards(selections);
-            for (auto i : selections) {
-                std::cout << i << "  ";
-            }
-            std::cout << "\n\n";
+           // for (auto i : selections) {
+             //   std::cout << i << "  ";
+            //}
+            //std::cout << "\n\n";
             hCards->CPUDiscard(dInput, selections);
         }
-
-        JudgeHand();
     }
 
 //******
@@ -413,9 +421,9 @@ private:
         int tempRoll = 0;                                       //Variable used to hold dicerolls
         int playerRoll = 0;                                     //Variable used to hold player dicerolls
         int opponentRoll = 0;                                   //Variable used to hold opponent dicerolls
-        std::cout << "\nCPU test 01\n";
+        //std::cout << "\nCPU test 01\n";
         if (CheckCash()) {
-            std::cout << "\nCPU test 02\n";
+            //std::cout << "\nCPU test 02\n";
             float fTempCash = CheckCash() + 1;                                      //Sets temp cash just out of range to prime loop
             while (fTempCash > fCash || fTempCash < 0) {                            //Loop repeats until fTempCash is a valid amount (greater than or equal to 0 and less than total cash)
 
@@ -425,9 +433,6 @@ private:
                                                                                                     //...generating exponentially more action points than weak hands
 
                 for (int iter = 0; iter < PLAYER_COUNT - 1; iter++) {                       //Goes through each opponent and tries to gather tells from them based on their overt tells and their bluff stat vs your perception stat w/ dice rolling
-                    std::cout << "\nTesting iter - " << iter << "\n\n";
-                    std::cout << "Your opinion:      " << yourOpinion.size() << "\n\n";
-                    std::cout << "In perception:     " << inPerception.size() << "\n\n";
                     tempRoll = randInt(seedMake);
                     fTemp = perceptionStat + (tempRoll / DICE_MOD);
                     playerRoll = tempRoll;
@@ -443,7 +448,7 @@ private:
                         double opponentScore = inScores[iter]
                                 - (inBluff[iter] + (tempRoll / DICE_MOD));       //Stores the opponents hand score slightly obfuscated by the opponents bluff stat and a dice roll
 
-                        opponentScore -= hCards->CountPoints();                                                 //Subtracts your score from the opponents score.  The remainder is used to evaluate how much better you think the opponents hand is
+                        opponentScore -= hCards->CountPoints(false);                                                 //Subtracts your score from the opponents score.  The remainder is used to evaluate how much better you think the opponents hand is
                         if (opponentScore >= 5) {
 
                             tempRoll = randInt(seedMake);
@@ -470,9 +475,6 @@ private:
                     }
 
                     else {
-                        std::cout << "\nTesting iter - " << iter << "\n\n";
-                        std::cout << "Your opinion:      " << yourOpinion.size() << "\n\n";
-                        std::cout << "In perception:     " << inPerception.size() << "\n\n";
                         yourOpinion[iter] = inPerception[iter];                                                 //If you cannot see through their bluff, you think their hand is as good as the impression they give you
                     }
 
@@ -522,17 +524,9 @@ private:
                 tempRoll = randInt(seedMake);
                 int tempRoll2 = randInt(seedMake);
                 int tempRoll3 = randInt(seedMake);
-                std::cout << "\nCurrent action score: " << actionScore << "\n\n";
+                //std::cout << "\nCurrent action score: " << actionScore << "\n\n";
                 if (actionScore * (tempRoll / DICE_MOD)
-                * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)) > EASY_ACTION /*NEED TO MAKE THIS A CONSTANT*/) {
-
-
-                    std::cout << "var0 =   " << fCash / (DICE_MOD * 5.0) << "\n"
-                              << "var1 =   " << aggressivenessStat << "\n"
-                              << "var2 =   " << (tempRoll / DICE_MOD) << "\n"
-                              << "var3 =   " << (aggressivenessStat / DICE_MOD) * ((tempRoll2 / DICE_MOD)) << "\n"
-                              << "var4 =   " << actionMod << "\n"
-                              << "var5 =   " << ((perceptionStat / (DICE_MOD * 2)) * (actionMod + tempRoll3 / DICE_MOD)) << "\n\n\n\n";
+                * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)) > EASY_ACTION /*NEED TO MAKE THIS A CONSTANT*/){
 
 
                     fTempCash = (fCash / (DICE_MOD * 5.0)) * (((aggressivenessStat) + ((tempRoll / DICE_MOD)) + ((aggressivenessStat / DICE_MOD) * ((tempRoll2 / DICE_MOD)))
@@ -619,7 +613,7 @@ private:
                         double opponentScore = inScores[iter]
                                 - (inBluff[iter] + (tempRoll / DICE_MOD));       //Stores the opponents hand score slightly obfuscated by the opponents bluff stat and a dice roll
 
-                        opponentScore -= hCards->CountPoints();                                                 //Subtracts your score from the opponents score.  The remainder is used to evaluate how much better you think the opponents hand is
+                        opponentScore -= hCards->CountPoints(false);                                                 //Subtracts your score from the opponents score.  The remainder is used to evaluate how much better you think the opponents hand is
                         if (opponentScore >= 5) {
                             if (opponentScore >= 1000 - (perceptionStat * (randInt(seedMake) * DICE_MOD))) {  //If it's greater than 1000 minus your perception stat multiplied by a dice roll, you think it's a very strong hand you likely won't beat
                                 yourOpinion[iter] = STRONG;
@@ -675,18 +669,8 @@ private:
                 }
                 float tempForIf = actionScore;
 
-                std::cout << "\nAction score = " << actionScore << "\n"
-                          << "tempForIf =      " << tempForIf << "\n\n"
-                          << "aggressiveness = " << aggressivenessStat << "\n"
-                          << "perception =     " << perceptionStat << "\n"
-                          << "bluff =          " << bluffStat << "\n"
-                          << "currWager =      " << currWager << "\n"
-                          << "Cash =           " << fCash << "\n"
-                          << "Current call =   " << callValue << "\n\n\n";
-
                 int actionMod = 0;
                 if (actionScore > MEDIUM_ACTION) {
-                    std::cout << "\n\nThis is a test\n\n";
                     if (actionScore >= DECISIVE_ACTION * 10) {
                         actionMod = 10;
                     }
@@ -702,24 +686,15 @@ private:
                 if (tempForIf > MEDIUM_ACTION /*NEED TO MAKE THIS A CONSTANT*/ && tempForIf <= DECISIVE_ACTION) {
                     fTempCash = callValue;
                     std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
-                    std::cout << "\nPlayer " << playerNum << " cash:   " << fCash << "\n\n\n";
+                    //std::cout << "\nPlayer " << playerNum << " cash:   " << fCash << "\n\n\n";
                 } else if (tempForIf > DECISIVE_ACTION) {
                     if (fCash > (callValue - currWager)) {
                         tempRoll = randInt(seedMake);
                         int tempRoll2 = randInt(seedMake);
                         int tempRoll3 = randInt(seedMake);
-                        std::cout << "var0 =   " << fCash / (DICE_MOD * 5.0) << "\n"
-                                  << "var1 =   " << aggressivenessStat << "\n"
-                                  << "var2 =   " << (tempRoll / DICE_MOD) << "\n"
-                                  << "var3 =   " << (aggressivenessStat / DICE_MOD) * ((tempRoll2 / DICE_MOD)) << "\n"
-                                  << "var4 =   " << actionMod << "\n"
-                                  << "var5 =   " << ((perceptionStat / (DICE_MOD * 2)) * (actionMod + tempRoll3 / DICE_MOD)) << "\n\n\n\n";
                         float checkCash = fCash - (callValue - currWager);
                         fTempCash = ((checkCash) / (DICE_MOD * 5)) * ((aggressivenessStat) + (tempRoll / DICE_MOD) + (aggressivenessStat / DICE_MOD * (tempRoll2 / DICE_MOD))
                                                             + (actionMod) + ((perceptionStat / (DICE_MOD * 2)) * (actionMod + (tempRoll3 / DICE_MOD))));
-
-                        std::cout << "THIS IS A TEST:   " << "\n\n"
-                                  << "pre = " << fTempCash << "\n\n";
 
                         fTempCash = std::floor(fTempCash);
                         if (fTempCash < 1) {
@@ -730,7 +705,7 @@ private:
                     } else {
                         fTempCash = callValue;
                         std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
-                        std::cout << "\nPlayer " << playerNum << " cash:   " << fCash << "\n\n\n";
+                        //std::cout << "\nPlayer " << playerNum << " cash:   " << fCash << "\n\n\n";
                     }
                 } else {                                                              //If the player bets nothing, they fold their hand
                     fTempCash = 0;
@@ -738,7 +713,6 @@ private:
                     std::cout << "\nPlayer " << playerNum << " has folded.\n\n";
                     return 0;
                 }
-                std::cout << "\n\nFTEMPCASH:    " << fTempCash << "\n\n";
                 fTempCash -= currWager;
             }
             fTempCash += callValue + currWager;

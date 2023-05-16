@@ -81,7 +81,7 @@ public:
         curr = curr->GetNext();
         prev = curr->GetPrev();
         next = curr->GetNext();
-        std::cout << "\n\nCurrent player selected: " << CurrPos() + 1 << "\n\n";
+        //std::cout << "\n\nCurrent player selected: " << CurrPos() + 1 << "\n\n";
     }
 
 //******

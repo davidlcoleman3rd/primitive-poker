@@ -1,134 +1,57 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
-**Version 0.7.3**
+
+**Version 0.8.0**
+-*ACCOMPLISHED GOALS*
+   - Removed testing outputs; turned into comments
+      - Need to remove these comments in due time
+   - Made output logic and formatting more clear and accurate to the final image of the game
+   - Removed text that talks about action score
+   - Added some nuance to ante'ing and folding that allows the computer to express that a player has folded if they don't have enough money to ante
+      - This has weird behavior with the user player and needs to be investigated.
+
+- *CURRENT GOALS*
+   - Need advanced bluff behavior for the CPU
+      - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
+      - CPU that pretends to be happy will discard *no more* than 2 cards to maintain the facade
+   - Need lots of testing to get the statistical likeliness of player behavior
+      - How often do CPU's fold?  How much does aggressiveness affect this?
+      - How strict is action score?  Can it be further modified to be effective but not so strict?
+      - Player bluffs, more often than not, should be inability to read their face - this should be very common behavior.
+   - Need to implement an Ace's ability to go both high and low - it should play as a "low" card in a A-2-3-4-5 straight/straight-flush
+   - Need to add comments to all routines in the project
+   - Need to extract main's code into functions
+   - Need to extract main's code from functions into the Game class
+      - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
+   - Want to institute multi-pots, allowing a player to still be apart of the betting, but be excluded from wagers above their paygrade
+      - Turn the myPot int into a vector of ints.  When *any* player is out of the money...
+         - New bets are pushed_back onto a new element in the myPot vector
+         - A position is saved and attached to the logic for each player... make each pot that the player plays in store in an int called "playerPots?"
+            - Each player starts out with a 0 value for the first pot.  When a player is out of the money, each other player increments this variable and the pot pushes back a new element
+         - When payouts are evaluated, hand scoring is evaluated on a pot-by-pot basis
+            - Pot 1 will have all 4 players
+            - Pot 2 will have the 3 best performers
+            - Pot 3 will have the 2 best performers
+            - Pot 4 will do nothing but return money back to the top player
+
+---
+
+**Version 0.7.0**
 - *RESOLVED ISSUES*
    - Need error/buffer checking for I/O.  Currently the game can be softlocked by using the wrong input values when entering inputs
       - Added std::cin error checking as well as buffer clears and input ignores to allow the input to "refresh"
    - CPU players will still bet 0 dollars and softlock the game in perpetual loop
       - This is believed to be resolved now thanks to forcing the CPU to call if they run out of money.  If the CPU bets all of their cash and has 0 dollars, they will call instead of continuing to try and fail to raise the bet.
-
-- *CURRENT GOALS*
-   - Need advanced bluff behavior for the CPU
-      - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
-      - CPU that pretends to be happy will discard *no more* than 2 cards to maintain the facade
-   - Need lots of testing to get the statistical likeliness of player behavior
-      - How often do CPU's fold?  How much does aggressiveness affect this?
-      - How strict is action score?  Can it be further modified to be effective but not so strict?
-      - Player bluffs, more often than not, should be inability to read their face - this should be very common behavior.
-   - Need to implement an Ace's ability to go both high and low - it should play as a "low" card in a A-2-3-4-5 straight/straight-flush
-   - Need to add comments to all routines in the project
-   - Need to extract main's code into functions
-   - Need to extract main's code from functions into the Game class
-      - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
-   - Want to institute multi-pots, allowing a player to still be apart of the betting, but be excluded from wagers above their paygrade
-      - Turn the myPot int into a vector of ints.  When *any* player is out of the money...
-         - New bets are pushed_back onto a new element in the myPot vector
-         - A position is saved and attached to the logic for each player... make each pot that the player plays in store in an int called "playerPots?"
-            - Each player starts out with a 0 value for the first pot.  When a player is out of the money, each other player increments this variable and the pot pushes back a new element
-         - When payouts are evaluated, hand scoring is evaluated on a pot-by-pot basis
-            - Pot 1 will have all 4 players
-            - Pot 2 will have the 3 best performers
-            - Pot 3 will have the 2 best performers
-            - Pot 4 will do nothing but return money back to the top player
-   - Need to remove testing comments
-
-============
-
-**Version 0.7.2**
-- *RESOLVED ISSUES*
    - Cash being bet in currWager does not accurately reflect the inputs given
       - There were some logical errors when it came to assigning values when betting, allowing the CPU to bet over their cash value
    - Sometimes when in a series of calls and raises, calls and raises will not properly reflect on the table and will cause strange issues, like an opponent folding but the player still in a call/raise/fold cycle, and the player folding resulting in all 4 players folding
       - While this does not surface, multiple CPU's can raise/call at 0 dollars in perpetuity.  I think that CPU's calling are not flipping their "allCalled" switches on like they should.  Possibly an easy fix
    - The entire primary logic of the program is solved outisde of bug fixing.  The game loop completes as expected unless the CPU's are caught in a call loop
-
-- *KNOWN PROBLEMS*
-   - Need error/buffer checking for I/O.  Currently the game can be softlocked by using the wrong input values when entering inputs
-      - It can also crash from the lack of a buffer and an invalid input bypassing the input check when trying to replay a game
-   - CPU players will still bet 0 dollars and softlock the game in perpetual loop
-      - There seems to be further refinement needed on the function that lets the CPU choose how much they'd like to bet.
-
-- *CURRENT GOALS*
-   - Need advanced bluff behavior for the CPU
-      - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
-      - CPU that pretends to be happy will discard *no more* than 2 cards to maintain the facade
-   - Need lots of testing to get the statistical likeliness of player behavior
-      - How often do CPU's fold?  How much does aggressiveness affect this?
-      - How strict is action score?  Can it be further modified to be effective but not so strict?
-      - Player bluffs, more often than not, should be inability to read their face - this should be very common behavior.
-   - Need to implement an Ace's ability to go both high and low - it should play as a "low" card in a A-2-3-4-5 straight/straight-flush
-   - Need to add comments to all routines in the project
-   - Need to extract main's code into functions
-   - Need to extract main's code from functions into the Game class
-      - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
-   - Want to institute multi-pots, allowing a player to still be apart of the betting, but be excluded from wagers above their paygrade
-      - Turn the myPot int into a vector of ints.  When *any* player is out of the money...
-         - New bets are pushed_back onto a new element in the myPot vector
-         - A position is saved and attached to the logic for each player... make each pot that the player plays in store in an int called "playerPots?"
-            - Each player starts out with a 0 value for the first pot.  When a player is out of the money, each other player increments this variable and the pot pushes back a new element
-         - When payouts are evaluated, hand scoring is evaluated on a pot-by-pot basis
-            - Pot 1 will have all 4 players
-            - Pot 2 will have the 3 best performers
-            - Pot 3 will have the 2 best performers
-            - Pot 4 will do nothing but return money back to the top player
-
-
-============
-
-**Version 0.7.1**
-- *RESOLVED ISSUES*
    - CPU Players will sometimes bet 0 dollars and succeed
       - Betting 0 dollars is still an issue; it, however, is caught by the loop to prevent further undefined behavior
    - CPU players will bet money and lose, and this value will not payout from the pot
       - This is resolved aside from other errors dealing with betting
-
-- *KNOWN PROBLEMS*
-   - Need error/buffer checking for I/O.  Currently the game can be softlocked by using the wrong input values when entering inputs
-      - It can also crash from the lack of a buffer and an invalid input bypassing the input check when trying to replay a game
-   - CPU players will still bet 0 dollars and softlock the game in perpetual loop
-      - There seems to be further refinement needed on the function that lets the CPU choose how much they'd like to bet.
-   - Cash being bet in currWager does not accurately reflect the inputs given
-   - Sometimes when in a series of calls and raises, calls and raises will not properly reflect on the table and will cause strange issues, like an opponent folding but the player still in a call/raise/fold cycle, and the player folding resulting in all 4 players folding
-      - I believe this error and the previous error are connect - not sure how.  Need to look at the method by which money is passed from function to the calling function and see how this behaves in detail
-
-- *CURRENT GOALS*
-   - Need advanced bluff behavior for the CPU
-      - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
-      - CPU that pretends to be happy will discard *no more* than 2 cards to maintain the facade
-   - Need lots of testing to get the statistical likeliness of player behavior
-      - How often do CPU's fold?  How much does aggressiveness affect this?
-      - How strict is action score?  Can it be further modified to be effective but not so strict?
-      - Player bluffs, more often than not, should be inability to read their face - this should be very common behavior.
-   - Need to implement an Ace's ability to go both high and low - it should play as a "low" card in a A-2-3-4-5 straight/straight-flush
-   - Need to add comments to all routines in the project
-   - Need to extract main's code into functions
-   - Need to extract main's code from functions into the Game class
-      - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
-
-============
-
-**Version 0.7.0**
-- Project has entered the bug searching and refining phase
-- *KNOWN PROBLEMS*
-   - CPU Players will sometimes bet 0 dollars and succeed
-   - CPU players will bet money and lose, and this value will not payout from the pot
-      - Perhaps this money being wagered isn't actually entering the pot to begin with? The money is being subtracted twice?
-   - Need error/buffer checking for I/O.  Currently the game can be softlocked by using the wrong input values when entering inputs
-
-- *CURRENT GOALS*
-   - Need advanced bluff behavior for the CPU
-      - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
-      - CPU that pretends to be happy will discard *no more* than 2 cards to maintain the facade
-   - Need lots of testing to get the statistical likeliness of player behavior
-      - How often do CPU's fold?  How much does aggressiveness affect this?
-      - How strict is action score?  Can it be further modified to be effective but not so strict?
-      - Player bluffs, more often than not, should be inability to read their face - this should be very common behavior.
-   - Need to implement an Ace's ability to go both high and low - it should play as a "low" card in a A-2-3-4-5 straight/straight-flush
-   - Need to add comments to all routines in the project
-   - Need to extract main's code into functions
-   - Need to extract main's code from functions into the Game class
-      - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
 
 ---
 
