@@ -17,10 +17,84 @@ struct Score {                      //Score struct - used to represent the value
     double points;                      //Stores the actual amount of points each player has - used to evaluate a hand of cards
 };
 
+void PlayGame();
+
+//******
+void PrintPot(float);
+
+//******
+void AnteUp(CircularList<Player*>&, Deck&, float&);
+
+//******
+void NewPlayers(std::vector<Player*>&, Deck&);
+
+void GameStart(std::vector<Score>&, std::vector<Player*>&, CircularList<Player*>&);
+
+//******
+void GetTells(CircularList<Player*>&, std::vector<PlayerPerception>);
+
+//******
+void PrintUserHand(CircularList<Player*>&);
+
+//******
+void DiscardCards(CircularList<Player*>&, std::vector<Player*>&,
+                  std::vector<Score>&, Deck&, std::vector<PlayerPerception>&);
+
+//******
+void EvaluateCards(std::vector<Score>&, std::vector<Player*>&,
+                   CircularList<Player*>&, std::vector<PlayerPerception>&);
+
+//******
+void SetBetLead(int currBet, CircularList<Player*>& turnOrder);
+
+//******
+void BettingRound(float&, std::vector<bool>&, int, float&,
+                  CircularList<Player*>&, int&, bool&,
+                  std::vector<PlayerPerception>, Deck&);
+
+//******
+void PlayerBet();
+
+//******
+void CPUBet();
+
+//******
+void CallingRound();
+
+//******
+void PlayerCall();
+
+//******
+void CPUCall();
+
+//******
+void PrintAllHands();
+
+//******
+void CheckWinner();
+
+//******
+void PrintCash();
+
+//******
+void PlayAgain();
+
+
 //*****************************************
 
 
 int main() {
+
+    PlayGame();
+    std::cout << "\nGoodbye!!\n";
+    return 0;
+}
+
+
+
+
+
+void PlayGame() {
     bool gameLoop = true;           //Bool that makes sure the game continues to run even after a floor has completed
     Deck myDeck;                    //Stack structure - is both the games stack of cards and the games discard pile
     myDeck.Shuffle();               //Shuffles the deck into a random order
@@ -30,226 +104,37 @@ int main() {
     std::vector<PlayerPerception> playerTells;
     int currBet = 0;                                //This will be used to rotate the active betting player clockwise each floor
     int betIteration = 0;                           //This will be used to move afloor the table during the rais and call phase of betting
+    std::string playerChoice;                       //Used for player input
 
-    for (int iter = 0; iter < PLAYER_COUNT; iter++) {           //This loop will generate the players at the table - one physical, and 3 CPU
-            if (iter == 0) {
-                playerPtr[iter] = new Player(myDeck, 500.00);
-            }
-            else {
-                playerPtr[iter] = new CPU(myDeck, 500.00);
-            }
-        }
+    NewPlayers(playerPtr, myDeck);
+
+    CircularList<Player*> turnOrder (playerPtr[0]);                                 //Uses the first player to generate the turn order
 
     while (gameLoop) {                                                              //The game will continue to run until the loop is broken
-        std::cout << "\nThere is a $" << ANTE << " ante for this hand.\n\n";
-        for (int iter = 0; iter < PLAYER_COUNT; iter++) {                           //The player's score is generated based on the value
-            vPlayerScore[iter].playerNum = iter + 1;                                //...of the cards in their hand
-            vPlayerScore[iter].points = playerPtr[iter]->HandPoints();
-        }
-
-        std::string playerChoice;                                                   //Used for player input
-
-        CircularList<Player*> turnOrder (playerPtr[0]);                             //Uses the first player to generate the turn order
-        for (int iter = 1; iter < PLAYER_COUNT; iter++) {                           //Fills the turn order object with all players
-            turnOrder.NewNode(playerPtr[iter]);
-        }
-
-        turnOrder.TraverseStart();                                                  //Begins the turn order at the beginning
-        for (int iter = 0; iter < PLAYER_COUNT; iter++) {                           //Loops until it receives an ante from every player
-            float temp = float(turnOrder.GetPlayer()->AnteUp(ANTE, myDeck));                    //Gets the ante from each player
-            if (temp < 1) {
-                std::cout << "\n\nPlayer " << iter + 1 << " does not have enough money to ante.  They fold.\n\n";
-            }
-            myPot += temp;
-            turnOrder.TraverseNext();                                               //Moves to the next player
-        }
-
-        std::cout << "The pot = " << std::fixed << std::setprecision(2) << "$" << myPot << "\n\n";
-
-        turnOrder.TraverseStart();
-        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
-            std::cout << "\nPlayer " << iter + 1 << " is dealt their cards...";
-            if (iter == 0) {
-                playerTells.push_back(AVERAGE);
-                std::cout << "\nYou receive your cards.\n\n";
-            } else {
-                CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
-                playerTells.push_back(tempPtr->JudgeHand());
-                tempPtr = nullptr;
-            }
-            turnOrder.TraverseNext();
-        }
 
 
+        GameStart(vPlayerScore, playerPtr, turnOrder);
+        AnteUp(turnOrder, myDeck, myPot);
+        PrintPot(myPot);
 
-        turnOrder.TraverseStart();
-        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
-            for (int next = 1; next < PLAYER_COUNT; next++) {
-                int temp = iter + next;
-              //  std::cout << "\nFirst Temp = " << temp << "\n\n";
-                if (temp >= PLAYER_COUNT) {
-                    temp -= PLAYER_COUNT;
-            //        std::cout << "\nSecond Temp = " << temp << "\n\n";
-                }
-          //      std::cout << "\nThird Temp = " << temp << "\n\n";
-                turnOrder.GetPlayer()->SetOpinion(playerTells.at(temp));
-            }
+        GetTells(turnOrder, playerTells);
 
-        }
+        PrintUserHand(turnOrder);
 
+        DiscardCards(turnOrder, playerPtr, vPlayerScore, myDeck, playerTells);
 
-
-        turnOrder.TraverseStart();
-        for (int iter = 1; iter < 1 + 1; iter++) {                  //Will show the player's hand (NEEDS TO BE CHANGED)
-            std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
-            turnOrder.GetPlayer()->PlayHand(false);
-        }
-
-        turnOrder.TraverseStart();
-        for (int iter = 1; iter < 5; iter++) {
-            //std::cout << "\n~~~~~~\nPlayer " << iter << ":\n\n";
-            //turnOrder.GetPlayer()->PlayHand();
-            if (iter == 1) {
-                turnOrder.GetPlayer()->DiscardCards(myDeck);
-            } else {
-                CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
-                tempPtr->DiscardCards(myDeck);
-                tempPtr = nullptr;
-            }
-            //std::cout << "\nNew Hand:\n\n";
-            //turnOrder.GetPlayer()->PlayHand();
-            turnOrder.TraverseNext();
-        }
-
-        turnOrder.TraverseStart();
-        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
-            if (iter == 0) {
-                playerTells.push_back(AVERAGE);
-                std::cout << "\nYou look at your cards.\n\n";
-            } else {
-                std::cout << "\nPlayer " << iter + 1 << " looks at their cards...\n";
-                CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
-                playerTells.at(iter) = tempPtr->JudgeHand();
-                tempPtr = nullptr;
-            }
-            turnOrder.TraverseNext();
-        }
-
-        vPlayerScore[0].points = playerPtr[0]->HandPoints();        //Evaluates how much each player's hand is worth
-        for (int iter = 1; iter < 1 + 1; iter++) {
-            std::cout << "~~~~~~\nPlayer " << iter << ":\n\n";
-            turnOrder.GetPlayer()->PlayHand(false);                      //
-        }
-
-
-        turnOrder.TraverseStart();
-        for (int iter = currBet; iter > 0; iter--) {
-            turnOrder.TraverseNext();
-        }
+        SetBetLead(currBet, turnOrder);
 
         float callValue = 0;
         std::vector<bool> allCalled(PLAYER_COUNT, false);
-        bool firstBet = true;
         bool callingBets = true;
-     //   std::cout << "\ncurrBet check = " << currBet << "\n\n";
         int tempBet = currBet;
 
-        //std::cout << "\nTest 01\n";
-
-        while (firstBet) {
-            int checkFold = 0;
-            turnOrder.TraverseNext();
-            //std::cout << "\nTest 02\n";
-            for (int iter = 0; iter < PLAYER_COUNT - 1; iter++) {
-                if (turnOrder.GetPlayer()->FoldedHand()) {
-                    checkFold++;
-                }
-                if (checkFold == PLAYER_COUNT - 1) {
-                    callingBets = false;
-                    firstBet = false;
-                }
-                turnOrder.TraverseNext();
-                //std::cout << "\nTest 03\n";
-            }
-            std::cout << "\nPlayer " << tempBet + 1 << " is leading the bet this hand\n";
-            std::cout << "The pot = " << std::fixed << std::setprecision(2) << "$" << myPot << "\n\n";
-            //std::cout << "\nTest 04\n";
-            if (firstBet) {
-                //std::cout << "\nTest 05\n";
-                if (tempBet > 0) {
-                    //std::cout << "\nTest 06\n";
-                    //std::cout << "\nCash 1 = " << turnOrder.GetPlayer()->CheckCash() << "\n\n";
-                    CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
-                    //std::cout << "\nCash 2 = " << tempPtr->CheckCash() << "\n\n";
-                    std::vector<PlayerPerception> tempOpinion;              //A vector of opponents opinions of the player's hand/tells
-                    std::vector<int> inBluff;                               //A vector of opponents bluff stat - position matched with tempOpinion
-                    std::vector<PlayerPerception> tempPerception;           //A vector of opponents opinions of themselves - position matched with the above
-                    std::vector<double> inScores;                           //A vector of opponents hand values; used for player decision making if the player
-                                                                            //...rolls exceptionally well.  Position matched with the above temp variables
-                    //std::cout << "\nTest 07\n";
-
-                    for (int iter = 0; iter < PLAYER_COUNT; iter++) {
-                       // std::cout << "\nTest 08\n";
-                        if (iter > 0) {
-                           // std::cout << "\nTest 09\n";
-
-                            int next = iter + tempBet;
-                                if (next >= PLAYER_COUNT) {
-                                    next -= PLAYER_COUNT;
-                                   // std::cout << "\nTest 10\n";
-                                }
-                                //std::cout << "\nTest 11\n";
-                            tempPerception.push_back(playerTells.at(next));
-                            tempOpinion.push_back(turnOrder.GetPlayer()->GetPlayerTells(PLAYER_COUNT - iter));          //UNDEFINED
-                                                                                                                        //Gets opponent opinion of a specific player's tell
-
-                            inBluff.push_back(turnOrder.GetPlayer()->GetBluffStat());                                   //UNDEFINED
-                                                                                                                        //Gets opponent's bluff stat
-
-                            inScores.push_back(turnOrder.GetPlayer()->HandPoints());                                    //DEFINED
-                                                                                                                        //Gets the actual value of a particular opponents hand
-
-                        }
-                        turnOrder.TraverseNext();
-                       // std::cout << "\nTest 12\n";
-                    }
-                   // std::cout << "\nTest 51\n";
-                    callValue = tempPtr->BetCash(tempBet + 1, myDeck, tempPerception,
-                                                                inScores, inBluff, tempOpinion);
-                   // std::cout << "\nTest 52\n";
-                    allCalled.at(tempBet) = true;
-                   // std::cout << "\nTest 53\n";
-                    tempPtr = nullptr;
-                    //std::cout << "\nTest 13\n";
-                }
-                else {
-                    callValue = turnOrder.GetPlayer()->BetCash(myDeck);
-                    allCalled.at(tempBet) = true;
-                    //std::cout << "\nTest 14\n";
-                }
-            }
-            if (turnOrder.GetPlayer()->FoldedHand()) {
-                tempBet++;
-                //std::cout << "\nTest 15\n";
-
-                if (tempBet >= PLAYER_COUNT) {
-                    tempBet = 0;
-                   // std::cout << "\nTest 16\n";
-                }
-                //std::cout << "\nTest 17\n";
-            }
-            else {
-                firstBet = false;
-                //std::cout << "\nTest 18\n";
-            }
-            turnOrder.TraverseNext();
-        }
-
-        myPot += callValue;
-        betIteration = tempBet;
+        BettingRound(callValue, allCalled, tempBet, myPot, turnOrder,
+                     betIteration, callingBets, playerTells, myDeck);
 
         while (callingBets) {
-        std::cout << "The pot = " << std::fixed << std::setprecision(2) << "$" << myPot << "\n\n";
+        PrintPot(myPot);
             //std::cout << "\n\nPrev call value = " << callValue << "\n";
             //std::cout << "\n\nCallValTest 01     " << callValue << "\n\n";
             callValue = std::floor(callValue);
@@ -523,7 +408,248 @@ int main() {
               << ONE / std::pow(13,11) << "\n"
               << ONE / std::pow(13,12) << "\n\n";
 */
-    std::cout << "\nGoodbye!!\n";
-    return 0;
 }
+
+//******
+void PrintPot(float myPot) {
+    std::cout << "The pot = " << std::fixed << std::setprecision(2) << "$" << myPot << "\n\n";
+}
+
+//******
+void AnteUp(CircularList<Player*>& turnOrder, Deck& myDeck, float& myPot) {
+
+    std::cout << "\nThere is a $" << ANTE << " ante for this hand.\n\n";
+
+    turnOrder.TraverseStart();                                                  //Begins the turn order at the beginning
+    for (int iter = 0; iter < PLAYER_COUNT; iter++) {                           //Loops until it receives an ante from every player
+        float temp = float(turnOrder.GetPlayer()->AnteUp(ANTE, myDeck));                    //Gets the ante from each player
+        if (temp < 1) {
+            std::cout << "\n\nPlayer " << iter + 1 << " does not have enough money to ante.  They fold.\n\n";
+        }
+        myPot += temp;
+        turnOrder.TraverseNext();                                               //Moves to the next player
+    }
+}
+
+//******
+void NewPlayers(std::vector<Player*>& playerPtr, Deck& myDeck) {
+    for (int iter = 0; iter < PLAYER_COUNT; iter++) {           //This loop will generate the players at the table - one physical, and 3 CPU
+        if (iter == 0) {
+            playerPtr[iter] = new Player(myDeck, 500.00);
+        }
+        else {
+            playerPtr[iter] = new CPU(myDeck, 500.00);
+        }
+    }
+}
+
+//******
+void GameStart(std::vector<Score>& vPlayerScore, std::vector<Player*>& playerPtr, CircularList<Player*>& turnOrder) {
+    for (int iter = 0; iter < PLAYER_COUNT; iter++) {                           //The player's score is generated based on the value
+        vPlayerScore[iter].playerNum = iter + 1;                                //...of the cards in their hand
+        vPlayerScore[iter].points = playerPtr[iter]->HandPoints();
+    }
+
+    for (int iter = 1; iter < PLAYER_COUNT; iter++) {                           //Fills the turn order object with all players
+        turnOrder.NewNode(playerPtr[iter]);
+    }
+
+}
+
+//******
+void GetTells(CircularList<Player*>& turnOrder, std::vector<PlayerPerception> playerTells) {
+    turnOrder.TraverseStart();
+
+    //TELLS TO THE TABLE
+        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+            std::cout << "\nPlayer " << iter + 1 << " is dealt their cards...";
+            if (iter == 0) {
+                playerTells.push_back(AVERAGE);
+                std::cout << "\nYou receive your cards.\n\n";
+            } else {
+                CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
+                playerTells.push_back(tempPtr->JudgeHand());
+                tempPtr = nullptr;
+            }
+            turnOrder.TraverseNext();
+        }
+
+    //TELLS TO THE PLAYERS
+        turnOrder.TraverseStart();
+        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+            for (int next = 1; next < PLAYER_COUNT; next++) {
+                int temp = iter + next;
+              //  std::cout << "\nFirst Temp = " << temp << "\n\n";
+                if (temp >= PLAYER_COUNT) {
+                    temp -= PLAYER_COUNT;
+            //        std::cout << "\nSecond Temp = " << temp << "\n\n";
+                }
+          //      std::cout << "\nThird Temp = " << temp << "\n\n";
+                turnOrder.GetPlayer()->SetOpinion(playerTells.at(temp));
+            }
+            turnOrder.TraverseNext();
+        }
+}
+
+//******
+void PrintUserHand(CircularList<Player*>& turnOrder) {
+    turnOrder.TraverseStart();
+    std::cout << "~~~~~~\nPlayer " << 1 << ":\n\n";
+    turnOrder.GetPlayer()->PlayHand(false);
+}
+
+//******
+void DiscardCards(CircularList<Player*>& turnOrder, std::vector<Player*>& playerPtr,
+                  std::vector<Score>& vPlayerScore, Deck& myDeck, std::vector<PlayerPerception>& playerTells) {
+    turnOrder.TraverseStart();
+    for (int iter = 1; iter < 5; iter++) {
+        if (iter == 1) {
+            turnOrder.GetPlayer()->DiscardCards(myDeck);
+        } else {
+            CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
+            tempPtr->DiscardCards(myDeck);
+            tempPtr = nullptr;
+        }
+        turnOrder.TraverseNext();
+    }
+    EvaluateCards(vPlayerScore, playerPtr, turnOrder, playerTells);
+}
+
+//******
+void EvaluateCards(std::vector<Score>& vPlayerScore, std::vector<Player*>& playerPtr,
+                   CircularList<Player*>& turnOrder, std::vector<PlayerPerception>& playerTells) {
+    turnOrder.TraverseStart();
+        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+            if (iter == 0) {
+                playerTells.push_back(AVERAGE);
+                std::cout << "\nYou look at your cards.\n\n";
+            } else {
+                std::cout << "\nPlayer " << iter + 1 << " looks at their cards...\n";
+                CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
+                playerTells.push_back(tempPtr->JudgeHand());
+                tempPtr = nullptr;
+            }
+            turnOrder.TraverseNext();
+        }
+
+
+        for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+            vPlayerScore[iter].points = playerPtr[iter]->HandPoints();        //Evaluates how much each player's hand is worth
+        }
+}
+
+//******
+void SetBetLead(int currBet, CircularList<Player*>& turnOrder) {
+    turnOrder.TraverseStart();
+    for (int iter = currBet; iter > 0; iter--) {
+        turnOrder.TraverseNext();
+    }
+}
+
+//******
+void BettingRound(float& callValue, std::vector<bool>& allCalled, int tempBet, float& myPot,
+                  CircularList<Player*>& turnOrder, int& betIteration, bool& callingBets,
+                  std::vector<PlayerPerception> playerTells, Deck& myDeck) {
+
+    bool firstBet = true;
+    while (firstBet) {
+            int checkFold = 0;
+            turnOrder.TraverseNext();
+            for (int iter = 0; iter < PLAYER_COUNT - 1; iter++) {
+                if (turnOrder.GetPlayer()->FoldedHand()) {
+                    checkFold++;
+                }
+                if (checkFold == PLAYER_COUNT - 1) {
+                    callingBets = false;
+                    firstBet = false;
+                }
+                turnOrder.TraverseNext();
+            }
+            std::cout << "\nPlayer " << tempBet + 1 << " is leading the bet this hand\n";
+            PrintPot(myPot);
+            if (firstBet) {
+                if (tempBet > 0) {
+
+                    CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
+
+                    std::vector<PlayerPerception> tempOpinion;              //A vector of opponents opinions of the player's hand/tells
+                    std::vector<int> inBluff;                               //A vector of opponents bluff stat - position matched with tempOpinion
+                    std::vector<PlayerPerception> tempPerception;           //A vector of opponents opinions of themselves - position matched with the above
+                    std::vector<double> inScores;                           //A vector of opponents hand values; used for player decision making if the player
+                                                                            //...rolls exceptionally well.  Position matched with the above temp variables
+
+                    for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+                        if (iter > 0) {
+
+                            int next = iter + tempBet;
+                                if (next >= PLAYER_COUNT) {
+                                    next -= PLAYER_COUNT;
+                                }
+                            tempPerception.push_back(playerTells.at(next));
+                            tempOpinion.push_back(turnOrder.GetPlayer()->GetPlayerTells(PLAYER_COUNT - iter));          //UNDEFINED
+                                                                                                                        //Gets opponent opinion of a specific player's tell
+
+                            inBluff.push_back(turnOrder.GetPlayer()->GetBluffStat());                                   //UNDEFINED
+                                                                                                                        //Gets opponent's bluff stat
+
+                            inScores.push_back(turnOrder.GetPlayer()->HandPoints());                                    //DEFINED
+                                                                                                                        //Gets the actual value of a particular opponents hand
+
+                        }
+                        turnOrder.TraverseNext();
+                    }
+                    callValue = tempPtr->BetCash(tempBet + 1, myDeck, tempPerception,
+                                                                inScores, inBluff, tempOpinion);
+                    allCalled.at(tempBet) = true;
+                    tempPtr = nullptr;
+                }
+                else {
+                    callValue = turnOrder.GetPlayer()->BetCash(myDeck);
+                    allCalled.at(tempBet) = true;
+                }
+            }
+            if (turnOrder.GetPlayer()->FoldedHand()) {
+                tempBet++;
+
+                if (tempBet >= PLAYER_COUNT) {
+                    tempBet = 0;
+                }
+            }
+            else {
+                firstBet = false;
+            }
+            turnOrder.TraverseNext();
+        }
+
+        myPot += callValue;
+        betIteration = tempBet;
+
+}
+
+//******
+void PlayerBet();
+
+//******
+void CPUBet();
+
+//******
+void CallingRound();
+
+//******
+void PlayerCall();
+
+//******
+void CPUCall();
+
+//******
+void PrintAllHands();
+
+//******
+void CheckWinner();
+
+//******
+void PrintCash();
+
+//******
+void PlayAgain();
 
