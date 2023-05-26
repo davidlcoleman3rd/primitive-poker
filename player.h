@@ -175,9 +175,6 @@ public:
     PlayerPerception JudgeHand(bool);   //Returns the player's opinion of their own hand to the calling function - bool parameter prevents a visible tell from being printed
 
 //******
-    ~CPU();
-
-//******
 private:
 
 };

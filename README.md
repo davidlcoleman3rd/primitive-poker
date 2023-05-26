@@ -1,6 +1,45 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.8.2**
+- *GOALS ACCOMPLISHED*
+   - Refactored code into functions
+
+- *RESOLVED ISSUES*
+   - - New out_of_range and stack_overflow errors have been discovered upon refactoring.  It's believed to be caused by the modification of the code during the refactoring process that caused this and not existing errors.  Need investigation
+      - Out_of_range error when tells are moved to the first CPU
+         - This is believed to be solved by changing the way tells are handled (pushed back instead of modified directly)
+         - THIS NEEDS TO BE CHANGED; pushing back in perpetuity will not allow these tells to be read past the first game
+            -Two solutions for this exist; either empty the vector at the end of each game, or initialize the vector at a size of 4 and modify each element directly
+      - Segmentation Fault error on player 3 checking for cash - This seems to be an issue with incrementing the CPU pointer perhaps. Further investigation will need to be made in how the game object handles player pointers at this point, CPU pointer conversion, and incrementationcode
+         - This has been resolved by modifying the gameplay loop to not include the creation of players - additional players were being created which was causing mysterious errors
+
+- *GOALS CURRENTLY BEINGR ATTEMPTED*
+   - Refactoring functions in main.cpp into Game.h and Game.cpp
+       - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
+   - Need advanced bluff behavior for the CPU
+      - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
+      - CPU that pretends to be happy will discard *no more* than 2 cards to maintain the facade
+   - Need lots of testing to get the statistical likeliness of player behavior
+      - How often do CPU's fold?  How much does aggressiveness affect this?
+      - How strict is action score?  Can it be further modified to be effective but not so strict?
+      - Player bluffs, more often than not, should be inability to read their face - this should be very common behavior.
+
+- *GOALS NOT YET ATTEMPTED*
+   - - Need to implement an Ace's ability to go both high and low - it should play as a "low" card in a A-2-3-4-5 straight/straight-flush
+   - Need to add comments to all routines in the project
+   - Want to institute multi-pots, allowing a player to still be apart of the betting, but be excluded from wagers above their paygrade
+      - Turn the myPot int into a vector of ints.  When *any* player is out of the money...
+         - New bets are pushed_back onto a new element in the myPot vector
+         - A position is saved and attached to the logic for each player... make each pot that the player plays in store in an int called "playerPots?"
+            - Each player starts out with a 0 value for the first pot.  When a player is out of the money, each other player increments this variable and the pot pushes back a new element
+         - When payouts are evaluated, hand scoring is evaluated on a pot-by-pot basis
+            - Pot 1 will have all 4 players
+            - Pot 2 will have the 3 best performers
+            - Pot 3 will have the 2 best performers
+            - Pot 4 will do nothing but return money back to the top player
+
+============
 
 **Version 0.8.1**
 - *GOALS CURRENTLY BEING ATTEMPTED*
@@ -14,6 +53,8 @@ A simple text-based poker game WIP.
          - This is believed to be solved by changing the way tells are handled (pushed back instead of modified directly)
          - THIS NEEDS TO BE CHANGED; pushing back in perpetuity will not allow these tells to be read past the first game
             -Two solutions for this exist; either empty the vector at the end of each game, or initialize the vector at a size of 4 and modify each element directly
+      - Segmentation Fault error on player 3 checking for cash - This seems to be an issue with incrementing the CPU pointer perhaps. Further investigation will need to be made in how the game object handles player pointers at this point, CPU pointer conversion, and incrementationcode
+         - This has been resolved by modifying the gameplay loop to not include the creation of players - additional players were being created which was causing mysterious errors
 
 - *CURRENT GOALS NOT YET ATTEMPTED*
    - Need advanced bluff behavior for the CPU
