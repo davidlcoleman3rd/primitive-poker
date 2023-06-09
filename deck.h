@@ -42,6 +42,15 @@ public:
     Deck(int/*in*/);    //Alternative constructor - Generates a deck made of X decks of cards (TO BE IMPLEMENTED LATER);
 
 //******
+    Deck(bool test);
+
+//******
+    Deck(char test);
+
+//******
+    Deck(std::string test);
+
+//******
     void Shuffle();              //Shuffles the deck
 
 //******

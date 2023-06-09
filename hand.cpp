@@ -162,6 +162,8 @@
         }
 
         int streak = 0;
+        bool hasOneAce = false;
+        bool multiAce = false;
         bool hasPair = false;
         bool hasTrips = false;
         bool hasQuads = false;
@@ -170,9 +172,19 @@
         bool tripsFirst = false;
         std::vector<int> StreakedCards;
         for (auto& iter : vCards) {
+
+            if (iter.GetNum() == ACE) {
+                if (hasOneAce && !multiAce) {
+                    hasOneAce = false;
+                    multiAce = true;
+                } else if (!hasOneAce && !multiAce){
+                    hasOneAce = true;
+                }
+            }
+
             if (iteration > 0) {
                 if (cnTemp == iter.GetNum()) {
-                    if (hasPair && streak == 1) {
+                    if (hasPair && streak == 1 && !twoPair) {
                         hasTrips = true;
                         StreakedCards.push_back(int(iter.GetNum()) + 1);
                         streak++;
@@ -289,8 +301,12 @@
                 if (iter.GetSuit() != csTemp) {
                     isFlush = false;
                 }
-                if (iter.GetNum() != (cnTemp - CardNum(1))) {
+                if (iter.GetNum() != (cnTemp - CardNum(1)) && !(hasOneAce)) {
                     isStraight = false;
+                } else if (iter.GetNum() != (cnTemp - CardNum(1))) {
+                    if (!(cnTemp == ACE && iter.GetNum() == FIVE)) {
+                        isStraight = false;
+                    }
                 }
             }
             StreakedCards.push_back(int(iter.GetNum()) + 1);
@@ -314,8 +330,7 @@
                 }
                 outputScore += 500;
 
-            }
-            else {
+            } else {
                 for (auto iter : StreakedCards) {
                     int holdCards = iter;
                     temp += (holdCards * 2400);
@@ -323,13 +338,13 @@
                 outputScore += 400;
             }
             totalScore += double(temp);
-        }
-        else if (isFlush) {
+        } else if (isFlush) {
             for (auto iter : StreakedCards) {
                 int holdCards = iter;
                 temp += (holdCards * 7200);
                 totalScore += double(temp);
             }
+            outputScore += 500;
         }
         ShowScore(outputScore, totalScore);
         return totalScore;
@@ -352,6 +367,8 @@
         }
 
         int streak = 0;
+        bool hasOneAce = false;
+        bool multiAce = false;
         bool hasPair = false;
         bool hasTrips = false;
         bool hasQuads = false;
@@ -360,9 +377,19 @@
         bool tripsFirst = false;
         std::vector<int> StreakedCards;
         for (auto& iter : vCards) {
+
+            if (iter.GetNum() == ACE) {
+                if (hasOneAce && !multiAce) {
+                    hasOneAce = false;
+                    multiAce = true;
+                } else if (!hasOneAce && !multiAce){
+                    hasOneAce = true;
+                }
+            }
+
             if (iteration > 0) {
                 if (cnTemp == iter.GetNum()) {
-                    if (hasPair && streak == 1) {
+                    if (hasPair && streak == 1 && !twoPair) {
                         hasTrips = true;
                         StreakedCards.push_back(int(iter.GetNum()) + 1);
                         streak++;
@@ -479,10 +506,15 @@
                 if (iter.GetSuit() != csTemp) {
                     isFlush = false;
                 }
-                if (iter.GetNum() != (cnTemp - CardNum(1))) {
+                if (iter.GetNum() != (cnTemp - CardNum(1)) && !(hasOneAce)) {
                     isStraight = false;
+                } else if (iter.GetNum() != (cnTemp - CardNum(1))) {
+                    if (!(cnTemp == ACE && iter.GetNum() == FIVE)) {
+                        isStraight = false;
+                    }
                 }
             }
+
             StreakedCards.push_back(int(iter.GetNum()) + 1);
             csTemp = iter.GetSuit();
             cnTemp = iter.GetNum();
@@ -534,29 +566,35 @@
     void Hand::DiscardCards(Deck& dInput) {
         int discardCount = 0;
         int discardChoice = 0;
-        int keepChoice = 0;
         bool hasAce = false;
         std::vector<Card> tempVect;
         Card* tempCard = nullptr;
+
+        for (auto i : vCards) {
+            if (i.GetNum() == ACE) {
+                hasAce = true;
+            }
+        }
+
+        if (hasAce) {
+            for (auto i : vCards) {
+                if (i.GetNum() == ACE) {
+                    tempVect.push_back(i);
+                }
+            }
+        }
+
         while (discardCount < 1 || discardCount > 5) {
             std::cout << "How many cards would you like to discard?\n\n";
             std::cin >> discardCount;
             if (discardCount == 0 && std::cin) {
                 return;
-            }
-            else if (discardCount == 4) {
-                for (auto i : vCards) {
-                    if (i.GetNum() == ACE) {
-                        hasAce = true;
-                        tempVect.push_back(i);
-                    }
-                }
+            } else if (discardCount == 4) {
                 if (!hasAce) {
                     discardCount = 0;
                     std::cout << "\nCannot discard 4 - no aces\n";
                 }
-            }
-            else if (discardCount > 4 || discardCount < 1 || !std::cin) {
+            } else if (discardCount > 4 || discardCount < 1 || !std::cin) {
                 discardCount = 0;
                 std::cout << "\nInvalid entry - enter a number between 1 and 3, or up to 4 if you have an ace\n";
                 std::cin.clear();
@@ -564,15 +602,22 @@
             }
         }
         if (hasAce) {
+            int keepChoice = 0;
             if (tempVect.size() > 1) {
                 for (auto i : tempVect) {
                     PrintCard(i);
                 }
                 while (keepChoice < 1 || keepChoice >= tempVect.size()) {
                     std::cout << "\nChoose which ace keep\n\n";
+                    std::cin >> keepChoice;
+                    if (!std::cin) {
+                        std::cin.clear();
+                        std::cin.ignore(1000, '\n');
+                        std::cout << "\n\nInvalid entry.  Please try again.\n";
+                    }
+                    tempCard = &(tempVect.at(keepChoice));
                 }
-            }
-            else {
+            } else {
                 tempCard = &(tempVect.at(0));
             }
 
@@ -581,41 +626,38 @@
             discardChoice = -1;
             bool cancelEarly = false;
             int handSize = vCards.size();
-            while (discardChoice < 1 || discardChoice > handSize) {
+            while ((discardChoice < 1 || discardChoice > handSize) && !cancelEarly) {
                 PrintHand();
                 std::cout << "\nChoose card #" << iter + 1 << " to discard.\n"
                           << "Enter 0 to stop discarding cards\n\n";
                 std::cin >> discardChoice;
                 if (discardChoice == 0 && std::cin) {
-                    discardCount = discardCount - (iter + 1);
+                    discardCount = iter;
                     cancelEarly = true;
-                    break;
-                }
-                else if (discardChoice < 1 || discardChoice > handSize || !std::cin) {
+                    iter = discardCount;
+                } else if (discardChoice < 1 || discardChoice > handSize || !std::cin) {
                     discardChoice = -1;
                     std::cout << "\nInvalid entry - enter a number between 1 and " << vCards.size() << "\n";
                     std::cin.clear();
                     std::cin.ignore(1000, '\n');
-                }
-                else if (hasAce) {
-                    if (*(tempCard) == vCards.at(discardChoice - 1)) {
+                } else if (hasAce) {
+                    if (*(tempCard) == vCards.at(discardChoice - 1) && discardCount == 4) {
                         std::cout << "\nCan't discard your shown ace when discarding 4 cards\n\n";
                         discardChoice = -1;
                     }
                 }
             }
-            if (cancelEarly) {
-                break;
+            if (!cancelEarly) {
+                dInput.ToDiscard(vCards.at(discardChoice - 1));
+                vCards.erase(vCards.begin() + (discardChoice - 1));
+//              vCards.resize(discardChoice - 1);
+                std::cout << "\n\n";
+                discardChoice = -1;
             }
-            dInput.ToDiscard(vCards.at(discardChoice - 1));
-            vCards.erase(vCards.begin() + (discardChoice - 1));
-//          vCards.resize(discardChoice - 1);
-            std::cout << "\n\n";
-            discardChoice = -1;
         }
         DrawCard(discardCount, dInput);
         SortHand();
-//        PrintHand();
+//      PrintHand();
     }
 
 //******

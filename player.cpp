@@ -57,10 +57,8 @@
             fCash -= fTempCash;                                                     //Subtracts the total amount to be bet from the total cash the player has
             currWager += fTempCash;                                                  //Sets the current amount of money the player is betting to fTempCash
             return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
-        }
-        else {
+        } else {
             std::cout << "\nOut of the money!\n\n";
-            Fold(dInput);
             return 0;
         }
     }
@@ -68,34 +66,37 @@
 //******
     float Player::CallBet(float callValue, Deck& dInput) {             //The CPU can choose to call or raise an existing bet
         int temp = 0;
+        bool outOfMoney = false;
         if (fCash < callValue - currWager) {
             std::cout << "\nPlayer 1 is out of the money\n\n";
-            Fold(dInput);
-            return 0;
+            outOfMoney = true;
         }
-        else if (FoldedHand()) {
+        if (FoldedHand()) {
             std::cout << "\nPlayer 1 has folded\n";
             return 0;
-        }
-        else {
+        } else {
             int playerInput;
             bool betting = true;
             while (betting) {
+                if (outOfMoney) {
+                    std::cout << "\nYou must go all in to stay in the game.\n\n";
+                }
                 std::cout << "\n\nCurrent call value:        " << callValue
                           <<   "\nMoney you have in the pot: " << currWager + ANTE
                           <<   "\nMoney to bet to call:      " << callValue - currWager
                           <<   "\nCash:                      " << fCash << "\n\n";
                 std::cin >> playerInput;
-                if (playerInput == 0 && std::cin) {
+                if (playerInput == 0 && std::cin && !outOfMoney) {
                     std::cout << "\nPlayer 1 calls the bet.\n\n";
                     return callValue;
-                }
-                else if (playerInput < 0) {
+                } else if (playerInput < 0) {
                     std::cout << "\nPlayer 1 folds.\n\n";
                     Fold(dInput);
                     return 0;
-                }
-                else {
+                } else if (playerInput > 0 && std::cin && outOfMoney) {
+                    std::cout << "\nPlayer 1 goes all in to stay in the game.\n\n";
+                    return fCash;
+                } else {
                         if (fCash >= (callValue - currWager) + playerInput) {
                             temp = callValue + playerInput;
                             temp = std::floor(temp);
@@ -123,6 +124,13 @@
         int temp = currWager;
         currWager = fCashIn;
         fCash -= (currWager - temp);
+        return fCashIn - temp;
+    }
+
+//******
+    float Player::SoftWager(float fCashIn) {
+        int temp = currWager;
+        currWager = fCashIn;
         return fCashIn - temp;
     }
 
@@ -238,6 +246,26 @@
 //******
     void Player::SetOpinion(PlayerPerception input, int selection) {
         opinions.at(selection) = input;
+    }
+
+//******
+    void Player::SetCurrPot(int selection) {
+        currPot = selection;
+    }
+
+//******
+    void Player::IncrementPot() {
+        currPot++;
+    }
+
+//******
+    int Player::GetCurrPot() {
+        return currPot;
+    }
+
+//******
+    void Player::ResetCurrPot() {
+        currPot = 0;
     }
 
 //******
@@ -553,7 +581,6 @@ private:
         }
         else {
             std::cout << "\nPlayer " << playerNum << " is out of the money!\n\n";
-            Fold(dInput);
             return 0;
         }
     }
@@ -577,19 +604,17 @@ private:
         int tempRoll = 0;                                       //Variable to hold the general dice roll
         int playerRoll = 0;                                     //Variable to hold the value of the player's dice roll
         int opponentRoll = 0;                                   //Variable to hold the value of the opponent's dice roll
+        bool outOfMoney = false;
+
+        if (fCash < (callValue - currWager)) {
+            std::cout << "\nPlayer " << playerNum << " is out of the money.\n\n";
+            outOfMoney = true;
+        }
 
         if (FoldedHand()) {
             std::cout << "\nPlayer " << playerNum << " has folded.\n\n";
             return 0;
-        }
-
-        else if (fCash < (callValue - currWager)) {
-            std::cout << "\nPlayer " << playerNum << " is out of the money.\n\n";
-            Fold(dInput);
-            return 0;
-        }
-
-        else {
+        } else {
             float fTempCash = CheckCash() + 1;                                      //Sets temp cash just out of range to prime loop
             while (fTempCash > fCash || fTempCash < 0) {                            //Loop repeats until fTempCash is a valid amount (greater than or equal to 0 and less than total cash)
 
@@ -682,13 +707,17 @@ private:
                         actionMod = 10 / (temp);
                     }
                 }
-
-                if (tempForIf > MEDIUM_ACTION /*NEED TO MAKE THIS A CONSTANT*/ && tempForIf <= DECISIVE_ACTION) {
+                if (outOfMoney && fCash == 0){
+                    std::cout << "\nPlayer " << playerNum << " is already all-in.\n\n";
+                    fTempCash = 0;
+                }else if (outOfMoney && tempForIf > DECISIVE_ACTION + (fCash / ((aggressivenessStat * (randInt(seedMake) / DICE_MOD))))) {
+                    std::cout << "\nPlayer " << playerNum << " goes all-in to stay in the game.\n\n";
+                    fTempCash = fCash;
+                } else if (!outOfMoney && tempForIf > MEDIUM_ACTION /*NEED TO MAKE THIS A CONSTANT*/ && tempForIf <= DECISIVE_ACTION) {
                     fTempCash = callValue;
                     std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
-                    //std::cout << "\nPlayer " << playerNum << " cash:   " << fCash << "\n\n\n";
-                } else if (tempForIf > DECISIVE_ACTION) {
-                    if (fCash > (callValue - currWager)) {
+                } else if (!outOfMoney && tempForIf > DECISIVE_ACTION) {
+                    if (fCash - MIN_CALL > (callValue - currWager)) {
                         tempRoll = randInt(seedMake);
                         int tempRoll2 = randInt(seedMake);
                         int tempRoll3 = randInt(seedMake);
@@ -697,15 +726,14 @@ private:
                                                             + (actionMod) + ((perceptionStat / (DICE_MOD * 2)) * (actionMod + (tempRoll3 / DICE_MOD))));
 
                         fTempCash = std::floor(fTempCash);
-                        if (fTempCash < 1) {
-                            fTempCash = 1;
+                        if (fTempCash < MIN_CALL) {
+                            fTempCash = MIN_CALL;
                         }
                         std::cout << "\nPlayer " << playerNum << " raises the bet by " << fTempCash << "\n\n";
                         fTempCash += callValue;
                     } else {
                         fTempCash = callValue;
                         std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
-                        //std::cout << "\nPlayer " << playerNum << " cash:   " << fCash << "\n\n\n";
                     }
                 } else {                                                              //If the player bets nothing, they fold their hand
                     fTempCash = 0;
@@ -715,7 +743,7 @@ private:
                 }
                 fTempCash -= currWager;
             }
-            fTempCash += callValue + currWager;
+            fTempCash += currWager;
             return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
         }
     }

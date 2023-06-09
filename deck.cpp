@@ -70,6 +70,189 @@
     }
 
 //******
+    Deck::Deck(bool test) {                                                 //Alternative constructor - used to generate a deck for testing purposes
+        Card* tempPtr = nullptr;
+        for (int iIterSuit = 0; iIterSuit < 2; iIterSuit++) {
+                tempPtr = new Card(0, 2);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(1, 2);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(2, 2);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(0, 5);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(1, 5);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(0, 7);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(1, 7);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(0, 9);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(1, 9);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(2, 9);
+                stDeck.push(*(tempPtr));
+    }
+    delete tempPtr;
+}
+
+//******
+    Deck::Deck(char test) {                                                 //Alternative constructor - used to generate a deck for testing purposes
+        Card* tempPtr = nullptr;
+        for (int iIterSuit = 0; iIterSuit < 2; iIterSuit++) {
+
+                tempPtr = new Card(3, 12);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 0);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 1);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 2);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 3);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(0, 12);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(1, 0);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(2, 1);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(0, 2);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(1, 3);
+                stDeck.push(*(tempPtr));
+    }
+
+                tempPtr = new Card(3, 12);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 0);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 1);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 2);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 3);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 12);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 0);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 1);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 2);
+                stDeck.push(*(tempPtr));
+
+                tempPtr = new Card(3, 3);
+                stDeck.push(*(tempPtr));
+
+    delete tempPtr;
+}
+
+Deck::Deck(std::string test) {
+    Card* tempPtr = nullptr;
+    tempPtr = new Card(3, 0);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(3, 1);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(3, 2);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(3, 3);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(3, 4);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(3, 5);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(3, 6);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(3, 7);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(3, 8);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(3, 9);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(3, 10);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(3, 11);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(3, 12);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(0, 1);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(0, 2);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(0, 3);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(0, 4);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(0, 5);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(0, 6);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(0, 7);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(0, 8);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(0, 9);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(0, 10);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(0, 11);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(0, 12);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(1, 1);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(1, 2);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(1, 3);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(1, 4);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(1, 5);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(1, 6);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(1, 7);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(1, 8);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(1, 9);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(1, 10);
+    stDeck.push(*(tempPtr));
+    tempPtr = new Card(1, 11);
+    stDeck.push(*(tempPtr));
+    delete tempPtr;
+}
+
+//******
     void Deck::Shuffle() {                                  //Shuffles the deck x times, where x is the argument passed to the function - REMOVED X TIMES PARAMETER FOR TESTING PURPOSES
         int tempSize = GetSize();
         std::random_device shuffler;                        //Random device

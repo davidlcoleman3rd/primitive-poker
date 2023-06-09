@@ -41,6 +41,7 @@ const int DECISIVE_ACTION = 75;
 const int POINTS_DIV = 100;
 
 const int ANTE = 5;                 //Constant for ante - the amount of money each player has to put into the pot in order to participate
+const int MIN_CALL = 10;
 
 //***********************************************
 
@@ -59,6 +60,9 @@ public:
 
 //******
     float TakeWager(float);                     //The player's wagered money is given to the dealer and placed in the pot
+
+//******
+    float SoftWager(float);
 
 //******
     bool FoldedHand();                          //Returns whether or not the player has folded their hand or not
@@ -121,6 +125,18 @@ public:
     void SetOpinion(PlayerPerception, int);     //Replaces an opinion into a particular location in the opinions vector
 
 //******
+    void SetCurrPot(int);
+
+//******
+    void IncrementPot();
+
+//******
+    int GetCurrPot();
+
+//******
+    void ResetCurrPot();
+
+//******
     ~Player();                                  //Destructor - currently does nothing
 
 protected:
@@ -128,6 +144,7 @@ protected:
     float fCash;
     bool bFolded;
     int currWager;
+    int currPot;
     int perceptionStat;                         //This stat will affect the player's ability to read tells of other players, realize if other players are reading their tells, and how good their hand is
     int aggressivenessStat;                     //This stat will affect the player's willingness to bet very large sums of money, take risks, and put pressure on the rest of the table
     int bluffStat;                              //This stat will affect the player's ability to provide "fake" tells for opponents, and their willingness to make strong bets even with a poor hand (based on their ability to convince opponents of their bluff)
