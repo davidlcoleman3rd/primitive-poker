@@ -99,7 +99,7 @@
 	<iostream>
 	"game.h"
 
-1686272301 /home/dave/Documents/Code - Projects/C++/primitivepoker/player.h
+1686788979 /home/dave/Documents/Code - Projects/C++/primitivepoker/player.h
 	"circularlList.h"
 	"hand.h"
 	<random>
@@ -110,7 +110,7 @@
 
 1677027807 /home/dave/Documents/Code - Projects/C++/primitivepoker/node.h
 
-1686272253 source:/home/dave/Documents/Code - Projects/C++/primitivepoker/player.cpp
+1686788979 source:/home/dave/Documents/Code - Projects/C++/primitivepoker/player.cpp
 	<math.h>
 	"player.h"
 
@@ -118,7 +118,7 @@
 
 1675374279 source:/home/dave/Documents/Code - Projects/C++/primitivepoker/river.cpp
 
-1686272381 source:/home/dave/Documents/Code - Projects/C++/primitivepoker/game.cpp
+1686789052 source:/home/dave/Documents/Code - Projects/C++/primitivepoker/game.cpp
 	"game.h"
 
 1685909287 /home/dave/Documents/Code - Projects/C++/primitivepoker/game.h

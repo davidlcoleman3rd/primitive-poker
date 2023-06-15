@@ -194,7 +194,7 @@ void Game::EvaluateCards(std::vector<Score>& vPlayerScore, std::vector<Player*>&
                 std::cout << "\nYou look at your cards.\n\n";
                 PrintUserHand(turnOrder);
             } else {
-                std::cout << "\nPlayer " << iter + 1 << " looks at their cards...\n";
+                std::cout << "\nPlayer " << iter + 1 << " looks at their cards...";
                 CPU* tempPtr = dynamic_cast<CPU*>(turnOrder.GetPlayer());
                 playerTells.at(iter) = tempPtr->JudgeHand();
                 tempPtr = nullptr;
@@ -324,7 +324,7 @@ void Game::CallingRound(float& myPot, float& callValue, int& tempBet, int& betIt
             std::cout << "\nPlayer " << betIteration + 1 << " can choose to call, raise, or fold.\n\n";
             if (betIteration == 0) {
                 temp = turnOrder.GetPlayer()->CallBet(callValue, myDeck);
-                std::cout << "\n\nTemp = " << temp << "\n\n";
+                //std::cout << "\n\nTemp = " << temp << "\n\n";
                 if (turnOrder.GetPlayer()->FoldedHand()) {
                     allCalled.at(betIteration) = true;
                 } else if (temp > callValue) {
@@ -341,6 +341,13 @@ void Game::CallingRound(float& myPot, float& callValue, int& tempBet, int& betIt
                     int currPot = turnOrder.GetPlayer()->GetCurrPot();
                     myPot += turnOrder.GetPlayer()->SoftWager(callValue);
                     potVect[currPot].at(betIteration) += turnOrder.GetPlayer()->TakeWager(callValue);
+                } else if (temp < callValue && turnOrder.GetPlayer()->CheckCash() == temp) {
+                    allCalled.at(betIteration) = true;
+                    int currPot = turnOrder.GetPlayer()->GetCurrPot();
+                    myPot += turnOrder.GetPlayer()->SoftWager(callValue);
+                    potVect[currPot].at(betIteration) += turnOrder.GetPlayer()->AllIn();
+                } else if (temp == 0 && turnOrder.GetPlayer()->CheckCash() == 0) {
+                    allCalled.at(betIteration) = true;
                 }
                 turnOrder.TraverseNext();
             } else {
@@ -369,7 +376,7 @@ void Game::CallingRound(float& myPot, float& callValue, int& tempBet, int& betIt
                 }
                     temp = tempPtr->CallBet(callValue, betIteration + 1, myDeck, tempPerception,
                                                         inScores, inBluff, tempOpinion);
-                    std::cout << "\n\nTemp = " << temp << "\n\n";
+                    //std::cout << "\n\nTemp = " << temp << "\n\n";
 
                 if (turnOrder.GetPlayer()->FoldedHand()) {
                     allCalled.at(betIteration) = true;
@@ -382,11 +389,18 @@ void Game::CallingRound(float& myPot, float& callValue, int& tempBet, int& betIt
                     int currPot = turnOrder.GetPlayer()->GetCurrPot();
                     myPot += turnOrder.GetPlayer()->SoftWager(callValue);
                     potVect[currPot].at(betIteration) += turnOrder.GetPlayer()->TakeWager(callValue);
-                } else if (temp == callValue || turnOrder.GetPlayer()->CheckCash() <= 0) {
+                } else if (temp == callValue) {
                     allCalled.at(betIteration) = true;
                     int currPot = turnOrder.GetPlayer()->GetCurrPot();
                     myPot += turnOrder.GetPlayer()->SoftWager(callValue);
                     potVect[currPot].at(betIteration) += turnOrder.GetPlayer()->TakeWager(callValue);
+                }else if (temp < callValue && turnOrder.GetPlayer()->CheckCash() == temp) {
+                    allCalled.at(betIteration) = true;
+                    int currPot = turnOrder.GetPlayer()->GetCurrPot();
+                    myPot += turnOrder.GetPlayer()->SoftWager(callValue);
+                    potVect[currPot].at(betIteration) += turnOrder.GetPlayer()->AllIn();
+                } else if (temp == 0 && turnOrder.GetPlayer()->CheckCash() == 0) {
+                    allCalled.at(betIteration) = true;
                 }
                 tempPtr = nullptr;
                 turnOrder.TraverseNext();
@@ -466,7 +480,7 @@ void Game::CheckWinner(CircularList<Player*>& turnOrder, std::vector<Score> vPla
         }
         for (int next = 0; next < PLAYER_COUNT; next++) {
             turnOrder.GetPlayer()->GetCash(potVect[iter].at(next));
-            std::cout << potVect[iter].at(next) << "\n\n";
+            //std::cout << potVect[iter].at(next) << "\n\n";
         }
     }
 }
@@ -541,7 +555,6 @@ void Game::DistributePot(std::vector<std::vector<float>>& myPot, CircularList<Pl
     turnOrder.TraverseStart();
     float largestValue = 0;
     float smallestValue = 0;
-    std::string tempin = "";
     for (int iter = 0; iter < myPot.size(); iter++) {
         for (int next = 0; next < PLAYER_COUNT; next++) {
             float temp = myPot[iter].at(next);

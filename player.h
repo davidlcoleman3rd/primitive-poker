@@ -62,6 +62,9 @@ public:
     float TakeWager(float);                     //The player's wagered money is given to the dealer and placed in the pot
 
 //******
+    float AllIn();
+
+//******
     float SoftWager(float);
 
 //******

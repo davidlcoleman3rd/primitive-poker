@@ -93,7 +93,7 @@
                     std::cout << "\nPlayer 1 folds.\n\n";
                     Fold(dInput);
                     return 0;
-                } else if (playerInput > 0 && std::cin && outOfMoney) {
+                } else if (playerInput >= 0 && std::cin && outOfMoney) {
                     std::cout << "\nPlayer 1 goes all in to stay in the game.\n\n";
                     return fCash;
                 } else {
@@ -121,16 +121,29 @@
 
 //******
     float Player::TakeWager(float fCashIn/*in*/) {
-        int temp = currWager;
-        currWager = fCashIn;
-        fCash -= (currWager - temp);
-        return fCashIn - temp;
+        std::cout << "\n\n\nCurrwager = " << currWager << "\n"
+                  << "fCashIn = " << fCashIn << "\n\n\n";
+        int temp = fCashIn - currWager;
+        currWager += temp;
+        fCash -= temp;
+        std::cout << "\n\nThis is a test:\n\n"
+                  << "temp = " << temp << "\n"
+                  << "currWager = " << currWager << "\n"
+                  << "fCash = " << fCash << "\n\n\n";
+        return float(temp);
+    }
+
+//******
+    float Player::AllIn() {
+        int temp = fCash;
+        currWager += fCash;
+        fCash = 0;
+        return float(temp);
     }
 
 //******
     float Player::SoftWager(float fCashIn) {
         int temp = currWager;
-        currWager = fCashIn;
         return fCashIn - temp;
     }
 
@@ -713,11 +726,13 @@ private:
                 }else if (outOfMoney && tempForIf > DECISIVE_ACTION + (fCash / ((aggressivenessStat * (randInt(seedMake) / DICE_MOD))))) {
                     std::cout << "\nPlayer " << playerNum << " goes all-in to stay in the game.\n\n";
                     fTempCash = fCash;
+                    return fTempCash;
                 } else if (!outOfMoney && tempForIf > MEDIUM_ACTION /*NEED TO MAKE THIS A CONSTANT*/ && tempForIf <= DECISIVE_ACTION) {
                     fTempCash = callValue;
                     std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
                 } else if (!outOfMoney && tempForIf > DECISIVE_ACTION) {
                     if (fCash - MIN_CALL > (callValue - currWager)) {
+                        int testint = 0;
                         tempRoll = randInt(seedMake);
                         int tempRoll2 = randInt(seedMake);
                         int tempRoll3 = randInt(seedMake);
@@ -731,6 +746,11 @@ private:
                         }
                         std::cout << "\nPlayer " << playerNum << " raises the bet by " << fTempCash << "\n\n";
                         fTempCash += callValue;
+                        /*std::cout << "\n\nCash = " << fCash << "\n"
+                                  << "checkCash = " << checkCash << "\n"
+                                  << "callValue = " << callValue << "\n"
+                                  << "currWager = " << currWager << "\n\n\n";
+                        std::cin >> testint;*/
                     } else {
                         fTempCash = callValue;
                         std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";

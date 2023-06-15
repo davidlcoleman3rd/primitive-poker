@@ -1,6 +1,20 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+
+
+**Version 0.9.1**
+- *GOALS ACCOMPLISHED*
+   - Multi-pot implemented and works as intended
+
+- *GOALS TO BE ACCOMPLISHED*
+   - Comments on everything in the program/documentation
+   - Advanced bluff behavior for the CPU - detailed in version 0.9.0 documentation
+   - Statistical analysis of realistic player betting/folding/raising likelihoods
+   - Tie breaking/pot splitting in the event of a tie
+
+============
+
 **Version 0.9.0**
 - *GOALS ACCOMPLISHED*
    - Refactoring functions in main.cpp into Game.h and Game.cpp
