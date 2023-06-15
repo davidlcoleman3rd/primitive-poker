@@ -1,7 +1,16 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.9.2**
+- *GOALS ACCOMPLISHED*
+   - Managed to establish pot-splitting in the event of a tie with the multi-pot system
 
+- *GOALS TO BE ACCOMPLISHED*
+   - Comments on everything in the program/documentation
+   - Advanced bluff behavior for the CPU - detailed in version 0.9.0 documentation
+   - Statistical analysis of realistic player betting/folding/raising likelihoods
+
+=============
 
 **Version 0.9.1**
 - *GOALS ACCOMPLISHED*

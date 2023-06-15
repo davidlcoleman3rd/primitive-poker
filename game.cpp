@@ -2,8 +2,8 @@
 
 void Game::FiveCardDraw() {
     bool gameLoop = true;           //Bool that makes sure the game continues to run even after a floor has completed
-    Deck myDeck;                    //Stack structure - is both the games stack of cards and the games discard pile
-    myDeck.Shuffle();               //Shuffles the deck into a random order
+    Deck myDeck(false);                    //Stack structure - is both the games stack of cards and the games discard pile
+    //myDeck.Shuffle();               //Shuffles the deck into a random order
 
     std::vector<Score> vPlayerScore(PLAYER_COUNT);  //A vector of playerScores - one for each player
     std::vector<Player*> playerPtr(PLAYER_COUNT);   //A vector of player pointers - used to generate circular linked list
@@ -461,26 +461,53 @@ void Game::CheckWinner(CircularList<Player*>& turnOrder, std::vector<Score> vPla
                         float& myPot, std::vector<std::vector<float>>& potVect) {
     double tempMax = 0;
     int tempPos = 0;
+    std::vector<int> tiedPos;
     bool tieGame = false;
     for (int iter = 0; iter < potVect.size(); iter++) {
     turnOrder.TraverseStart();
-        double tempMax = 0;
-        int tempPos = 0;
+        tiedPos.clear();
+        tempMax = 0;
+        tempPos = 0;
         for (int next = 0; next < PLAYER_COUNT; next++) {
-            if (vPlayerScore[next].points >= tempMax && turnOrder.GetPlayer()->GetCurrPot() >= iter) {
+            if (vPlayerScore[next].points == tempMax && turnOrder.GetPlayer()->GetCurrPot() >= iter) {
                 tempMax = vPlayerScore[next].points;
                 tempPos = vPlayerScore[next].playerNum;
+                tiedPos.push_back(tempPos);
+            } else if (vPlayerScore[next].points > tempMax && turnOrder.GetPlayer()->GetCurrPot() >= iter) {
+                tiedPos.clear();
+                tempMax = vPlayerScore[next].points;
+                tempPos = vPlayerScore[next].playerNum;
+                tiedPos.push_back(tempPos);
             }
             turnOrder.TraverseNext();
         }
-        std::cout << "Player " << tempPos << " is the winner of pot " << iter + 1 << "!\n\n";
-        turnOrder.TraverseStart();
-        for (int next = 1; next < tempPos; next++) {
-            turnOrder.TraverseNext();
-        }
-        for (int next = 0; next < PLAYER_COUNT; next++) {
-            turnOrder.GetPlayer()->GetCash(potVect[iter].at(next));
-            //std::cout << potVect[iter].at(next) << "\n\n";
+        if (tiedPos.size() == 1) {
+            std::cout << "Player " << tiedPos.at(0) << " is the winner of pot " << iter + 1 << "!\n\n";
+            turnOrder.TraverseStart();
+            for (int next = 1; next < tiedPos.at(0); next++) {
+                turnOrder.TraverseNext();
+            }
+            for (int next = 0; next < PLAYER_COUNT; next++) {
+                turnOrder.GetPlayer()->GetCash(potVect[iter].at(next));
+                //std::cout << potVect[iter].at(next) << "\n\n";
+            }
+        } else if (tiedPos.size() > 1) {
+            std::cout << "The following players have tied on pot " << iter + 1 << " and split the pot:\n\n";
+            for (auto i : tiedPos) {
+                std::cout << "Player " << i << "\n";
+            }
+            std::cout << "\n\n";
+            float tempCash = 0;
+            for (auto i : potVect[iter]) {
+                tempCash += i;
+            }
+            for (auto i : tiedPos) {
+                turnOrder.TraverseStart();
+                for (int next = 1; next < i; next++) {
+                    turnOrder.TraverseNext();
+                }
+                turnOrder.GetPlayer()->GetCash(tempCash / tiedPos.size());
+            }
         }
     }
 }

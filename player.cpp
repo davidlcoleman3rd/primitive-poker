@@ -84,7 +84,10 @@
                 std::cout << "\n\nCurrent call value:        " << callValue
                           <<   "\nMoney you have in the pot: " << currWager + ANTE
                           <<   "\nMoney to bet to call:      " << callValue - currWager
-                          <<   "\nCash:                      " << fCash << "\n\n";
+                          <<   "\nCash:                      " << fCash << "\n"
+                          <<   "\n- Type the value you wish to raise the bet by (or go all-in if required)."
+                          <<   "\n- Type 0 to call the bet (or to go all-in if required to stay in the game)."
+                          <<   "\n- Type any value less than 0 to fold.\n\n";
                 std::cin >> playerInput;
                 if (playerInput == 0 && std::cin && !outOfMoney) {
                     std::cout << "\nPlayer 1 calls the bet.\n\n";
@@ -121,15 +124,15 @@
 
 //******
     float Player::TakeWager(float fCashIn/*in*/) {
-        std::cout << "\n\n\nCurrwager = " << currWager << "\n"
-                  << "fCashIn = " << fCashIn << "\n\n\n";
+        /*std::cout << "\n\n\nCurrwager = " << currWager << "\n"
+                  << "fCashIn = " << fCashIn << "\n\n\n";*/
         int temp = fCashIn - currWager;
         currWager += temp;
         fCash -= temp;
-        std::cout << "\n\nThis is a test:\n\n"
+        /*std::cout << "\n\nThis is a test:\n\n"
                   << "temp = " << temp << "\n"
                   << "currWager = " << currWager << "\n"
-                  << "fCash = " << fCash << "\n\n\n";
+                  << "fCash = " << fCash << "\n\n\n";*/
         return float(temp);
     }
 
