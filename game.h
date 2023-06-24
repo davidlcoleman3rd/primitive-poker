@@ -17,6 +17,12 @@ struct Score {
 
 //**************************************************
 
+const int FIVE_CARD_DRAW_HANDSIZE = 5;
+const int SEVEN_CARD_STUD_HANDSIZE = 7;
+const int TEXAS_HOLDEM_HANDSIZE = 2;
+
+//**************************************************
+
 class Game {
 private:
 
@@ -30,7 +36,7 @@ public:
     void AnteUp(CircularList<Player*>&, Deck&, float&, std::vector<std::vector<float>>&);
 
 //******
-    void NewPlayers(std::vector<Player*>&, Deck&);
+    void NewPlayers(int, std::vector<Player*>&, Deck&);
 
 //******
     void GameStart(std::vector<Score>&, std::vector<Player*>&, CircularList<Player*>&);

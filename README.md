@@ -1,6 +1,21 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+
+**Version 0.9.3**
+- *GOALS ACCOMPLISHED*
+   - Begun to comment on all functions/elements of the program
+   - Made printing aces for ace selection more sensical
+   - Made instances where the player discards 4 cards make more sense
+   - Optimized code for the scoring and discarding functions
+
+- *GOALS TO BE ACCOMPLISHED*
+   - Comments on everything in the program/documentation
+   - Advanced bluff behavior for the CPU - detailed in version 0.9.0 documentation
+   - Statistical analysis of realistic player betting/folding/raising likelihoods
+
+=============
+
 **Version 0.9.2**
 - *GOALS ACCOMPLISHED*
    - Managed to establish pot-splitting in the event of a tie with the multi-pot system

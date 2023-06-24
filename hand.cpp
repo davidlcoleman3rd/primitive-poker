@@ -19,68 +19,59 @@
 
 //***********************************************
 
-    Hand::Hand(Deck& dInput) {
-        GetHand(dInput);
+    Hand::Hand(int handSize, Deck& dInput) {
+        GetHand(handSize, dInput);
     }
 
 //******
-    void Hand::GetHand(Deck& dInput) {
-        DrawCard(5, dInput);
+    void Hand::GetHand(int handSize, Deck& dInput) {        //Generates a hand of cards for the player
+        DrawCard(handSize, dInput);
     }
 
 //******
-    void Hand::SortHand() {
-        std::vector<Card> vTempSort;                                //
-        int iSize = vCards.size();
-        Card* tempCard = nullptr;
-        for (int iCount = 0; iCount < iSize; iCount++) {
-            int vCardSize = vCards.size();
-            for (int iter = 0; iter < vCardSize; iter++) {
-                CardNum cnFinal;
-                CardNum cnTemp;
-                cnTemp = vCards.at(iter).GetNum();
-                Card cardTemp(vCards.at(iter));
-                if (cnTemp > cnFinal || iter == 0) {
-                    if (tempCard != nullptr) {
-                        delete tempCard;
-                        tempCard = nullptr;
+    void Hand::SortHand() {                                 //Sorts the cards based on value - Aces first, Twos last
+
+        std::vector<Card> vTempSort;                                //Temporary vector used for sorting
+        int iSize = vCards.size();                                  //Size of the hand to be sorted
+        Card* tempPtr = nullptr;                                   //Pointer that serves to temporarily refer to a card
+
+        for (int iCount = 0; iCount < iSize; iCount++) {            //Iterates over the entire hand of cards
+            int vCardSize = vCards.size();                              //Stores vCard's size - holds it as a prev value
+            for (int iter = 0; iter < vCardSize; iter++) {              //Iterates using the "previous" card size
+                CardNum cnFinal;                                            //The largest card value found in the hand
+                CardNum cnTemp;                                             //The current card value being tested
+                cnTemp = vCards.at(iter).GetNum();                          //Gets the current card value at the iteration location
+                Card cardTemp(vCards.at(iter));                             //Creates a local card variable by using cardTemp to copy the card at the location
+                if (cnTemp > cnFinal || iter == 0) {                        //If temp is greater than final or the iteration is beginning...
+                    if (tempPtr != nullptr) {                                  //If tempCard is not pointing at null...
+                        delete tempPtr;                                            //Delete and empty tempCard
+                        tempPtr = nullptr;
                     }
-                    cnFinal = cnTemp;
-                    tempCard =  new Card(cardTemp);
+                    cnFinal = cnTemp;                                           //Set the final value to the current value
+                    tempPtr =  new Card(cardTemp);                              //Dynamically allocate a copy of current cardTemp
                 }
             }
-            vTempSort.push_back(*(tempCard));
-            for (int iter = 0; iter < int(vCards.size()); iter++) {
-                if (vCards.at(iter) == *(tempCard)) {
+            vTempSort.push_back(*(tempPtr));                                //Store the card's qualities as an element of the sorting vector
+            for (int iter = 0; iter < int(vCards.size()); iter++) {         //Iterate over vCards
+                if (vCards.at(iter) == *(tempPtr)) {                           //When the card to be copied is found, it is erased from the vector.
                     vCards.erase(vCards.begin() + iter);
                 }
             }
-            delete tempCard;
-            tempCard = nullptr;
+            delete tempPtr;                                             //The pointer is free'd and no longer dangling
+            tempPtr = nullptr;
         }
-        vCards = vTempSort;
+        vCards = vTempSort;                                         //Copies the sorted vector directly over the hand vector - stores the sorted hand into the player's hand
     }
 
 //******
-    void Hand::DrawCard(int iCount, Deck& dInput) {
-        for (int iter = 0; iter < iCount; iter++) {
+    void Hand::DrawCard(int iCount, Deck& dInput) {                   //Draws cards for the player - draws based on iCount, where iCount is the number of cards the player should draw
+        for (int iter = 0; iter < iCount; iter++) {                 //Pushes back a number of cards equal to the draw amount into the player's hand
             vCards.push_back(dInput.DealCard(HAND_STATE));
         }
     }
-/*
+
 //******
-    void Hand::Discard(std::vector<int> vDiscard, Deck& dInput) {               //This function is terribad - don't use it yet
-        int iSize = 0;
-        std::vector<int>::iterator iter;
-        for (iter = vDiscard.begin(); iter < vDiscard.end(); iter++) {
-            vCards.erase(vCards.begin() + iter);
-            iSize++;
-        }
-        DrawCard(iSize, dInput);                        //Draws cards for the user
-    }
-*/
-//******
-    void Hand::PrintHand() const {
+    void Hand::PrintHand() const {                                  //Print's the player's entire hand of cards.
         std::cout << "Player hand:\n\n";
         for (auto& iter : vCards) {
             std::cout << " ,,,,,,, ";
@@ -121,7 +112,7 @@
 
 //******
     //******
-    void Hand::PrintCard(Card cardin) const {
+    void Hand::PrintCard(Card cardin) const {           //Prints a single selected card
         std::cout << " ,,,,,,, ";
         std::cout << "\n";
 
@@ -146,7 +137,55 @@
 
 
 //******
-    double Hand::CountPoints() {
+ void Hand::PrintAces() const {                                  //Print's all aces in the player's hand
+        std::cout << "Player hand:\n\n";
+        for (auto& iter : vCards) {
+            if (iter.GetNum() == ACE)
+                std::cout << " ,,,,,,, ";
+        }
+        std::cout << "\n";
+
+
+        for (auto& iter : vCards) {
+            if (iter.GetNum() == ACE)
+                std::cout << " |" << iter.GetSuitSym() << "  " << iter.GetNumStr() << "| ";
+        }
+        std::cout << "\n";
+
+        for (auto& iter : vCards) {
+            if (iter.GetNum() == ACE)
+                std::cout << " |     | ";
+        }
+        std::cout << "\n";
+
+        for (auto& iter : vCards) {
+            if (iter.GetNum() == ACE)
+                std::cout << " |" << iter.GetSuitStr() << "| ";
+        }
+        std::cout << "\n";
+
+        for (auto& iter : vCards) {
+            if (iter.GetNum() == ACE)
+                std::cout << " |     | ";
+        }
+        std::cout << "\n";
+
+        for (auto& iter : vCards) {
+            if (iter.GetNum() == ACE)
+                std::cout << " |" << iter.GetNumStr() << "  " << iter.GetSuitSym() << "| ";
+        }
+        std::cout << "\n";
+
+         for (auto& iter : vCards) {
+            if (iter.GetNum() == ACE)
+                std::cout << " ``````` ";
+        }
+        std::cout << "\n";
+    }
+
+
+//******
+    double Hand::CountPoints(bool print) {
         SortHand();
         long double totalScore = 0;
         int outputScore = 0;
@@ -157,24 +196,38 @@
 
         for (auto& iter : vCards) {
             //            13 ^ -x, where x is 13 - the value of the card + 1; This means ACE will return 1.0, whereas 2 will return 4E-14, etc
-            //              MAKE A TABLE FOR THIS
+            //
+            //              TWO     -   13 ^ -(13 - 1)  =   4^-14
+            //              THREE   -   13 ^ -(13 - 2)  =   5^-13
+            //              FOUR    -   13 ^ -(13 - 3)  =   7^-12
+            //              FIVE    -   13 ^ -(13 - 4)  =   9^-11
+            //              SIX     -   13 ^ -(13 - 5)  =   1^-9
+            //              SEVEN   -   13 ^ -(13 - 6)  =   1^-8
+            //              EIGHT   -   13 ^ -(13 - 7)  =   2^-7
+            //              NINE    -   13 ^ -(13 - 8)  =   2^-6
+            //              TEN     -   13 ^ -(13 - 9)  =   3^-5
+            //              JACK    -   13 ^ -(13 - 10) =   4^-4
+            //              QUEEN   -   13 ^ -(13 - 11) =   5^-3
+            //              KING    -   13 ^ -(13 - 12) =   7^-2
+            //              ACE     -   13 ^ -(13 - 13) =   1
+            //
             totalScore += double(1 / std::pow(13,(13 - (int(iter.GetNum()) + 1))));
         }
 
         int streak = 0;
-        bool hasOneAce = false;
-        bool multiAce = false;
-        bool hasPair = false;
-        bool hasTrips = false;
-        bool hasQuads = false;
-        bool twoPair = false;
-        bool fullHouse = false;
-        bool tripsFirst = false;
+        bool hasOneAce = false;                 //Logic bools - each checks for a certain "condition" with the hand, which is used for scoring.
+        bool multiAce = false;                  //          /
+        bool hasPair = false;                   //         /
+        bool hasTrips = false;                  //        /
+        bool hasQuads = false;                  //       /
+        bool twoPair = false;                   //      /
+        bool fullHouse = false;                 //  <--/
+        bool tripsFirst = false;                // Checks to see if the "three of a kind" comes before a "pair" in a "Full House" - scoring is handled differently depending on which comes first
         std::vector<int> StreakedCards;
-        for (auto& iter : vCards) {
+        for (auto& iter : vCards) {                                     //Iterates over the player's hand for scoring
 
-            if (iter.GetNum() == ACE) {
-                if (hasOneAce && !multiAce) {
+            if (iter.GetNum() == ACE) {                                     //Logic to determine if the player has exactly one ace
+                if (hasOneAce && !multiAce) {                               //This is used in instances where a player has a "straight" consisting of A-2-3-4-5
                     hasOneAce = false;
                     multiAce = true;
                 } else if (!hasOneAce && !multiAce){
@@ -182,19 +235,24 @@
                 }
             }
 
+            //This block is used for checking if a player has any "matches" - pair, two pair, toak, foak, and full house
+            //Cards are organized by "streaks" - Cards stored in the "streaked" vector can be used for "matched" hands
+            //Streak is iterated to test for the proper hand
+
             if (iteration > 0) {
-                if (cnTemp == iter.GetNum()) {
-                    if (hasPair && streak == 1 && !twoPair) {
+                if (cnTemp == iter.GetNum()) {                              //If the current card is equal to the previous card...
+
+                    if (hasPair && streak == 1 && !twoPair) {                   //Three of a kind block
                         hasTrips = true;
                         StreakedCards.push_back(int(iter.GetNum()) + 1);
                         streak++;
                     }
-                    else if (hasTrips && streak == 2) {
+                    else if (hasTrips && streak == 2) {                         //Four of a kind block
                         hasQuads = true;
                         StreakedCards.push_back(int(iter.GetNum()) + 1);
                         streak++;
                     }
-                    else if (hasTrips && streak == 0) {
+                    else if (hasTrips && streak == 0) {                         //Full house (trips first) block
                         fullHouse = true;
                         tripsFirst = true;
                         StreakedCards.push_back(int(iter.GetNum()) + 1);
@@ -202,13 +260,13 @@
                         hasPair = true;
                         streak++;
                     }
-                    else if (hasPair && streak == 0) {
+                    else if (hasPair && streak == 0) {                          //Two pair block
                         twoPair = true;
                         StreakedCards.push_back(int(iter.GetNum()) + 1);
                         StreakedCards.push_back(int(iter.GetNum()) + 1);
                         streak++;
                     }
-                    else if (twoPair) {
+                    else if (twoPair) {                                         //Full house (pair first) block
                         hasTrips = true;
                         hasPair = true;
                         fullHouse = true;
@@ -216,354 +274,164 @@
                         StreakedCards.push_back(int(iter.GetNum()) + 1);
                         streak++;
                     }
-                    else {
+                    else {                                                      //Pair block
                         hasPair = true;
                         StreakedCards.push_back(int(iter.GetNum()) + 1);
                         StreakedCards.push_back(int(iter.GetNum()) + 1);
                         streak++;
                     }
                 }
-                else {
-                    streak = 0;
+                else {                                                      //If it's the player's first card or it doesn't match the previous card, the streak is reset
+                                                                            //This is important for making sure streaks are monitored properly, so the game doesn't think
+                    streak = 0;                                             //we have a four of a kind when we have a full house
                 }
             }
             cnTemp = iter.GetNum();
             iteration++;
         }
-        unsigned long int temp = 0;
-        if (hasPair) {
-            if (hasTrips) {
-                if (hasQuads) {
+        unsigned long int temp = 0;                                         //Variable to hold the player's final "score" - the grading of their hand
+                                                                            //Using the table above and the 1-13 value of each card, superior hands will always win
+                                                                            //  An unsigned long int was used as a precaution - extremely long decimal points as well as
+                                                                            //  very large values must both be used to assure that superior hands ALWAYS beat weaker hands
+
+
+        //This block will take the logic bools and use them to store the player's score and return it, as well as output that player's hand
+        //...should the bool for outputting be set to true
+
+        if (hasPair) {                                              //If the player has a pair...
+            if (hasTrips) {                                             //If the player has a three of a kind...
+                if (hasQuads) {                                             //4 of a kind block
                     for (auto iter : StreakedCards) {
                         int holdCard = iter;
-                        temp += (holdCard * 4000000);
+                        temp += (holdCard * QUADS_MULT);
                     }
-                    outputScore = 800;
+                    outputScore = QUADS_OUT;
                 }
-                else if (fullHouse) {
-                    if (tripsFirst) {
+                else if (fullHouse) {                                       //Full house block
+                    if (tripsFirst) {                                           //3 of a kind first...
                         for (int iter = 0; iter < 3; iter++) {
                             int holdCard = StreakedCards.at(iter);
-                            temp += (holdCard * 300000);
+                            temp += (holdCard * FULLHOUSE_TRIPS_MULT);
                         }
                         for (int iter = 3; iter < 5; iter++) {
                             int holdCard = StreakedCards.at(iter);
-                            temp += (holdCard * 1000);
+                            temp += (holdCard * FULLHOUSE_PAIR_MULT);
                         }
                     }
-                    else {
+                    else {                                                      //Pair first...
                         for (int iter = 0; iter < 2; iter++) {
                             int holdCard = StreakedCards.at(iter);
-                            temp += (holdCard * 1000);
+                            temp += (holdCard * FULLHOUSE_PAIR_MULT);
                         }
                         for (int iter = 2; iter < 5; iter++) {
                             int holdCard = StreakedCards.at(iter);
-                            temp += (holdCard * 300000);
+                            temp += (holdCard * FULLHOUSE_TRIPS_MULT);
                         }
                     }
-                    outputScore += 600;
+                    outputScore += FULLHOUSE_OUT;
                 }
-                else {
+                else {                                                      //3 of a kind block
                     for (auto iter : StreakedCards) {
                         int holdCard = iter;
-                        temp += (holdCard * 720);
+                        temp += (holdCard * TRIPS_MULT);
                     }
-                    outputScore += 300;
+                    outputScore += TRIPS_OUT;
                 }
             }
-            else if (twoPair) {
+            else if (twoPair) {                                         //Two pair block
                 for (int iter = 0; iter < 2; iter++) {
                     int holdCard = StreakedCards.at(iter);
-                    temp += (holdCard * 30);
+                    temp += (holdCard * TWOPAIR_MULT);
                 }
                 for (int iter = 2; iter < 4; iter++) {
                     int holdCard = StreakedCards.at(iter);
                 }
-                outputScore += 200;
+                outputScore += TWOPAIR_OUT;
             }
-            else {
+            else {                                                      //pair block
                 for (auto iter : StreakedCards) {
                     int holdCard = iter;
                     temp += (holdCard);
                 }
-                outputScore += 100;
+                outputScore += PAIR_OUT;
             }
             totalScore += double(temp);
-            ShowScore(outputScore, totalScore);
+            if (print)
+                ShowScore(outputScore, totalScore);
             return totalScore;
         }
 
-        bool isStraight = true;
+
+//If no matched hands can be found, the function will then search for any possible straights or flushes, return the value, and print the score if the bool is true.
+
+        bool isStraight = true;                                                     //Logic bools for straight and flush - flip to false if a condition isn't met
         bool isFlush = true;
-        iteration = 0;
+        iteration = 0;                                                              //Simply checks to see if checking the first card - if so, don't set to false
         for (auto iter : vCards) {
             if (iteration > 0) {
-                if (iter.GetSuit() != csTemp) {
+                if (iter.GetSuit() != csTemp) {                                         //If the current suit doesn't match the previous suit, not a flush
                     isFlush = false;
                 }
-                if (iter.GetNum() != (cnTemp - CardNum(1)) && !(hasOneAce)) {
+                if (iter.GetNum() != (cnTemp - CardNum(1)) || multiAce) {               //If the curr value is not exactly one less than prev OR you have multiple aces, not straight
                     isStraight = false;
-                } else if (iter.GetNum() != (cnTemp - CardNum(1))) {
+                } else if (iter.GetNum() != (cnTemp - CardNum(1)) && hasOneAce) {      //If the same, except you have one ace and it is not the prev value while the next is 5, not straight
                     if (!(cnTemp == ACE && iter.GetNum() == FIVE)) {
                         isStraight = false;
                     }
                 }
             }
-            StreakedCards.push_back(int(iter.GetNum()) + 1);
-            csTemp = iter.GetSuit();
+            StreakedCards.push_back(int(iter.GetNum()) + 1);                        //Pushes back the cards parsed for straight and flushness into a new vector; streakedCards
+            csTemp = iter.GetSuit();                                                //Stores the previous suit and value for parsing purposes
             cnTemp = iter.GetNum();
-            iteration++;
+            iteration++;                                                            //Iterates
         }
 
-        if (isStraight) {
-            if (isFlush) {
+
+//This block will check the straightness and flushness of the hand - it will then output if required and return the score to the calling function
+
+        if (isStraight) {                                       //Straight block...
+            if (isFlush) {                                          //Straight flush block...
                 for (auto iter : StreakedCards) {
                     int holdCards = iter;
-                    temp += (holdCards * 53000000);
+                    temp += (holdCards * STRAIGHTFLUSH_MULT);
                 }
-                outputScore += 400;
-                if (temp > 2914000000) {
-                    totalScore = 9999999999.0;
-                    outputScore = 900;
+                outputScore += STRAIGHT_OUT;
+                if (temp > ROYAL_THRESHOLD) {                       //Royal flush block...
+                    totalScore = ROYAL_MULT;
+                    outputScore = ROYAL_OUT;
                     ShowScore(outputScore, totalScore);
                     return totalScore;
                 }
-                outputScore += 500;
+                outputScore += FLUSH_OUT;
 
             } else {
                 for (auto iter : StreakedCards) {
                     int holdCards = iter;
-                    temp += (holdCards * 2400);
+                    temp += (holdCards * STRAIGHT_MULT);
                 }
-                outputScore += 400;
+                outputScore += STRAIGHT_OUT;
             }
             totalScore += double(temp);
-        } else if (isFlush) {
+        } else if (isFlush) {                                       //Flush block....
             for (auto iter : StreakedCards) {
                 int holdCards = iter;
-                temp += (holdCards * 7200);
+                temp += (holdCards * FLUSH_MULT);
                 totalScore += double(temp);
             }
-            outputScore += 500;
+            outputScore += FLUSH_OUT;
         }
-        ShowScore(outputScore, totalScore);
-        return totalScore;
+        if (print)
+            ShowScore(outputScore, totalScore);                     //Output if necessary
+        return totalScore;                                          //return score to the calling function
     }
 
 //******
-    double Hand::CountPoints(bool noPrint) {
-        SortHand();
-        long double totalScore = 0;
-        int outputScore = 0;
-        int iteration = 0;
-        CardSuit csTemp;
-        CardNum cnTemp;
-
-
-        for (auto& iter : vCards) {
-            //            13 ^ -x, where x is 13 - the value of the card + 1; This means ACE will return 1.0, whereas 2 will return 4E-14, etc
-            //              MAKE A TABLE FOR THIS
-            totalScore += double(1 / std::pow(13,(13 - (int(iter.GetNum()) + 1))));
-        }
-
-        int streak = 0;
-        bool hasOneAce = false;
-        bool multiAce = false;
-        bool hasPair = false;
-        bool hasTrips = false;
-        bool hasQuads = false;
-        bool twoPair = false;
-        bool fullHouse = false;
-        bool tripsFirst = false;
-        std::vector<int> StreakedCards;
-        for (auto& iter : vCards) {
-
-            if (iter.GetNum() == ACE) {
-                if (hasOneAce && !multiAce) {
-                    hasOneAce = false;
-                    multiAce = true;
-                } else if (!hasOneAce && !multiAce){
-                    hasOneAce = true;
-                }
-            }
-
-            if (iteration > 0) {
-                if (cnTemp == iter.GetNum()) {
-                    if (hasPair && streak == 1 && !twoPair) {
-                        hasTrips = true;
-                        StreakedCards.push_back(int(iter.GetNum()) + 1);
-                        streak++;
-                    }
-                    else if (hasTrips && streak == 2) {
-                        hasQuads = true;
-                        StreakedCards.push_back(int(iter.GetNum()) + 1);
-                        streak++;
-                    }
-                    else if (hasTrips && streak == 0) {
-                        fullHouse = true;
-                        tripsFirst = true;
-                        StreakedCards.push_back(int(iter.GetNum()) + 1);
-                        StreakedCards.push_back(int(iter.GetNum()) + 1);
-                        hasPair = true;
-                        streak++;
-                    }
-                    else if (hasPair && streak == 0) {
-                        twoPair = true;
-                        StreakedCards.push_back(int(iter.GetNum()) + 1);
-                        StreakedCards.push_back(int(iter.GetNum()) + 1);
-                        streak++;
-                    }
-                    else if (twoPair) {
-                        hasTrips = true;
-                        hasPair = true;
-                        fullHouse = true;
-                        twoPair = false;
-                        StreakedCards.push_back(int(iter.GetNum()) + 1);
-                        streak++;
-                    }
-                    else {
-                        hasPair = true;
-                        StreakedCards.push_back(int(iter.GetNum()) + 1);
-                        StreakedCards.push_back(int(iter.GetNum()) + 1);
-                        streak++;
-                    }
-                }
-                else {
-                    streak = 0;
-                }
-            }
-            cnTemp = iter.GetNum();
-            iteration++;
-        }
-        unsigned long int temp = 0;
-        if (hasPair) {
-            if (hasTrips) {
-                if (hasQuads) {
-                    for (auto iter : StreakedCards) {
-                        int holdCard = iter;
-                        temp += (holdCard * 4000000);
-                    }
-                    outputScore = 800;
-                }
-                else if (fullHouse) {
-                    if (tripsFirst) {
-                        for (int iter = 0; iter < 3; iter++) {
-                            int holdCard = StreakedCards.at(iter);
-                            temp += (holdCard * 300000);
-                        }
-                        for (int iter = 3; iter < 5; iter++) {
-                            int holdCard = StreakedCards.at(iter);
-                            temp += (holdCard * 1000);
-                        }
-                    }
-                    else {
-                        for (int iter = 0; iter < 2; iter++) {
-                            int holdCard = StreakedCards.at(iter);
-                            temp += (holdCard * 1000);
-                        }
-                        for (int iter = 2; iter < 5; iter++) {
-                            int holdCard = StreakedCards.at(iter);
-                            temp += (holdCard * 300000);
-                        }
-                    }
-                    outputScore += 600;
-                }
-                else {
-                    for (auto iter : StreakedCards) {
-                        int holdCard = iter;
-                        temp += (holdCard * 720);
-                    }
-                    outputScore += 300;
-                }
-            }
-            else if (twoPair) {
-                for (int iter = 0; iter < 2; iter++) {
-                    int holdCard = StreakedCards.at(iter);
-                    temp += (holdCard * 30);
-                }
-                for (int iter = 2; iter < 4; iter++) {
-                    int holdCard = StreakedCards.at(iter);
-                }
-                outputScore += 200;
-            }
-            else {
-                for (auto iter : StreakedCards) {
-                    int holdCard = iter;
-                    temp += (holdCard);
-                }
-                outputScore += 100;
-            }
-            totalScore += double(temp);
-//          ShowScore(outputScore, totalScore);
-            return totalScore;
-        }
-
-        bool isStraight = true;
-        bool isFlush = true;
-        iteration = 0;
-        for (auto iter : vCards) {
-            if (iteration > 0) {
-                if (iter.GetSuit() != csTemp) {
-                    isFlush = false;
-                }
-                if (iter.GetNum() != (cnTemp - CardNum(1)) && !(hasOneAce)) {
-                    isStraight = false;
-                } else if (iter.GetNum() != (cnTemp - CardNum(1))) {
-                    if (!(cnTemp == ACE && iter.GetNum() == FIVE)) {
-                        isStraight = false;
-                    }
-                }
-            }
-
-            StreakedCards.push_back(int(iter.GetNum()) + 1);
-            csTemp = iter.GetSuit();
-            cnTemp = iter.GetNum();
-            iteration++;
-        }
-
-        if (isStraight) {
-            if (isFlush) {
-                for (auto iter : StreakedCards) {
-                    int holdCards = iter;
-                    temp += (holdCards * 53000000);
-                }
-                outputScore += 400;
-                if (temp > 2914000000) {
-                    totalScore = 9999999999.0;
-                    outputScore = 900;
-                    ShowScore(outputScore, totalScore);
-                    return totalScore;
-                }
-                outputScore += 500;
-
-            }
-            else {
-                for (auto iter : StreakedCards) {
-                    int holdCards = iter;
-                    temp += (holdCards * 2400);
-                }
-                outputScore += 400;
-            }
-            totalScore += double(temp);
-        }
-        else if (isFlush) {
-            for (auto iter : StreakedCards) {
-                int holdCards = iter;
-                temp += (holdCards * 7200);
-                totalScore += double(temp);
-            }
-        }
-//      ShowScore(outputScore, totalScore);
-        return totalScore;
-    }
-
-//******
-    int Hand::CardCount() {
+    int Hand::CardCount() {                             //Returns the size of the player's hand to the calling function
         return vCards.size();
     }
 
 //******
-    void Hand::DiscardCards(Deck& dInput) {
+    void Hand::DiscardCards(Deck& dInput) {             //Allows the user player to select and discard cards from their hand
         int discardCount = 0;
         int discardChoice = 0;
         bool hasAce = false;
@@ -604,9 +472,7 @@
         if (hasAce) {
             int keepChoice = 0;
             if (tempVect.size() > 1) {
-                for (auto i : tempVect) {
-                    PrintCard(i);
-                }
+                PrintAces();
                 while (keepChoice < 1 || keepChoice >= tempVect.size()) {
                     std::cout << "\nChoose which ace keep\n\n";
                     std::cin >> keepChoice;
@@ -615,44 +481,51 @@
                         std::cin.ignore(1000, '\n');
                         std::cout << "\n\nInvalid entry.  Please try again.\n";
                     }
-                    tempCard = &(tempVect.at(keepChoice));
+                    tempCard = &(tempVect.at(keepChoice - 1);
                 }
             } else {
                 tempCard = &(tempVect.at(0));
             }
 
         }
-        for (int iter = 0; iter < discardCount; iter++) {
-            discardChoice = -1;
-            bool cancelEarly = false;
-            int handSize = vCards.size();
-            while ((discardChoice < 1 || discardChoice > handSize) && !cancelEarly) {
-                PrintHand();
-                std::cout << "\nChoose card #" << iter + 1 << " to discard.\n"
-                          << "Enter 0 to stop discarding cards\n\n";
-                std::cin >> discardChoice;
-                if (discardChoice == 0 && std::cin) {
-                    discardCount = iter;
-                    cancelEarly = true;
-                    iter = discardCount;
-                } else if (discardChoice < 1 || discardChoice > handSize || !std::cin) {
-                    discardChoice = -1;
-                    std::cout << "\nInvalid entry - enter a number between 1 and " << vCards.size() << "\n";
-                    std::cin.clear();
-                    std::cin.ignore(1000, '\n');
-                } else if (hasAce) {
-                    if (*(tempCard) == vCards.at(discardChoice - 1) && discardCount == 4) {
-                        std::cout << "\nCan't discard your shown ace when discarding 4 cards\n\n";
+        if (discardCount == 4) {
+            for (int iter = vCards.size(); iter > 1; iter--) {
+                dInput.ToDiscard(vCards.at(iter - 1));
+                vCards.erase(vCards.begin() + (iter - 1));
+            }
+        } else {
+            for (int iter = 0; iter < discardCount; iter++) {
+                discardChoice = -1;
+                bool cancelEarly = false;
+                int handSize = vCards.size();
+                while ((discardChoice < 1 || discardChoice > handSize) && !cancelEarly) {
+                    PrintHand();
+                    std::cout << "\nChoose card #" << iter + 1 << " to discard.\n"
+                              << "Enter 0 to stop discarding cards\n\n";
+                    std::cin >> discardChoice;
+                    if (discardChoice == 0 && std::cin) {
+                        discardCount = iter;
+                        cancelEarly = true;
+                        iter = discardCount;
+                    } else if (discardChoice < 1 || discardChoice > handSize || !std::cin) {
                         discardChoice = -1;
+                        std::cout << "\nInvalid entry - enter a number between 1 and " << vCards.size() << "\n";
+                        std::cin.clear();
+                        std::cin.ignore(1000, '\n');
+                    } else if (hasAce) {
+                        if (*(tempCard) == vCards.at(discardChoice - 1) && discardCount == 4) {
+                            std::cout << "\nCan't discard your shown ace when discarding 4 cards\n\n";
+                            discardChoice = -1;
+                        }
                     }
                 }
-            }
-            if (!cancelEarly) {
-                dInput.ToDiscard(vCards.at(discardChoice - 1));
-                vCards.erase(vCards.begin() + (discardChoice - 1));
-//              vCards.resize(discardChoice - 1);
-                std::cout << "\n\n";
-                discardChoice = -1;
+                if (!cancelEarly) {
+                    dInput.ToDiscard(vCards.at(discardChoice - 1));
+                    vCards.erase(vCards.begin() + (discardChoice - 1));
+//                  vCards.resize(discardChoice - 1);
+                    std::cout << "\n\n";
+                    discardChoice = -1;
+                }
             }
         }
         DrawCard(discardCount, dInput);
@@ -672,9 +545,7 @@
         vCards.clear();
     }
 
-//******        //THIS FUNCTION HAS UNDEFINED BEHAVIOR!!!!!!!!!!!!!
-
-
+//******
     void Hand::SelectCards(std::vector<int>& selections) {              //Will pass back a vector of the cards the CPU would want to discard
         Card* prevCard = nullptr;                                       //The last card analyzed by the player - Free
         std::vector<Card*> goodCards;                                   //Cards that the player will keep - Free

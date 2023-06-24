@@ -47,7 +47,7 @@ const int MIN_CALL = 10;
 
 class Player {
 public:
-    Player(Deck&/*in&out*/, float/*in*/);       //Generates a player, gives them a hand of 5 cards and a sum of cash
+    Player(int, Deck&/*in&out*/, float/*in*/);       //Generates a player, gives them a hand of 5 cards and a sum of cash
 
 //******
     float AnteUp(int, Deck&);                          //The player wagers the ante for the hand
@@ -160,7 +160,7 @@ class CPU : public Player {
 public:
 
 //******
-    CPU(Deck&/*in&out*/ myDeck, float/*in*/ myCash);                        //Generates a player, gives them a hand of 5 cards and a sum of cash
+    CPU(int, Deck&/*in&out*/ myDeck, float/*in*/ myCash);                        //Generates a player, gives them a hand of 5 cards and a sum of cash
 
 //******
     float BetCash(int, Deck&, std::vector<PlayerPerception>);                          //The CPU chooses how much money to bet on a hand - bets are made based on how well the CPU can

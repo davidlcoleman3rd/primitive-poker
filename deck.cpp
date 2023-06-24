@@ -252,6 +252,8 @@ Deck::Deck(std::string test) {
     delete tempPtr;
 }
 
+
+
 //******
     void Deck::Shuffle() {                                  //Shuffles the deck x times, where x is the argument passed to the function - REMOVED X TIMES PARAMETER FOR TESTING PURPOSES
         int tempSize = GetSize();

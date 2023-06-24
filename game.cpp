@@ -2,8 +2,8 @@
 
 void Game::FiveCardDraw() {
     bool gameLoop = true;           //Bool that makes sure the game continues to run even after a floor has completed
-    Deck myDeck(false);                    //Stack structure - is both the games stack of cards and the games discard pile
-    //myDeck.Shuffle();               //Shuffles the deck into a random order
+    Deck myDeck;                    //Stack structure - is both the games stack of cards and the games discard pile
+    myDeck.Shuffle();               //Shuffles the deck into a random order
 
     std::vector<Score> vPlayerScore(PLAYER_COUNT);  //A vector of playerScores - one for each player
     std::vector<Player*> playerPtr(PLAYER_COUNT);   //A vector of player pointers - used to generate circular linked list
@@ -12,7 +12,7 @@ void Game::FiveCardDraw() {
     int betIteration = 0;                           //This will be used to move afloor the table during the rais and call phase of betting
     std::string playerChoice;                       //Used for player input
 
-    NewPlayers(playerPtr, myDeck);
+    NewPlayers(FIVE_CARD_DRAW_HANDSIZE, playerPtr, myDeck);
 
     CircularList<Player*> turnOrder (playerPtr[0]);                                 //Uses the first player to generate the turn order
     GameStart(vPlayerScore, playerPtr, turnOrder);
@@ -104,13 +104,13 @@ void Game::AnteUp(CircularList<Player*>& turnOrder, Deck& myDeck, float& myPot, 
 }
 
 //******
-void Game::NewPlayers(std::vector<Player*>& playerPtr, Deck& myDeck) {
+void Game::NewPlayers(int handSize, std::vector<Player*>& playerPtr, Deck& myDeck) {
     for (int iter = 0; iter < PLAYER_COUNT; iter++) {           //This loop will generate the players at the table - one physical, and 3 CPU
         if (iter == 0) {
-            playerPtr[iter] = new Player(myDeck, 500.00);
+            playerPtr[iter] = new Player(handSize, myDeck, 500.00);
         }
         else {
-            playerPtr[iter] = new CPU(myDeck, 500.00);
+            playerPtr[iter] = new CPU(handSize, myDeck, 500.00);
         }
     }
 }

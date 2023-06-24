@@ -16,10 +16,10 @@
     #include "player.h"
 
 //******
-    Player::Player(Deck& dDeck,/*in&out*/ float fStartCash/*in*/) {
+    Player::Player(int handSize, Deck& dDeck,/*in&out*/ float fStartCash/*in*/) {
         fCash = fStartCash;                                                     //Starts each player off with a set amount of money
-        hCards = new Hand(dDeck);                                               //Generates a hand of 5 cards for each player
-        bFolded = false;                                                       //Sets the "folded" state to false - used to check if the player has folded this turn
+        hCards = new Hand(handSize, dDeck);                                     //Generates a hand of 5 cards for each player
+        bFolded = false;                                                        //Sets the "folded" state to false - used to check if the player has folded this turn
         currWager = 0;
         opinions.resize(1);
     }
@@ -206,7 +206,7 @@
         hCards->SortHand();
         hCards->PrintHand();
 //        ShowScore(outputScore, totalScore);
-        std::cout << std::fixed <<  std::setprecision(14) << "\n" << hCards->CountPoints() << " points\n\n";
+        std::cout << std::fixed <<  std::setprecision(14) << "\n" << hCards->CountPoints(true) << " points\n\n";
     }
 
 //******
@@ -307,8 +307,8 @@ private:
 
 
 //******
-    CPU::CPU(Deck&/*in&out*/ myDeck, float/*in*/ myCash)      //Generates a player, gives them a hand of 5 cards and a sum of cash
-            : Player(myDeck, myCash) {
+    CPU::CPU(int handSize, Deck&/*in&out*/ myDeck, float/*in*/ myCash)      //Generates a player, gives them a hand of 5 cards and a sum of cash
+            : Player(handSize, myDeck, myCash) {
         std::random_device statMaker;                          //Random device
         std::mt19937 seedMake(statMaker());                    //Random device seed
         std::uniform_int_distribution<int> randInt(1,10);      //The object that produces our random number - between 1 and 10
