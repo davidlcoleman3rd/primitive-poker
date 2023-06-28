@@ -11,6 +11,7 @@ void Game::FiveCardDraw() {
     int currBet = 0;                                //This will be used to rotate the active betting player clockwise each floor
     int betIteration = 0;                           //This will be used to move afloor the table during the rais and call phase of betting
     std::string playerChoice;                       //Used for player input
+    bool gameOver = false;
 
     NewPlayers(FIVE_CARD_DRAW_HANDSIZE, playerPtr, myDeck);
 
@@ -27,7 +28,12 @@ void Game::FiveCardDraw() {
             iter->ResetCurrPot();
         }
 
-        AnteUp(turnOrder, myDeck, myPot, potVect);
+        AnteUp(turnOrder, myDeck, myPot, potVect, gameOver);
+
+        if (gameOver) {
+            return;
+        }
+
         PrintPot(myPot);
 
         GetTells(turnOrder, playerTells);
@@ -85,7 +91,7 @@ void Game::PrintPot(float myPot) {
 }
 
 //******
-void Game::AnteUp(CircularList<Player*>& turnOrder, Deck& myDeck, float& myPot, std::vector<std::vector<float>>& potVect) {
+void Game::AnteUp(CircularList<Player*>& turnOrder, Deck& myDeck, float& myPot, std::vector<std::vector<float>>& potVect, bool& gameOver) {
 
     std::cout << "\nThere is a $" << ANTE << " ante for this hand.\n\n";
 
@@ -100,6 +106,32 @@ void Game::AnteUp(CircularList<Player*>& turnOrder, Deck& myDeck, float& myPot, 
         int maxPot = potVect.size() - 1;
         potVect[maxPot].at(iter) = temp;
         turnOrder.TraverseNext();                                               //Moves to the next player
+    }
+    turnOrder.TraverseStart();
+    std::vector<bool> gameOverCheck;
+    bool playerLoss = false;
+    bool playerWin = true;
+    for (int iter = 0; iter < PLAYER_COUNT; iter++) {
+        if (turnOrder.GetPlayer()->FoldedHand()) {
+            gameOverCheck.push_back(true);
+        } else {
+            gameOverCheck.push_back(false);
+        }
+        turnOrder.TraverseNext();
+    }
+    for (int iter = 0; iter < gameOverCheck.size(); iter++) {
+        if (iter == 0 && gameOverCheck.at(iter)) {
+            playerLoss = true;
+        } else if (iter > 0 && !gameOverCheck.at(iter)) {
+            playerWin = false;
+        }
+    }
+    if (playerLoss) {
+        std::cout << "\n\nYou don't have enough money to stay in the game!\n\nG A M E   O V E R . . . \n\n\n";
+        gameOver = true;
+    } else if (playerWin) {
+        std::cout << "\n\nNo other players have enough money to keep playing!\n\n Y O U ' R E   A   C A R D   S H A R K ! ! ! \n\n\n";
+        gameOver = true;
     }
 }
 
@@ -172,6 +204,7 @@ void Game::DiscardCards(CircularList<Player*>& turnOrder, std::vector<Player*>& 
                   std::vector<Score>& vPlayerScore, Deck& myDeck, std::vector<PlayerPerception>& playerTells) {
     turnOrder.TraverseStart();
     for (int iter = 1; iter < 5; iter++) {
+        std::cout << "\n\nIt is player " << iter << "'s turn to discard cards.\n";
         if (iter == 1) {
             turnOrder.GetPlayer()->DiscardCards(myDeck);
         } else {
@@ -180,6 +213,7 @@ void Game::DiscardCards(CircularList<Player*>& turnOrder, std::vector<Player*>& 
             tempPtr = nullptr;
         }
         turnOrder.TraverseNext();
+        std::cout << "\n~~~~~~\n";
     }
     EvaluateCards(vPlayerScore, playerPtr, turnOrder, playerTells);
 }
@@ -272,7 +306,7 @@ void Game::BettingRound(float& callValue, std::vector<bool>& allCalled, int temp
                     allCalled.at(tempBet) = true;
                     tempPtr = nullptr;
                 } else {
-                    callValue = turnOrder.GetPlayer()->BetCash(myDeck);
+                    callValue = turnOrder.GetPlayer()->BetCash(myDeck, myPot, potVect);
                     allCalled.at(tempBet) = true;
                 }
 
@@ -288,13 +322,12 @@ void Game::BettingRound(float& callValue, std::vector<bool>& allCalled, int temp
             }
             currPot = turnOrder.GetPlayer()->GetCurrPot();
             turnOrder.TraverseNext();
+            std::cout << "\n~~~~~~\n";
         }
 
         myPot += callValue;
         potVect[currPot].at(tempBet) += callValue;
         betIteration = tempBet;
-
-
 }
 
 //******
@@ -309,6 +342,8 @@ void Game::CallingRound(float& myPot, float& callValue, int& tempBet, int& betIt
                     std::vector<PlayerPerception> playerTells, Deck& myDeck,
                     bool& callingBets, std::vector<std::vector<float>>& potVect) {
     while (callingBets) {
+       //std::vector<std::vector<float>> tempPotVect = potVect;
+        //DistributePot(tempPotVect, turnOrder);
         PrintPot(myPot);
         callValue = std::floor(callValue);
         tempBet++;
@@ -321,9 +356,9 @@ void Game::CallingRound(float& myPot, float& callValue, int& tempBet, int& betIt
             betIteration -= PLAYER_COUNT;
         }
         if (!(turnOrder.GetPlayer()->FoldedHand())) {
-            std::cout << "\nPlayer " << betIteration + 1 << " can choose to call, raise, or fold.\n\n";
+            std::cout << "\nPlayer " << betIteration + 1 << " can choose to call, raise, or fold.";
             if (betIteration == 0) {
-                temp = turnOrder.GetPlayer()->CallBet(callValue, myDeck);
+                temp = turnOrder.GetPlayer()->CallBet(callValue, myDeck, myPot, potVect);
                 //std::cout << "\n\nTemp = " << temp << "\n\n";
                 if (turnOrder.GetPlayer()->FoldedHand()) {
                     allCalled.at(betIteration) = true;
@@ -416,9 +451,10 @@ void Game::CallingRound(float& myPot, float& callValue, int& tempBet, int& betIt
                 callingBets = true;
             }
         }
+        std::cout << "\n~~~~~~\n";
     }
 
-    DistributePot(potVect, turnOrder);
+    //DistributePot(potVect, turnOrder);
 }
 
 //******
@@ -450,7 +486,7 @@ void Game::PrintAllHands(CircularList<Player*>& turnOrder, std::vector<Score>& v
             vPlayerScore[iter].points = 0;
         }
         else {
-            turnOrder.GetPlayer()->PlayHand(false);
+            turnOrder.GetPlayer()->PlayHand(true);
         }
         turnOrder.TraverseNext();
     }
@@ -481,8 +517,13 @@ void Game::CheckWinner(CircularList<Player*>& turnOrder, std::vector<Score> vPla
             }
             turnOrder.TraverseNext();
         }
+        int potValue = 0;
+        for (auto getPot : potVect[iter]) {
+            potValue += getPot;
+        }
+
         if (tiedPos.size() == 1) {
-            std::cout << "Player " << tiedPos.at(0) << " is the winner of pot " << iter + 1 << "!\n\n";
+            std::cout << "The winner of Pot #" << iter + 1 << ", with a total of $" << potValue << "... is Player " << tiedPos.at(0) << "!\n";
             turnOrder.TraverseStart();
             for (int next = 1; next < tiedPos.at(0); next++) {
                 turnOrder.TraverseNext();
@@ -492,11 +533,11 @@ void Game::CheckWinner(CircularList<Player*>& turnOrder, std::vector<Score> vPla
                 //std::cout << potVect[iter].at(next) << "\n\n";
             }
         } else if (tiedPos.size() > 1) {
-            std::cout << "The following players have tied on pot " << iter + 1 << " and split the pot:\n\n";
+            std::cout << "The following players have tied on pot " << iter + 1 << " and split the pot of $" << potValue << ":\n\n";
             for (auto i : tiedPos) {
                 std::cout << "Player " << i << "\n";
             }
-            std::cout << "\n\n";
+            std::cout << "\n";
             float tempCash = 0;
             for (auto i : potVect[iter]) {
                 tempCash += i;
@@ -510,6 +551,7 @@ void Game::CheckWinner(CircularList<Player*>& turnOrder, std::vector<Score> vPla
             }
         }
     }
+    std::cout << "\n\n";
 }
 
 //******
@@ -618,7 +660,7 @@ void Game::DistributePot(std::vector<std::vector<float>>& myPot, CircularList<Pl
                 myPot[iter].at(next) = smallestValue;
             }
         }
-        //std::cin >> tempin;
     }
+    turnOrder.TraverseStart();
 }
 

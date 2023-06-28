@@ -30,27 +30,27 @@ const int HAND_STATE = 1;         //Holds the numerical version of the enum CARD
 //This block consists of the multipliers for hands of cards
 //  This block is very important for assuring that a superior hand will ALWAYS beat a weaker one
 //******
-const int QUADS_MULT = 4000000;             //Multiplier for 4 of a kind
-const int FULLHOUSE_TRIPS_MULT = 300000;    //Multiplier for the 3 of a kind section of a full house
-const int FULLHOUSE_PAIR_MULT = 1000;       //Multiplier for the pair section of a full house
-const int TRIPS_MULT = 720;                 //Multiplier for 3 of a kind
 const int TWOPAIR_MULT = 30;                //Multiplier for two pairs
-const int STRAIGHTFLUSH_MULT = 53000000;    //Multiplier for a straight flush
-const float ROYAL_MULT = 9999999999.0;      //Multiplier for a royal flush - uses float as it's not being cast back into one like prev mults
+const int TRIPS_MULT = 720;                 //Multiplier for 3 of a kind
+const int FULLHOUSE_PAIR_MULT = 1000;       //Multiplier for the pair section of a full house
 const int STRAIGHT_MULT = 2400;             //Multiplier for a straight
 const int FLUSH_MULT = 7200;                //Multiplier for a flush
+const int FULLHOUSE_TRIPS_MULT = 300000;    //Multiplier for the 3 of a kind section of a full house
+const int QUADS_MULT = 4000000;             //Multiplier for 4 of a kind
+const int STRAIGHTFLUSH_MULT = 53000000;    //Multiplier for a straight flush
+const float ROYAL_MULT = 9999999999.0;      //Multiplier for a royal flush - uses float as it's not being cast back into one like prev mults
 
 //This block consists of the constant values used for actually printing the hand value
 //  *****This is needlessly complex and can be simplified drastically!*****
 //******
-const int QUADS_OUT = 800;                  //Const value to make sure the game outputs Four of a Kind when printing hand rank
-const int FULLHOUSE_OUT = 600;              //Const value to make sure the game outputs full house when printing hand rank
-const int TRIPS_OUT = 300;                  //Const value to make sure the game outputs three of a kind when printing hand rank
-const int TWOPAIR_OUT = 200;                //Const value to make sure the game outputs two pair when printing hand rank
 const int PAIR_OUT = 100;                   //Const value to make sure the game outputs pair when printing hand rank
+const int TWOPAIR_OUT = 200;                //Const value to make sure the game outputs two pair when printing hand rank
+const int TRIPS_OUT = 300;                  //Const value to make sure the game outputs three of a kind when printing hand rank
 const int STRAIGHT_OUT = 400;               //Const value to make sure the game outputs straight when printing hand rank
-const int ROYAL_OUT = 900;                  //Const value to make sure the game outputs royal flush when printing hand rank
 const int FLUSH_OUT = 500;                  //Const value to make sure the game outputs flush when printing hand rank
+const int FULLHOUSE_OUT = 600;              //Const value to make sure the game outputs full house when printing hand rank
+const int QUADS_OUT = 800;                  //Const value to make sure the game outputs Four of a Kind when printing hand rank
+const int ROYAL_OUT = 900;                  //Const value to make sure the game outputs royal flush when printing hand rank
 
 const int ROYAL_THRESHOLD = 2914000000;     //Threshold before the game automatically makes the hand score a royal flush
 
@@ -80,6 +80,9 @@ public:
                                                             //...like all aces in a hand when deciding which to keep (when discarding 4 cards) in example
 //******
     void PrintAces() const;
+
+//******
+    void PrintSelection(std::vector<Card>) const;           //Prints a selection of cards
 
 //******
     double CountPoints(bool);                               //Iterates multiple times through a sorted hand to determine how strong that hand is vs other players - no printing

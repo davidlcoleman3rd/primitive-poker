@@ -1,6 +1,19 @@
 # primitive-poker
 A simple text-based poker game WIP.
 
+**Version 0.9.4**
+- *GOALS ACCOMPLISHED*
+   - Made it so the player can see what cards are being discarded by the CPU's when they discard cards
+   - Created a heads up display function that shows all important information to the player whenever they must make a decision in game
+   - Created a ShowSelection function that allows a selection of cards to be shown (such as discarded cards)
+   - Added some functionality where player number can be seen during the discard phase - allowing the user player to know which CPU discarded what
+   - Improved formatting for readability; including break lines so important sections can be isolated from the rest of the text, improving player comprehension
+
+- *GOALS TO BE ACCOMPLISHED*
+   - Comments on everything in the program/documentation
+   - Advanced bluff behavior for the CPU - detailed in version 0.9.0 documentation
+   - Statistical analysis of realistic player betting/folding/raising likelihoods
+
 
 **Version 0.9.3**
 - *GOALS ACCOMPLISHED*

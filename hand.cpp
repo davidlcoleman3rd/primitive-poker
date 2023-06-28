@@ -138,7 +138,7 @@
 
 //******
  void Hand::PrintAces() const {                                  //Print's all aces in the player's hand
-        std::cout << "Player hand:\n\n";
+        std::cout << "\n";
         for (auto& iter : vCards) {
             if (iter.GetNum() == ACE)
                 std::cout << " ,,,,,,, ";
@@ -179,6 +179,46 @@
          for (auto& iter : vCards) {
             if (iter.GetNum() == ACE)
                 std::cout << " ``````` ";
+        }
+        std::cout << "\n";
+    }
+
+//******
+    void Hand::PrintSelection(std::vector<Card> selection) const {                                  //Print's the player's a selection of cards.
+        std::cout << "\n";
+        for (auto& iter : selection) {
+            std::cout << " ,,,,,,, ";
+        }
+        std::cout << "\n";
+
+
+        for (auto& iter : selection) {
+            std::cout << " |" << iter.GetSuitSym() << "  " << iter.GetNumStr() << "| ";
+        }
+        std::cout << "\n";
+
+        for (auto& iter : selection) {
+            std::cout << " |     | ";
+        }
+        std::cout << "\n";
+
+        for (auto& iter : selection) {
+            std::cout << " |" << iter.GetSuitStr() << "| ";
+        }
+        std::cout << "\n";
+
+        for (auto& iter : selection) {
+            std::cout << " |     | ";
+        }
+        std::cout << "\n";
+
+        for (auto& iter : selection) {
+            std::cout << " |" << iter.GetNumStr() << "  " << iter.GetSuitSym() << "| ";
+        }
+        std::cout << "\n";
+
+         for (auto& iter : selection) {
+            std::cout << " ``````` ";
         }
         std::cout << "\n";
     }
@@ -432,109 +472,114 @@
 
 //******
     void Hand::DiscardCards(Deck& dInput) {             //Allows the user player to select and discard cards from their hand
-        int discardCount = 0;
-        int discardChoice = 0;
-        bool hasAce = false;
-        std::vector<Card> tempVect;
-        Card* tempCard = nullptr;
 
-        for (auto i : vCards) {
+        int discardCount = 0;                                               //Variable stores the amount of cards the player will discard
+        int discardChoice = 0;                                              //The actual card they will discard on this pass of the discard iteration series
+        bool hasAce = false;                                                //Checks if the player has an ace - important for determining if the player can discard 4 cards
+        std::vector<Card> tempVect;                                         //Vector that holds all aces the player has - used for allowing the player to select which ace to drop
+                                                                            //...when discarding 4 and holding more than 1 ace
+        Card* tempCard = nullptr;                                           //Pointer that points to individual cards and holds their location
+
+        for (auto i : vCards) {                                             //Parses the hand - if an ace is discovered in any location, the hasAce bool is turned on
             if (i.GetNum() == ACE) {
                 hasAce = true;
             }
         }
 
-        if (hasAce) {
-            for (auto i : vCards) {
-                if (i.GetNum() == ACE) {
+        if (hasAce) {                                                       //If the player has an ace, their ace is pushed onto the tempVect vector
+            for (auto i : vCards) {                                         //*********THIS SEEMS PRETTY REDUNDANT**********
+                if (i.GetNum() == ACE) {                                    //...Can this just be implemented in the above for loop??
                     tempVect.push_back(i);
                 }
             }
         }
 
-        while (discardCount < 1 || discardCount > 5) {
+        while (discardCount < 1 || discardCount > 5) {                                      //Uses discardCount starting at 0 to begin loop - checks for proper input for card discard count
             std::cout << "How many cards would you like to discard?\n\n";
             std::cin >> discardCount;
-            if (discardCount == 0 && std::cin) {
+            if (discardCount == 0 && std::cin) {                                                //If they discard 0, return to the calling function with no further action
                 return;
-            } else if (discardCount == 4) {
+            } else if (discardCount == 4) {                                                     //If they discard 4, checks if they have an ace.  If not, discardCount is set to 0, as they cannot discard 4
                 if (!hasAce) {
                     discardCount = 0;
                     std::cout << "\nCannot discard 4 - no aces\n";
                 }
-            } else if (discardCount > 4 || discardCount < 1 || !std::cin) {
-                discardCount = 0;
+            } else if (discardCount > 4 || discardCount < 1 || !std::cin) {                     //If they discard less than 0 or greater than 4, OR input an invalid character, buffer is cleared and count set to 0
+                discardCount = 0;                                                                   //They are primed to try again.
+
                 std::cout << "\nInvalid entry - enter a number between 1 and 3, or up to 4 if you have an ace\n";
                 std::cin.clear();
                 std::cin.ignore(1000, '\n');
             }
         }
-        if (hasAce) {
+
+        if (hasAce && discardCount == 4) {                                                  //If they are dropping all but their ace, the player can choose which ace to keep
             int keepChoice = 0;
             if (tempVect.size() > 1) {
-                PrintAces();
-                while (keepChoice < 1 || keepChoice >= tempVect.size()) {
+                PrintAces();                                                                    //Prints all aces
+                while (keepChoice < 1 || keepChoice > tempVect.size()) {                        //Player chooses between 1 and the number of aces total
                     std::cout << "\nChoose which ace keep\n\n";
                     std::cin >> keepChoice;
-                    if (!std::cin) {
+                    if (!std::cin || keepChoice < 1 || keepChoice > tempVect.size()) {          //if the player makes an invalid input, they are prompted to try again.
                         std::cin.clear();
                         std::cin.ignore(1000, '\n');
                         std::cout << "\n\nInvalid entry.  Please try again.\n";
                     }
-                    tempCard = &(tempVect.at(keepChoice - 1);
+                    tempCard = &(tempVect.at(keepChoice - 1));                                  //The ace they choose is stored at tempCard
                 }
             } else {
-                tempCard = &(tempVect.at(0));
-            }
+                tempCard = &(tempVect.at(0));                                               //if they only have one ace, the first card is chosen, as it's the most valuable card
+            }                                                                               //...and the most valuable cards always come first when sorted
 
         }
-        if (discardCount == 4) {
-            for (int iter = vCards.size(); iter > 1; iter--) {
-                dInput.ToDiscard(vCards.at(iter - 1));
-                vCards.erase(vCards.begin() + (iter - 1));
+
+        if (discardCount == 4) {                                                            //Parses the entire hand - everything that is NOT the user's selected ace is discarded
+            for (int iter = vCards.size(); iter > 0; iter--) {
+                if (tempCard->GetNum() != vCards.at(iter - 1).GetNum()) {
+                    dInput.ToDiscard(vCards.at(iter - 1));
+                    vCards.erase(vCards.begin() + (iter - 1));
+                    PrintHand();
+                } else if (tempCard->GetSuit() != vCards.at(iter - 1).GetSuit()) {
+                    dInput.ToDiscard(vCards.at(iter - 1));
+                    vCards.erase(vCards.begin() + (iter - 1));
+                    PrintHand();
+                }
             }
-        } else {
-            for (int iter = 0; iter < discardCount; iter++) {
-                discardChoice = -1;
-                bool cancelEarly = false;
+        } else {                                                                            //If they are not discarding 4 cards, the user can select up to X times, where X is the
+            for (int iter = 0; iter < discardCount; iter++) {                               //...number of cards they are choosing to discard, which cards to discard from their hand
+
+                discardChoice = -1;                                                         //Setting discardChoice to -1 "primes" the loop
+                bool cancelEarly = false;                                                   //Bool that turns on if they player chooses to stop discarding cards
                 int handSize = vCards.size();
                 while ((discardChoice < 1 || discardChoice > handSize) && !cancelEarly) {
-                    PrintHand();
+                    PrintHand();                                                            //Prints the user's hand on each iteration - shrinks for each discarded card
                     std::cout << "\nChoose card #" << iter + 1 << " to discard.\n"
                               << "Enter 0 to stop discarding cards\n\n";
                     std::cin >> discardChoice;
-                    if (discardChoice == 0 && std::cin) {
-                        discardCount = iter;
+                    if (discardChoice == 0 && std::cin) {                                               //If they choose 0 and not an invalid value, discardCount is set to iter
+                        discardCount = iter;                                                            //...and cancelEarly turns on
                         cancelEarly = true;
-                        iter = discardCount;
-                    } else if (discardChoice < 1 || discardChoice > handSize || !std::cin) {
+                    } else if (discardChoice < 1 || discardChoice > handSize || !std::cin) {            //Invalid entry - while loop repeats, buffer cleared
                         discardChoice = -1;
                         std::cout << "\nInvalid entry - enter a number between 1 and " << vCards.size() << "\n";
                         std::cin.clear();
                         std::cin.ignore(1000, '\n');
-                    } else if (hasAce) {
-                        if (*(tempCard) == vCards.at(discardChoice - 1) && discardCount == 4) {
-                            std::cout << "\nCan't discard your shown ace when discarding 4 cards\n\n";
-                            discardChoice = -1;
-                        }
                     }
                 }
-                if (!cancelEarly) {
-                    dInput.ToDiscard(vCards.at(discardChoice - 1));
+                if (!cancelEarly) {                                         //If the player clears the while loop and isn't canceling early, the particular card selected is discarded
+                    dInput.ToDiscard(vCards.at(discardChoice - 1));         //...and the while loop is primed once more
                     vCards.erase(vCards.begin() + (discardChoice - 1));
-//                  vCards.resize(discardChoice - 1);
                     std::cout << "\n\n";
                     discardChoice = -1;
                 }
             }
         }
-        DrawCard(discardCount, dInput);
+        DrawCard(discardCount, dInput);                 //After all cards selected are discarded, the player draws that many cards from the deck, and their hand is sorted once more
         SortHand();
-//      PrintHand();
     }
 
 //******
-    void Hand::DiscardHand(Deck& dInput) {
+    void Hand::DiscardHand(Deck& dInput) {                      //This function does the same as above, but discards the player's entire hand automatically
         for (auto i : vCards) {
             dInput.ToDiscard(i);
         }
@@ -545,7 +590,8 @@
         vCards.clear();
     }
 
-//******
+//******                                                                //***CPU FUNCTION***    -   This function is specifically for the CPU to select the cards it wants to discard
+
     void Hand::SelectCards(std::vector<int>& selections) {              //Will pass back a vector of the cards the CPU would want to discard
         Card* prevCard = nullptr;                                       //The last card analyzed by the player - Free
         std::vector<Card*> goodCards;                                   //Cards that the player will keep - Free
@@ -559,25 +605,18 @@
         int discardCount = 0;                                           //The number of cards the player would discard in this instance
 
 
-        std::vector<std::vector<Card*>> straightCards;                  //Free
-        std::vector<std::vector<Card*>> flushCards;                     //Free
+        std::vector<std::vector<Card*>> straightCards;
+        std::vector<std::vector<Card*>> flushCards;
 
         for (int iter = 0; iter < vCards.size(); iter++) {
-            //std::cout << "\n\nTest 01\n\n";
             Card* i = &vCards.at(iter);
             if (i->GetNum() == ACE) {
                 hasAce = true;
             }
             if (prevCard == nullptr) {
                 prevCard = i;
-              //  std::cout << "\n\nTest 02\n\n";
             }
             else {
-                //std::cout << "\ni    = " << i->GetNum()
-                  //            << "\nprev = " << prevCard->GetNum()
-                    //          << "\ni suit   = " << i->GetSuit()
-                      //        << "\nprevSuit = " << prevCard->GetSuit()
-                        //      << "\n\n\n";
                 if (i->GetNum() == prevCard->GetNum()) {
 
                     if (streak) {
@@ -588,7 +627,6 @@
                         goodCards.push_back(prevCard);
                         goodCards.push_back(i);
                     }
-                //std::cout << "\n\nTest 03\n\n";
                 }
                 else {
                     if (!(streak)) {
@@ -604,104 +642,71 @@
                         straightCheck.push_back(i);
                         flushCheck.push_back(i);
                     }
-                  //  std::cout << "\n\nTest 04\n\n";
                 }
             }
             prevCard = i;
-            i = nullptr;                                                                                    //i free'd appropriately
         }
 
-
-        //std::cout << "\n\nTest 05\n\n";
-                                                                                                            //NEED TO REANLYZE ALL OF THIS - THE WRONG VALUES ARE BEING SELECTED WHEN SORTING THROUGH THE VECTORS
-                                                                                                            //!!!!!!!!!!!!!!!!!!!!
-                                                                                                            //!!!!!!!!!!!!!!!!!!!!
-                                                                                                            //!!!!!!!!!!!!!!!!!!!!
+//******
         if (goodCards.size() == 0) {
-          //  std::cout << "\n\nTest 06\n\n";
             while (straightCheck.size() > 0) {
-            //    std::cout << "\n\nStraightCheck size = " << straightCheck.size() << "\n\n";
-              //  std::cout << "\n\nTest 07\n\n";
                 std::vector<int> tempNums;
                 CardNum tempNum;
                 for (int iter = 0; iter < straightCheck.size(); iter++) {
-                //    std::cout << "\n\nTest 08\n\n";
                     if (iter == 0) {
-                  //      std::cout << "\n\nTest 41, iter " << iter << "\n\n";
                         tempNum = straightCheck.at(iter)->GetNum();
-                    //    std::cout << "\n\nTest 42, iter " << iter << "\n\n";
                         tempNums.push_back(iter);
-                      //  std::cout << "\n\nTest 43, iter " << iter << "\n\n";
                     }
                     else {
-                        //std::cout << "\n\nTest 09\n\n";
                         if (straightCheck.at(iter)->GetNum() < tempNum && straightCheck.at(iter)->GetNum() > tempNum - 5) {
-                          //  std::cout << "\n\nTest 44, iter " << iter << "\n\n";
                             tempNums.push_back(iter);
                         }
                     }
                 }
                 std::vector<Card*> tempVect;
                 for (auto i : tempNums) {
-                    //std::cout << "\n\nTest 10\n\n";
                     tempVect.push_back(straightCheck.at(i));
                 }
                 int rangeCount = 0;
                 for (auto i : tempNums) {
                     i -= rangeCount;
-                   // std::cout << "\n\nTest 11\n\n";
-                  //  std::cout << "i = " << i << "\n\n";                                     //NEED TO REANALYZE
-                    //std::cout << "straightCheck = " << straightCheck.size() << "\n\n";
                     straightCheck.at(i) = nullptr;
                     straightCheck.erase(straightCheck.begin() - i);
                     rangeCount++;
                 }
-                //std::cout << "\n\nTest 40\n\n";
                 straightCards.push_back(tempVect);
                 tempVect.clear();
-                //std::cout << "\n\nTest 12\n\n";
             }
-            //std::cout << "\n\nTest 13\n\n";
             while (flushCheck.size() > 0) {
-              //  std::cout << "\n\nTest 14\n\n";
                 std::vector<int> tempNums;
                 CardSuit tempSuit;
                 for (int iter = 0; iter < flushCheck.size(); iter++) {
-                //    std::cout << "\n\nTest 15\n\n";
                     if (iter == 0) {
-                  //      std::cout << "\n\nTest 16\n\n";
                         tempSuit = flushCheck.at(iter)->GetSuit();
                         tempNums.push_back(iter);
                     }
                     else {
-                    //    std::cout << "\n\nTest 17\n\n";
                         if (tempSuit == flushCheck.at(iter)->GetSuit()) {
                             tempNums.push_back(iter);
                         }
                     }
                 }
-                //std::cout << "\n\nTest 18\n\n";
                 std::vector<Card*> tempVect;
                 for (auto i : tempNums) {
-                  //  std::cout << "\n\nTest 19\n\n";
                     tempVect.push_back(flushCheck.at(i));
                 }
                 int rangeCheck = 0;
                 for (auto i : tempNums) {
                     i -= rangeCheck;
-                    //std::cout << "\n\nTest 20\n\n";
                     flushCheck.at(i) = nullptr;
                     flushCheck.erase(flushCheck.begin() + i);
                     rangeCheck++;
                 }
                 flushCards.push_back(tempVect);
-                //std::cout << "\n\nTest 21\n\n";
                 for (auto i : tempVect) {
                     i = nullptr;
                 }
-                 //std::cout << "\n\nTest 22\n\n";
                 tempVect.clear();                                                   //Tempvect free'd appropriately
-                //std::cout << "\n\nTest 23\n\n";
             }
             int flushNum = 0;
             int straightNum = 0;
@@ -710,29 +715,23 @@
                     flushNum = i.size();
                 }
             }
-             //std::cout << "\n\nTest 24\n\n";
 
             for (auto i : straightCards) {
                 if (i.size() > straightNum) {
                     straightNum = i.size();
                 }
             }
-             //std::cout << "\n\nTest 25\n\n";
 
             int biggestNum = 0;
             int biggestVect = 0;
-             //std::cout << "\n\nTest 26\n\n";
             badCards.clear();
-             //std::cout << "\n\nTest 27\n\n";
             if (flushNum >= straightNum) {
-                //std::cout << "\n\nTest 28\n\n";
                 for (int iter = 0; iter < flushCards.size(); iter++) {
                     if (flushCards.at(iter).size() > biggestNum) {
                         biggestNum = flushCards.at(iter).size();
                         biggestVect = iter;
                     }
                 }
-                //std::cout << "\n\nTest 29\n\n";
 
                 for (int iter = 0; iter < flushCards.size(); iter++) {
                     if (iter == biggestVect) {
@@ -746,17 +745,14 @@
                         }
                     }
                 }
-                //std::cout << "\n\nTest 30\n\n";
             }
             else {
-                //std::cout << "\n\nTest 31\n\n";
                 for (int iter = 0; iter < straightCards.size(); iter++) {
                     if (straightCards.at(iter).size() > biggestNum) {
                         biggestNum = straightCards.at(iter).size();
                         biggestVect = iter;
                     }
                 }
-                //std::cout << "\n\nTest 32\n\n";
 
                 for (int iter = 0; iter < straightCards.size(); iter++) {
                     if (iter == biggestVect) {
@@ -770,24 +766,20 @@
                         }
                     }
                 }
-                //std::cout << "\n\nTest 33\n\n";
             }
         }
 
         //**
-        //std::cout << "\n\nTest 34\n\n";
-        if (badCards.size() >= 3) {
+        if (badCards.size() > 3) {
             if (hasAce) {
                 discardCount = 4;
-            }
-            else {
+                std::cout << "The player is discarding everything but their ace.\n";
+                PrintCard(vCards.at(0));
+            } else {
                 discardCount = 3;
             }
-          //  std::cout << "\n\nTest 35\n\n";
-        }
-        else {
+        } else {
             discardCount = badCards.size();
-            //std::cout << "\n\nTest 36\n\n";
 
         }
 
@@ -798,7 +790,6 @@
                 }
             }
         }
-        //std::cout << "\n\nTest 37\n\n";
 
         prevCard = nullptr;                         //PrevCard free'd appropriately
         for (auto i : badCards) {                   //BadCards free'd appropriately
@@ -830,41 +821,30 @@
             }
             i.clear();
         }
-    //std::cout << "\n\nTest 38\n\n";
     }
 
 //******
     void Hand::CPUDiscard(Deck& dInput, std::vector<int>& selections) {               //NEED TO CHANGE THIS FUNCTIONS LOGIC TO ALLOW FOR PLAYER STATS TO COME INTO PLAY!!!!!!!
         std::vector<int> cardNums;
-        //std::cout << "\n\nselections = " << selections.size() << "\n\n";
-        for (int iter = 0; iter < selections.size(); iter++) {          //MIGHT NOT BE NECESSARY!!
-          //  std::cout << "\n\nIter = " << iter << "\n\n";               //!!!!!!!!!!!!!!
-            if (cardNums.size() > 0) {                                  //!!!!!!!!!!!!!!
-                /*for (auto i : cardNums) {                               //!!!!!!!!!!!!!!
-                     for (auto &k : selections) {
-                        std::cout << "\n\nPrev k = " << k << "\n\n";
-                        if (k > i) {
-                            k--;
-                            std::cout << "\n\nPost k = " << k << "\n\n";
-                        }
-                    }
-                }
-                */
-
+        std::vector<Card> cardVect;
+        for (int iter = 0; iter < selections.size(); iter++) {
+            if (cardNums.size() > 0) {
                 selections.at(iter) -= iter;
             }
-           // std::cout << selections.at(iter);
-            if (selections.at(iter) < vCards.size()) {
-                dInput.ToDiscard(vCards.at(selections.at(iter)));
-                vCards.erase(vCards.begin() + (selections.at(iter)));
-                cardNums.push_back(selections.at(iter));
-            } else {
-                std::cout << "\n\nError - selection is " << selections.at(iter) << " whereas hand size is " << vCards.size() << "\n\n";
-            }
-        }
+            cardVect.push_back(vCards.at(selections.at(iter)));
+            dInput.ToDiscard(vCards.at(selections.at(iter)));
+            vCards.erase(vCards.begin() + (selections.at(iter)));
+            cardNums.push_back(selections.at(iter));
 
-        DrawCard(selections.size(), dInput);
-        SortHand();
+        }
+        if (cardVect.size() > 0) {
+            std::cout << "The player discards the following cards:\n";
+            PrintSelection(cardVect);
+            DrawCard(selections.size(), dInput);
+            SortHand();
+        } else {
+            std::cout << "The player keeps all cards in their hand.\n\n";
+        }
     }
 //******
     void Hand::ShowScore(int iOutput, double iTotal) const {

@@ -33,7 +33,7 @@ public:
     void PrintPot(float);
 
 //******
-    void AnteUp(CircularList<Player*>&, Deck&, float&, std::vector<std::vector<float>>&);
+    void AnteUp(CircularList<Player*>&, Deck&, float&, std::vector<std::vector<float>>&, bool&);
 
 //******
     void NewPlayers(int, std::vector<Player*>&, Deck&);

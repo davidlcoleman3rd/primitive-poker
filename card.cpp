@@ -21,7 +21,7 @@
     Card::Card() { }                    //Default constructor - Does nothing as of yet
 
 //******
-    Card::Card(const Card& cOther) {    //Copy constructor - Creates a new object by copying the cOther   //THIS FUNCTION IS ALL KINDS OF FUCKED UP
+    Card::Card(const Card& cOther) {    //Copy constructor - Creates a new object by copying the cOther   //THIS FUNCTION IS ALL KINDS OF MESSED UP
                                                                                                           //  DO
         SetSuit(int(cOther.GetSuit()));                                                                     //  NOT
         SetNum(int(cOther.GetNum()));                                                                       //  USE

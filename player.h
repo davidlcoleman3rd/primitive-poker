@@ -47,19 +47,21 @@ const int MIN_CALL = 10;
 
 class Player {
 public:
-    Player(int, Deck&/*in&out*/, float/*in*/);       //Generates a player, gives them a hand of 5 cards and a sum of cash
+    Player(int, Deck&/*in&out*/, float/*in*/);                      //Generates a player, gives them a hand of 5 cards and a sum of cash
 
 //******
-    float AnteUp(int, Deck&);                          //The player wagers the ante for the hand
+    float AnteUp(int, Deck&);                                       //The player wagers the ante for the hand
 
 //******
-    virtual float BetCash(Deck&);               //The player chooses how much money to bet on a hand - Redefined if used by a CPU
+    virtual float BetCash(Deck&, float,
+                          std::vector<std::vector<float>>);         //The player chooses how much money to bet on a hand - Redefined if used by a CPU
 
 //******
-    virtual float CallBet(float, Deck&);       //The player can choose to call or raise an existing bet - Redefined if used by a CPU
+    virtual float CallBet(float, Deck&, float,
+                          std::vector<std::vector<float>>);         //The player can choose to call or raise an existing bet - Redefined if used by a CPU
 
 //******
-    float TakeWager(float);                     //The player's wagered money is given to the dealer and placed in the pot
+    float TakeWager(float);                                         //The player's wagered money is given to the dealer and placed in the pot
 
 //******
     float AllIn();
@@ -138,6 +140,12 @@ public:
 
 //******
     void ResetCurrPot();
+
+//******
+    void HeadsUpDisplay(float, std::vector<std::vector<float>>) const;
+
+//******
+    void HeadsUpDisplay(float, std::vector<std::vector<float>>, float) const;
 
 //******
     ~Player();                                  //Destructor - currently does nothing

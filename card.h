@@ -30,7 +30,7 @@ enum CardState {IN_DECK, IN_HAND, IN_RIVER, IN_DISCARD};
 
 const std::string SUIT_SYM[4] = {u8"♣", u8"♦", u8"♥", u8"♠"};           //String versions of suit...
 const std::string SUIT_STR[4] = {" CLUB", " DMND", "HEART", "SPADE"};
-const std::string NUM_STR[13] = {" 2", " 3", " 4", " 5", " 6",     //...and rank.  Translate directlyu with enum values
+const std::string NUM_STR[13] = {" 2", " 3", " 4", " 5", " 6",     //...and rank.  Translate directly with enum values
                                  " 7", " 8", " 9", "10", " J",
                                  " Q", " K", " A"};
 

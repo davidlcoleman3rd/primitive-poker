@@ -37,13 +37,15 @@
     }
 
 //******
-    float Player::BetCash(Deck& dInput) {                                           //The player chooses how much money to bet on a hand
+    float Player::BetCash(Deck& dInput, float myPot, std::vector<std::vector<float>> potVect) {  //The player chooses how much money to bet on a hand
         if (fCash > 0) {
-            float fTempCash = fCash + 1;                                            //Sets temp cash just out of range to prime loop
-            while (fTempCash > fCash || fTempCash < 0) {                            //Loop repeats until fTempCash is a valid amount (greater than or equal to 0 and less than total cash)
+            float fTempCash = fCash + 1;                                                 //Sets temp cash just out of range to prime loop
+            while (fTempCash > fCash || fTempCash < 0) {                                 //Loop repeats until fTempCash is a valid amount (greater than or equal to 0 and less than total cash)
+
+                HeadsUpDisplay(myPot, potVect);
                 std::cout << "\nEnter how much money you bet. Type 0 to fold.\n";
                 std::cin >> fTempCash;
-                if (fTempCash == 0) {                                                //If the player enters 0, they fold their hand
+                if (fTempCash == 0) {                                                    //If the player enters 0, they fold their hand
                     Fold(dInput);
                     break;
                 }
@@ -64,7 +66,7 @@
     }
 
 //******
-    float Player::CallBet(float callValue, Deck& dInput) {             //The CPU can choose to call or raise an existing bet
+    float Player::CallBet(float callValue, Deck& dInput, float myPot, std::vector<std::vector<float>> potVect) {      //The player can choose to call or raise an existing bet
         int temp = 0;
         bool outOfMoney = false;
         if (fCash < callValue - currWager) {
@@ -81,11 +83,10 @@
                 if (outOfMoney) {
                     std::cout << "\nYou must go all in to stay in the game.\n\n";
                 }
-                std::cout << "\n\nCurrent call value:        " << callValue
-                          <<   "\nMoney you have in the pot: " << currWager + ANTE
-                          <<   "\nMoney to bet to call:      " << callValue - currWager
-                          <<   "\nCash:                      " << fCash << "\n"
-                          <<   "\n- Type the value you wish to raise the bet by (or go all-in if required)."
+
+                HeadsUpDisplay(myPot, potVect, callValue);
+
+                std::cout <<   "\n- Type the value you wish to raise the bet by (or go all-in if required)."
                           <<   "\n- Type 0 to call the bet (or to go all-in if required to stay in the game)."
                           <<   "\n- Type any value less than 0 to fold.\n\n";
                 std::cin >> playerInput;
@@ -156,41 +157,6 @@
     }
 
 //******
-
-//     void Player::Drop(Deck&/*inandout*/) {                          //The player can drop up to 3 cards - 4 if holding an ace - and draw that many
-/*
-        vector<int> vCardsToDrop;
-        vector<Card>::iterator vIter turnOrder.TraverseNext();= hCards.vCards.begin();
-        int iMaxDrop = 3;
-        int iDropCount = -1;
-        for (vIter; vIter < hCards.vCards.end(); vIter++) {
-            if (*vIter.GetNum() == ACE)
-                iMaxDrop = 4;
-        }
-        while (iDropCount < 0 && iDropCount > iMaxDrop) {
-            std::cout << "\nEnter how many cards you'd like to drop: \n\n";
-            std::cin >> iDropCount;
-        }
-        for (int iIter = 0; iIter < iDropCount; iIter++) {
-            int iCardChoice;
-            std::cout << "\nWhich card do you wish to drop? (from left to right, enter 1 through 5)\n\n";
-            std::cin >> iCardChoice;
-            if (vCardsToDrop.size() == 0)
-                vCardsToDrop.push_back(iCardChoice);
-            else {
-                int iTemp = vCardsToDrop.size() + 1;
-                int iNeg = (vCardsToDrop.size() * (-1));
-                int iHandSize = hCards.vCards.size() - iTemp + 1;
-                iCardChoice = iCardChoice - iTemp;
-                if (iCardChoice < iHandSize && iCardChoice > iNeg)
-                    std::cout << "\nYou already chose that card.\n";
-                else if (iCardChoice <= iNeg)
-            }
-        }
-    }
-*/
-
-//******
     void Player::Fold(Deck& dInput/*out*/){                  //The player can forfeit their hand until the end of the floor and get a new hand
         DiscardHand(dInput);
         bFolded = true;
@@ -213,12 +179,12 @@
         void Player::PlayHand(bool noPrint) {                   //Sorts the player's hand based on suit first, and then rank. Used to generate a point value from the hand
         hCards->SortHand();                                     //No printing using bool
         hCards->PrintHand();
-//        ShowScore(outputScore, totalScore);
-//      std::cout << std::fixed <<  std::setprecision(14) << "\n" << hCards->CountPoints() << " points\n\n";
+        float dummy = hCards->CountPoints(true);
     }
 
 //******
         void Player::DiscardCards(Deck& dInput) {
+
             hCards->DiscardCards(dInput);
         }
 
@@ -285,24 +251,53 @@
     }
 
 //******
-    //Hand Play() {                               //The player plays their sorted hand
-    //    return hCards;
-    //}
+    void Player::HeadsUpDisplay(float myPot, std::vector<std::vector<float>> potVect) const {
+        std::cout << "\n~~~~~~\n";
+        std::cout << "Hand:\n\n";
+        hCards->PrintHand();
+        std::cout << "\n";
+        std::cout << "\nCash:                        $" << fCash
+                  << "\nMoney you have in the pot:   $" << currWager + ANTE << "\n";
+
+        for (int iter = 0; iter < potVect.size(); iter++) {
+            int potValue = 0;
+            for (auto next : potVect.at(iter)) {
+                potValue += next;
+            }
+            std::cout << "\nTotal in pot #" << iter << "              $" << potValue;
+        }
+        std::cout << "\n\nCumulative pot value:        $" << myPot << "\n";
+        std::cout << "\n\n~~~~~~\n";
+    }
+
+//******
+    //******
+    void Player::HeadsUpDisplay(float myPot, std::vector<std::vector<float>> potVect, float callValue) const {
+        std::cout << "\n~~~~~~\n";
+        std::cout << "Hand:\n\n";
+        hCards->PrintHand();
+        std::cout << "\n";
+        std::cout << "\nCash:                        $" << fCash
+                  << "\nMoney you have in the pot:   $" << currWager + ANTE
+                  << "\nCurrent call value:          $" << callValue << "\n";
+
+       /* for (int iter = 0; iter < potVect.size(); iter++) {           ********* NEED TO REFACTOR DISTRIBUTEPOT FUNCTION FOR THIS TO WORK *********
+            int potValue = 0;
+            for (auto next : potVect.at(iter)) {
+                potValue += next;
+            }
+            std::cout << "\nTotal in pot #" << iter + 1 << "              $" << potValue;
+        }
+        */
+        std::cout << "\nCumulative pot value:        $" << myPot << "\n";
+        std::cout << "\n~~~~~~\n";
+    }
 
 //******
     Player::~Player() {
         delete hCards;
         hCards = nullptr;
     }                                             //Destructor - deallocates the player's hand and frees its memory
-
-/*
-private:
-    Hand hCards(Deck& dInput);
-    float fCash;
-
-};
-
-*/
 
 
 
@@ -439,10 +434,7 @@ private:
             std::vector<int> selections;
             //std::cout << "\nThis is a test.\n\n";
             hCards->SelectCards(selections);
-           // for (auto i : selections) {
-             //   std::cout << i << "  ";
-            //}
-            //std::cout << "\n\n";
+
             hCards->CPUDiscard(dInput, selections);
         }
     }
