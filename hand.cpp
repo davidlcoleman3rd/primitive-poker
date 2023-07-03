@@ -605,20 +605,20 @@
         int discardCount = 0;                                           //The number of cards the player would discard in this instance
 
 
-        std::vector<std::vector<Card*>> straightCards;
-        std::vector<std::vector<Card*>> flushCards;
+        std::vector<std::vector<Card*>> straightCards;      //A set of vectors of possible straight candidates
+        std::vector<std::vector<Card*>> flushCards;         //A set of vectors of possible flush candidates
 
-        for (int iter = 0; iter < vCards.size(); iter++) {
-            Card* i = &vCards.at(iter);
-            if (i->GetNum() == ACE) {
+        for (int iter = 0; iter < vCards.size(); iter++) {  //Iterates through the player's entire hand of cards
+            Card* i = &vCards.at(iter);                         //Temporary pointer to the current card
+            if (i->GetNum() == ACE) {                           //Turns on hasAce if the player at any point has an ace in their hands
                 hasAce = true;
             }
-            if (prevCard == nullptr) {
+            if (prevCard == nullptr) {                          //If the previous card is null, set it to the current card
                 prevCard = i;
             }
-            else {
-                if (i->GetNum() == prevCard->GetNum()) {
-
+            else {                                              //Otherwise...
+                if (i->GetNum() == prevCard->GetNum()) {            //Compare the prev to the curr
+                                                                        //if there's a pair candidate, push them back to good cards
                     if (streak) {
                         goodCards.push_back(i);
                     }
@@ -628,15 +628,15 @@
                         goodCards.push_back(i);
                     }
                 }
-                else {
-                    if (!(streak)) {
+                else {                                                  //If there's not...
+                    if (!(streak)) {                                        //push back to bad cards'
                         badCards.push_back(prevCard);
                         straightCheck.push_back(prevCard);
                         flushCheck.push_back(prevCard);
                     }
-                    else {
+                    else {                                                  //if there's an existing streak, instead of pushing to bad cards, end the streak
                         streak = false;
-                    }
+                    }       //If the card is ending a streak and it's the last card, send directly to the bad cards
                     if (i->GetSuit() == vCards.back().GetSuit() && i->GetNum() == vCards.back().GetNum()) {
                         badCards.push_back(i);
                         straightCheck.push_back(i);
@@ -644,39 +644,44 @@
                     }
                 }
             }
-            prevCard = i;
+            prevCard = i;       //On end of each iteration, previous card becomes the curr card
         }
-
+                //During the goodCard badCard process, bad cards were also copied to straightCheck and flushCheck
 //******
+        //If there are no good cards, the function will check for straights and flushes
         if (goodCards.size() == 0) {
-            while (straightCheck.size() > 0) {
-                std::vector<int> tempNums;
-                CardNum tempNum;
-                for (int iter = 0; iter < straightCheck.size(); iter++) {
+            while (straightCheck.size() > 0) {      //iterates until no more cards in straightCheck
+                std::vector<int> tempNums;          //Vector of card positions for a straight candidate
+                CardNum tempNum;                    //card rank of a given card candidate - beginning of straight
+                                                        //****CONFUSING NAME CHOICES**** should change this
+                for (int iter = 0; iter < straightCheck.size(); iter++) {       //Iterate until straightCheck has been iterated through
                     if (iter == 0) {
-                        tempNum = straightCheck.at(iter)->GetNum();
-                        tempNums.push_back(iter);
+                        tempNum = straightCheck.at(iter)->GetNum(); //the first cardis tempNum
+                        tempNums.push_back(iter);                   //This value is pushed back onto the vector
                     }
                     else {
+                        //If the number is less than tempNum but no less than tempNum by 5, it can be pushed back as a candidate
                         if (straightCheck.at(iter)->GetNum() < tempNum && straightCheck.at(iter)->GetNum() > tempNum - 5) {
                             tempNums.push_back(iter);
                         }
                     }
                 }
-                std::vector<Card*> tempVect;
+                std::vector<Card*> tempVect;            //tempVect is a vector of pointers that is pushed back onto straight and flush check
                 for (auto i : tempNums) {
-                    tempVect.push_back(straightCheck.at(i));
+                    tempVect.push_back(straightCheck.at(i));        //Each value in the positions is pushed back onto tempVect
                 }
                 int rangeCount = 0;
-                for (auto i : tempNums) {
+                for (auto i : tempNums) {   //Straight check is iterated upon and cleared element by element based on tempVect
                     i -= rangeCount;
                     straightCheck.at(i) = nullptr;
                     straightCheck.erase(straightCheck.begin() - i);
                     rangeCount++;
                 }
-                straightCards.push_back(tempVect);
-                tempVect.clear();
+                straightCards.push_back(tempVect);  //Tempvect as a whole is pushed back on the 2d straight vector
+                tempVect.clear();  //tempVect is cleared and free'd and the loop repeats if there is more to iterate upon
             }
+
+            //The same process as above is repeated for a flush.  Refer to the comments above for more information
             while (flushCheck.size() > 0) {
                 std::vector<int> tempNums;
                 CardSuit tempSuit;
@@ -708,46 +713,48 @@
                 }
                 tempVect.clear();                                                   //Tempvect free'd appropriately
             }
-            int flushNum = 0;
-            int straightNum = 0;
-            for (auto i : flushCards) {
-                if (i.size() > flushNum) {
+
+
+            int flushNum = 0;                       //The highest length of a flush
+            int straightNum = 0;                    //The highest length of a straight
+            for (auto i : flushCards) {         //Iterates through flushCards 2D vector using i
+                if (i.size() > flushNum) {          //If the i is bigger than flushNum, it becomes the new flush num
                     flushNum = i.size();
                 }
             }
 
-            for (auto i : straightCards) {
+            for (auto i : straightCards) {      //The above process repeats for straightNum as well
                 if (i.size() > straightNum) {
                     straightNum = i.size();
                 }
             }
 
-            int biggestNum = 0;
-            int biggestVect = 0;
-            badCards.clear();
-            if (flushNum >= straightNum) {
-                for (int iter = 0; iter < flushCards.size(); iter++) {
-                    if (flushCards.at(iter).size() > biggestNum) {
-                        biggestNum = flushCards.at(iter).size();
+            int biggestNum = 0;                 //Size of the biggest vector
+            int biggestVect = 0;                //Position of the biggeset vector
+            badCards.clear();                   //Empties bad cards
+            if (flushNum >= straightNum) {      //An equal-sized flush is more likely than an equal-sized straight, and will be prioritized
+                for (int iter = 0; iter < flushCards.size(); iter++) {      //Iterates through flush cards
+                    if (flushCards.at(iter).size() > biggestNum) {          //the biggest vector is stored in biggestNum...
+                        biggestNum = flushCards.at(iter).size();            //...and its position in biggest vect.
                         biggestVect = iter;
                     }
                 }
 
-                for (int iter = 0; iter < flushCards.size(); iter++) {
+                for (int iter = 0; iter < flushCards.size(); iter++) {  //All cards in the biggest vect candidate are pushed back to good cards
                     if (iter == biggestVect) {
                         for (auto i : flushCards.at(iter)) {
                             goodCards.push_back(i);
                         }
                     }
                     else {
-                        for (auto i : flushCards.at(iter)) {
+                        for (auto i : flushCards.at(iter)) {            //All other cards are pushed back to bad cards
                             badCards.push_back(i);
                         }
                     }
                 }
             }
-            else {
-                for (int iter = 0; iter < straightCards.size(); iter++) {
+            else {                                                      //If straight cleanly beats out flush, straight is prioritized...
+                for (int iter = 0; iter < straightCards.size(); iter++) {   //...and the same process as above is performed for straights instead
                     if (straightCards.at(iter).size() > biggestNum) {
                         biggestNum = straightCards.at(iter).size();
                         biggestVect = iter;
@@ -770,22 +777,26 @@
         }
 
         //**
-        if (badCards.size() > 3) {
+        if (badCards.size() > 3) {  //If they have 4+ bad cards and an ace, they will discard everything except their ace
             if (hasAce) {
-                discardCount = 4;
+                discardCount = 4;       //Discard count is set to 4
                 std::cout << "The player is discarding everything but their ace.\n";
                 PrintCard(vCards.at(0));
             } else {
-                discardCount = 3;
+                discardCount = 3;       //Without an ace, it's set to 3
             }
         } else {
-            discardCount = badCards.size();
+            discardCount = badCards.size(); //Otherwise, it's set to the number of bad cards they are holding
 
         }
-
-        for (int iter = 0; iter < vCards.size(); iter++) {
-            for (auto k : badCards) {
-                if ((k->GetNum() == vCards.at(iter).GetNum()) && (k->GetSuit() == vCards.at(iter).GetSuit())) {
+        int tempCount = 0;
+        for (int iter = 0; iter < vCards.size(); iter++) {  //vCards is iterated through.
+            tempCount++;
+            for (auto k : badCards) {   //If a card in vCards matches a bad card, it's pushed back onto selections
+                if (tempCount <= discardCount
+                    && (k->GetNum() == vCards.at(iter).GetNum())
+                    && (k->GetSuit() == vCards.at(iter).GetSuit())) {
+                        //If the card matches and they haven't already selected too many bad cards
                     selections.push_back(iter);
                 }
             }
@@ -824,30 +835,30 @@
     }
 
 //******
-    void Hand::CPUDiscard(Deck& dInput, std::vector<int>& selections) {               //NEED TO CHANGE THIS FUNCTIONS LOGIC TO ALLOW FOR PLAYER STATS TO COME INTO PLAY!!!!!!!
-        std::vector<int> cardNums;
-        std::vector<Card> cardVect;
-        for (int iter = 0; iter < selections.size(); iter++) {
-            if (cardNums.size() > 0) {
+    void Hand::CPUDiscard(Deck& dInput, std::vector<int>& selections) {     //The CPU discards the cards that they select
+        std::vector<int> cardNums;                                          //vector of card positions
+        std::vector<Card> cardVect;                                         //vector of the cards themselves
+        for (int iter = 0; iter < selections.size(); iter++) {  //itereates through selections
+            if (cardNums.size() > 0) {          //reduces iter to 0 on each iteration after the 1st
                 selections.at(iter) -= iter;
             }
-            cardVect.push_back(vCards.at(selections.at(iter)));
-            dInput.ToDiscard(vCards.at(selections.at(iter)));
-            vCards.erase(vCards.begin() + (selections.at(iter)));
-            cardNums.push_back(selections.at(iter));
+            cardVect.push_back(vCards.at(selections.at(iter)));     //Pushes back the vCard at selection iter
+            dInput.ToDiscard(vCards.at(selections.at(iter)));       //Discards this card
+            vCards.erase(vCards.begin() + (selections.at(iter)));   //erases it from the hand vector
+            cardNums.push_back(selections.at(iter));                //pushes back the selected position to cardNums
 
         }
-        if (cardVect.size() > 0) {
+        if (cardVect.size() > 0) {      //If they discarded any cards...
             std::cout << "The player discards the following cards:\n";
-            PrintSelection(cardVect);
-            DrawCard(selections.size(), dInput);
-            SortHand();
-        } else {
+            PrintSelection(cardVect);               //These discarded cards are printed
+            DrawCard(selections.size(), dInput);    //They draw new cards to fill their hand
+            SortHand();                             //Their hand is sorted
+        } else {                        //...if not, this information is relayed to the table
             std::cout << "The player keeps all cards in their hand.\n\n";
         }
     }
 //******
-    void Hand::ShowScore(int iOutput, double iTotal) const {
+    void Hand::ShowScore(int iOutput, double iTotal) const {        //Uses iOutput and iTotal to output a player's hand with fanfare appropriately
         switch (iOutput) {
             case 100 : std::cout << "\nOne pair!\n"; break;
             case 200 : std::cout << "\nTwo pair!\n"; break;
@@ -867,8 +878,3 @@
         }
     }
 
-
-//******
-    Hand::~Hand() {
-
-    }

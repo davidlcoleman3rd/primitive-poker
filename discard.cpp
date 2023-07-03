@@ -36,7 +36,6 @@
         return stPile.size();
     }
 //******
-//    Discard::~Discard() { }          //Destructor - currently does nothing
 
 /*
 private:

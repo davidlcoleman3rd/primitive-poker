@@ -30,6 +30,8 @@ const int HAND_STATE = 1;         //Holds the numerical version of the enum CARD
 //This block consists of the multipliers for hands of cards
 //  This block is very important for assuring that a superior hand will ALWAYS beat a weaker one
 //******
+const int MIN_STRENGTH = 10;                //Used specifically for hand judging
+
 const int TWOPAIR_MULT = 30;                //Multiplier for two pairs
 const int TRIPS_MULT = 720;                 //Multiplier for 3 of a kind
 const int FULLHOUSE_PAIR_MULT = 1000;       //Multiplier for the pair section of a full house
@@ -101,16 +103,13 @@ public:
     void ShowScore(int, double) const;                 //Prints out the specific hand the player has
 
 //******
-    void SelectCards(std::vector<int>&);
+    void SelectCards(std::vector<int>&);                //used by the CPU to select the cards they'd like to discard
 
 //******
-    void CPUDiscard(Deck&, std::vector<int>&);
-
-//******
-    ~Hand();
+    void CPUDiscard(Deck&, std::vector<int>&);          //used by the CPU to discard their selected cards
 
 private:
-    std::vector<Card> vCards;
+    std::vector<Card> vCards;                           //This vector of cards serves as the actual data for the hand of cards the player uses
 
 };
 

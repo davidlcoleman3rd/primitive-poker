@@ -45,14 +45,14 @@
                 HeadsUpDisplay(myPot, potVect);
                 std::cout << "\nEnter how much money you bet. Type 0 to fold.\n";
                 std::cin >> fTempCash;
-                if (fTempCash == 0) {                                                    //If the player enters 0, they fold their hand
-                    Fold(dInput);
-                    break;
-                }
-                else if (fTempCash > fCash || fTempCash < 0 || !std::cin) {
+                if (fTempCash > fCash || fTempCash < 0 || !std::cin) {
                     std::cout << "\nInvalid input.  Only enter a value within your cash amount, or fold.\n";
                     std::cin.clear();
                     std::cin.ignore(1000, '\n');
+                    fTempCash = -1;
+                } else if (fTempCash == 0) {                                                    //If the player enters 0, they fold their hand
+                    Fold(dInput);
+                    break;
                 }
             }
             fTempCash = std::floor(fTempCash);
@@ -69,53 +69,54 @@
     float Player::CallBet(float callValue, Deck& dInput, float myPot, std::vector<std::vector<float>> potVect) {      //The player can choose to call or raise an existing bet
         int temp = 0;
         bool outOfMoney = false;
-        if (fCash < callValue - currWager) {
+        if (fCash < callValue - currWager) {                                                //Checks if the player is out of the money - if so, they must go all in and not sidebet
             std::cout << "\nPlayer 1 is out of the money\n\n";
             outOfMoney = true;
         }
-        if (FoldedHand()) {
+        if (FoldedHand()) {                                                                 //If the player has already folded, this paradigm persists
             std::cout << "\nPlayer 1 has folded\n";
             return 0;
         } else {
             int playerInput;
             bool betting = true;
-            while (betting) {
-                if (outOfMoney) {
+            while (betting) {                                                               //This loop repeats as long as the player needs to call/raise/fold
+                if (outOfMoney) {                                                               //If the player is out of the money, they must go all-in to stay in the game
                     std::cout << "\nYou must go all in to stay in the game.\n\n";
                 }
 
-                HeadsUpDisplay(myPot, potVect, callValue);
+                HeadsUpDisplay(myPot, potVect, callValue);                                      //Print the player's heads up display
 
                 std::cout <<   "\n- Type the value you wish to raise the bet by (or go all-in if required)."
                           <<   "\n- Type 0 to call the bet (or to go all-in if required to stay in the game)."
                           <<   "\n- Type any value less than 0 to fold.\n\n";
-                std::cin >> playerInput;
-                if (playerInput == 0 && std::cin && !outOfMoney) {
+                std::cin >> playerInput;                                                        //Player enters their choice. Negative values = fold. 0 = call. Positive values = raise
+                if (playerInput == 0 && std::cin && !outOfMoney) {                              //Called value - returns the callValue back to the calling function
                     std::cout << "\nPlayer 1 calls the bet.\n\n";
                     return callValue;
-                } else if (playerInput < 0) {
+                } else if (playerInput < 0) {                                                   //Fold return - returns 0 to calling function
                     std::cout << "\nPlayer 1 folds.\n\n";
                     Fold(dInput);
                     return 0;
-                } else if (playerInput >= 0 && std::cin && outOfMoney) {
-                    std::cout << "\nPlayer 1 goes all in to stay in the game.\n\n";
+                } else if (playerInput >= 0 && std::cin && outOfMoney) {                        //All in to stay in the game - returns entire cash value
+                    std::cout << "\nPlayer 1 goes all in to stay in the game.\n\n";             //...this only works if outOfMoney is turned on
                     return fCash;
                 } else {
-                        if (fCash >= (callValue - currWager) + playerInput) {
-                            temp = callValue + playerInput;
-                            temp = std::floor(temp);
+                        if (fCash >= (callValue - currWager) + playerInput) {                   //If the player has enough cash for their input...
+                            temp = callValue + playerInput;                                         //They raise the value by the input and returns the sum of it and callValue
+                            temp = std::floor(temp);                                                //...this value is rounded down before returning
                             betting = false;
-                        } else if (!std::cin) {
+                        } else if (!std::cin) {                                                 //If they entred and invalid value, this is relayed to the player and they try again
                             std::cout << "\nInvalid input.  Please try again.\n\n";
                             std::cin.clear();
                             std::cin.ignore(1000, '\n');
-                        } else {
+                        } else {                                                                //If they don't have enough money, this is relayed and they try again
+
                             std::cout << "\nPlayer 1 does not have enough money for that raise.  Please try again.\n";
                         }
                     }
                 }
             }
-        return temp;
+        return temp;                                                                    //Temp - the value the player is putting into the pot - is returned to the calling function
     }
 
 //******
@@ -124,21 +125,15 @@
     }
 
 //******
-    float Player::TakeWager(float fCashIn/*in*/) {
-        /*std::cout << "\n\n\nCurrwager = " << currWager << "\n"
-                  << "fCashIn = " << fCashIn << "\n\n\n";*/
-        int temp = fCashIn - currWager;
-        currWager += temp;
+    float Player::TakeWager(float fCashIn/*in*/) {                  //The player's currWager variable is incremented by how much they are putting into the pot, and
+        int temp = fCashIn - currWager;                             //...their cash is reduced by that much.  Then that value is returned to the calling function to increase
+        currWager += temp;                                          //...the pot by how much the player is wagering
         fCash -= temp;
-        /*std::cout << "\n\nThis is a test:\n\n"
-                  << "temp = " << temp << "\n"
-                  << "currWager = " << currWager << "\n"
-                  << "fCash = " << fCash << "\n\n\n";*/
         return float(temp);
     }
 
 //******
-    float Player::AllIn() {
+    float Player::AllIn() {                                         //Same as above, but returns the entire cash pool of the player to the caller
         int temp = fCash;
         currWager += fCash;
         fCash = 0;
@@ -146,7 +141,7 @@
     }
 
 //******
-    float Player::SoftWager(float fCashIn) {
+    float Player::SoftWager(float fCashIn) {                        //This is used to modify the myPot variable - not the muiltipot.  Prevents double dipping into player money
         int temp = currWager;
         return fCashIn - temp;
     }
@@ -163,7 +158,7 @@
 }
 
 //******
-    bool Player::FoldedHand() {
+    bool Player::FoldedHand() {                                 //Returns the status of bFolded - if the player has folded, returns true.  If not, returns false
         return bFolded;
     }
 
@@ -171,7 +166,6 @@
     void Player::PlayHand() {                                   //Sorts the player's hand based on suit first, and then rank. Used to generate a point value from the hand
         hCards->SortHand();
         hCards->PrintHand();
-//        ShowScore(outputScore, totalScore);
         std::cout << std::fixed <<  std::setprecision(14) << "\n" << hCards->CountPoints(true) << " points\n\n";
     }
 
@@ -183,28 +177,29 @@
     }
 
 //******
-        void Player::DiscardCards(Deck& dInput) {
+        void Player::DiscardCards(Deck& dInput) {               //Parses the playerHand into the discard function
 
             hCards->DiscardCards(dInput);
         }
 
 //******
-        void Player::DiscardHand(Deck& dInput) {
+        void Player::DiscardHand(Deck& dInput) {                //Parses the player hand and discards the entire hand
             hCards->DiscardHand(dInput);
         }
 
 //******
-        void Player::NewHand(Deck& dInput) {
+        void Player::NewHand(int handSize, Deck& dInput) {                    //Unfolds the player and draws them a new hand of cards
             bFolded = false;
-            hCards->DiscardHand(dInput);
-            hCards->DrawCard(5, dInput);
+            hCards->DiscardHand(dInput);                                        //Discards a full hand and draws that many cards
+            hCards->DrawCard(handSize, dInput);
+            currWager = 0;
         }
 
 //******
-        void Player::NewHand(Deck& dInput, bool noDiscard) {
+        void Player::NewHand(int handSize, Deck& dInput, bool noDiscard) {  //Unfolds the player and draws however many cards the player needs to draw for a full hand
             bFolded = false;
-            int tempInt = hCards->CardCount();
-            hCards->DrawCard((5 - tempInt), dInput);
+            int tempInt = hCards->CardCount();                                  //tempInt is equal to the number of cards the player has
+            hCards->DrawCard((handSize - tempInt), dInput);                     //draws however many cards the player needs - hand size constant minus card the player has
             currWager = 0;
         }
 
@@ -221,58 +216,50 @@
     }
 
 //******
-    void Player::SetOpinion(PlayerPerception input) {
+    void Player::SetOpinion(PlayerPerception input) {                           //Pushes a new opinion back on the player's perception vector.  What the player thinks of other players
         opinions.push_back(input);
     }
 
 //******
-    void Player::SetOpinion(PlayerPerception input, int selection) {
+    void Player::SetOpinion(PlayerPerception input, int selection) {            //Changes an existing opinion in the player's perception vector.
         opinions.at(selection) = input;
     }
 
 //******
-    void Player::SetCurrPot(int selection) {
+    void Player::SetCurrPot(int selection) {                                    //Sets the current pot the player is betting within
         currPot = selection;
     }
 
 //******
-    void Player::IncrementPot() {
+    void Player::IncrementPot() {                                               //Increments the current pot the player is betting within
         currPot++;
     }
 
 //******
-    int Player::GetCurrPot() {
+    int Player::GetCurrPot() {                                                  //Returns the player's current betting pot to the calling function
         return currPot;
     }
 
 //******
-    void Player::ResetCurrPot() {
+    void Player::ResetCurrPot() {                                               //Resets the current pot the player is betting on to 0.
         currPot = 0;
     }
 
 //******
-    void Player::HeadsUpDisplay(float myPot, std::vector<std::vector<float>> potVect) const {
+    void Player::HeadsUpDisplay(float myPot, std::vector<std::vector<float>> potVect) const {       //heads up display. Any time the player makes a decision, prints important info
         std::cout << "\n~~~~~~\n";
         std::cout << "Hand:\n\n";
         hCards->PrintHand();
         std::cout << "\n";
         std::cout << "\nCash:                        $" << fCash
                   << "\nMoney you have in the pot:   $" << currWager + ANTE << "\n";
-
-        for (int iter = 0; iter < potVect.size(); iter++) {
-            int potValue = 0;
-            for (auto next : potVect.at(iter)) {
-                potValue += next;
-            }
-            std::cout << "\nTotal in pot #" << iter << "              $" << potValue;
-        }
         std::cout << "\n\nCumulative pot value:        $" << myPot << "\n";
         std::cout << "\n\n~~~~~~\n";
     }
 
 //******
     //******
-    void Player::HeadsUpDisplay(float myPot, std::vector<std::vector<float>> potVect, float callValue) const {
+    void Player::HeadsUpDisplay(float myPot, std::vector<std::vector<float>> potVect, float callValue) const {  //The same as above but also prints the callValue
         std::cout << "\n~~~~~~\n";
         std::cout << "Hand:\n\n";
         hCards->PrintHand();
@@ -280,15 +267,6 @@
         std::cout << "\nCash:                        $" << fCash
                   << "\nMoney you have in the pot:   $" << currWager + ANTE
                   << "\nCurrent call value:          $" << callValue << "\n";
-
-       /* for (int iter = 0; iter < potVect.size(); iter++) {           ********* NEED TO REFACTOR DISTRIBUTEPOT FUNCTION FOR THIS TO WORK *********
-            int potValue = 0;
-            for (auto next : potVect.at(iter)) {
-                potValue += next;
-            }
-            std::cout << "\nTotal in pot #" << iter + 1 << "              $" << potValue;
-        }
-        */
         std::cout << "\nCumulative pot value:        $" << myPot << "\n";
         std::cout << "\n~~~~~~\n";
     }
@@ -322,35 +300,44 @@
         std::uniform_int_distribution<int> randInt(1, 100);     //The object that produces our random number
         int tempRoll = 0;                                       //Diceroll variable - used to streamline the dice rolling process
 
-        if (temp <= 10) {
+        if (temp <= MIN_STRENGTH) {                     //Weakest judgement
             opinions[0] = WEAK;
         }
-        else if (temp <= 30) {
+        else if (temp <= TWOPAIR_MULT) {                //Second weakest
             opinions[0] = SUBPAR;
         }
-        else if (temp <= 720) {
+        else if (temp <= TRIPS_MULT) {                  //Average
             opinions[0] = AVERAGE;
         }
-        else if (temp <= 2400) {
+        else if (temp <= STRAIGHT_MULT) {               //Second strongest
             opinions[0] = DECENT;
         }
         else {
-            opinions[0] = STRONG;
+            opinions[0] = STRONG;                       //Strongest
         }
-        tempRoll = (randInt(seedMake));
+        tempRoll = (randInt(seedMake));                 //Random number
+
+        //Takes the player's bluff stat pluss 1/20th of their random roll.
+        //If this number is greater than the easy roll constant OR they roll a natural twenty (93 and above)...
         if (bluffStat + tempRoll / DICE_MOD > EASY_ROLL || tempRoll > NAT_TWENTY) {
-            tempRoll = (randInt(seedMake));
+
+            tempRoll = (randInt(seedMake));       //Temproll is re-initialized
+
+            //1/20th of the random roll is added to the aggressiveness stat
+            //If the roll is a natural twenty OR they roll above a master roll value...
+
             if (aggressivenessStat + tempRoll / DICE_MOD > MASTER_ROLL || tempRoll > NAT_TWENTY) {
-                GetTell(PlayerPerception(int(STRONG) - int(opinions[0])));
+
+                GetTell(PlayerPerception(int(STRONG) - int(opinions[0])));      //Returns and stores the opposite of their hand's worth
                 return PlayerPerception(int(STRONG) - int(opinions[0]));
             }
-            else {
-                GetTell(CANNOT_READ);
+            else {                                  //If not...
+                GetTell(CANNOT_READ);                   //Returns and outputs a poker face
                 return CANNOT_READ;
             }
         }
-        else {
-            GetTell();
+        else {                              //If not greater than an easy roll or a nat twenty...
+            GetTell();                          //Returns and outputs the player's actual judgement of their own hand
             return opinions[0];
         }
     }
@@ -358,22 +345,23 @@
 //******
     PlayerPerception CPU::JudgeHand(bool noOuput) {                 //Gets a judgement for the hand and attempts to pass a bluffed judgement to the table
                                                                     //BOOL PASSED PREVENTS OUTPUT TO THE TERMINAL
+                                                                    //The same as above without an output to the screen
         float temp = hCards->CountPoints(false);
         std::random_device scoreMake;                           //Random device
         std::mt19937 seedMake(scoreMake());                     //Random device seed
         std::uniform_int_distribution<int> randInt(1, 100);     //The object that produces our random number
 
 
-        if (temp <= 10) {
+        if (temp <= MIN_STRENGTH) {
             opinions[0] = WEAK;
         }
-        else if (temp <= 30) {
+        else if (temp <= TWOPAIR_MULT) {
             opinions[0] = SUBPAR;
         }
-        else if (temp <= 720) {
+        else if (temp <= TRIPS_MULT) {
             opinions[0] = AVERAGE;
         }
-        else if (temp <= 2400) {
+        else if (temp <= STRAIGHT_MULT) {
             opinions[0] = DECENT;
         }
         else {
@@ -381,17 +369,15 @@
         }
 
         if (bluffStat + (randInt(seedMake)) / DICE_MOD > 10) {
-            //GetTell(PlayerPerception(int(STRONG) - int(opinion)));
             return PlayerPerception(int(STRONG) - int(opinions[0]));
         }
         else {
-            //GetTell();
             return opinions[0];
         }
     }
 
 //******
-    void CPU::GetTell(PlayerPerception opinion) {
+    void CPU::GetTell(PlayerPerception opinion) {           //Outputs the player's bluffed judgement to the screen
         if (FoldedHand()) {
             std::cout << "\nThey have folded.\n\n";
         }
@@ -408,7 +394,7 @@
     }
 
 //******
-    void CPU::GetTell() {
+    void CPU::GetTell() {           //Outputs the player's true judgement to the screen
         if (FoldedHand()) {
             std::cout << "\nThey have folded.\n\n";
         }
@@ -425,17 +411,12 @@
     }
 
 //******
-    void CPU::DiscardCards(Deck& dInput) {
-        //std::random_device handMake;                           //Random device
-        //std::mt19937 seedMake(handMake());                     //Random device seed
-        //std::uniform_int_distribution<int> randInt(1, 100);     //The object that produces our random number
+    void CPU::DiscardCards(Deck& dInput) {          //Allows the CPU to select and discard certain cards for a better hand
+        if (opinions[0] < STRONG) {                 //If their hand is not considered "strong"...
+            std::vector<int> selections;                //Vector of ints
+            hCards->SelectCards(selections);            //A function is called using the vector above to store the selected cards to discard
 
-        if (opinions[0] < STRONG) {
-            std::vector<int> selections;
-            //std::cout << "\nThis is a test.\n\n";
-            hCards->SelectCards(selections);
-
-            hCards->CPUDiscard(dInput, selections);
+            hCards->CPUDiscard(dInput, selections);     //The selected cards are parsed, iterated, discarded, and new cards are drawn
         }
     }
 
@@ -542,17 +523,19 @@
                     }
                 }
 
+                //if their action score is at least greater than a medium action, the routine of setting it between 1 and 10 based on raw hand value is performed
+                //...otherwise, it remains at 0.
                 int actionMod = 0;
                 if (actionScore > MEDIUM_ACTION) {
-                    if (actionScore >= DECISIVE_ACTION * 10) {
-                        actionMod = 10;
+                    if (actionScore >= DECISIVE_ACTION * DICE_MOD) {
+                        actionMod = DICE_MOD;
                     }
                     else {
-                        int temp = (10 * DECISIVE_ACTION) - actionScore;
+                        int temp = (DICE_MOD * DECISIVE_ACTION) - actionScore;
                         if (temp < 1) {
                             temp = 1;
                         }
-                        actionMod = 10 / (temp);
+                        actionMod = DICE_MOD / (temp);
                     }
                 }
 
@@ -560,24 +543,33 @@
                 tempRoll = randInt(seedMake);
                 int tempRoll2 = randInt(seedMake);
                 int tempRoll3 = randInt(seedMake);
-                //std::cout << "\nCurrent action score: " << actionScore << "\n\n";
-                if (actionScore * (tempRoll / DICE_MOD)
-                * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)) > EASY_ACTION /*NEED TO MAKE THIS A CONSTANT*/){
 
+                    //If the player's action score times their modified dice roll times (their agressiveness stat times a modified dice roll) is GREATER...
+                        //...than the easy action constant, they will lead the bet this turn
+                if (actionScore * (tempRoll / DICE_MOD)
+                    * (aggressivenessStat * (randInt(seedMake) / DICE_MOD)) > EASY_ACTION){
+
+                    //The cash they will raise the score by becomes equal to their cash divided by 50.  Then, this number is multiplied by 5 different elements
+                            //1)        their raw aggressiveness stat
+                            //2)        their first dice roll over the dice modifier (1-100 / 10)
+                            //3)        their aggressiveness stat over 10 times their second dice roll over the dice modifier
+                            //4)        their action modifier - a scale of 1 through 10 based on their raw hand value
+                            //5)        their perception stat over (two times dice mod [20]), and this value times their action mod plus (their 3rd roll over diceMod)
 
                     fTempCash = (fCash / (DICE_MOD * 5.0)) * (((aggressivenessStat) + ((tempRoll / DICE_MOD)) + ((aggressivenessStat / DICE_MOD) * ((tempRoll2 / DICE_MOD)))
                                                             + (actionMod) + ((perceptionStat / (DICE_MOD * 2)) * (actionMod + tempRoll3 / DICE_MOD))));
 
 
-                    if (fTempCash < 1) {
+                    if (fTempCash < 1) {    //if their fTempCash (amount they would like to bet) is less than 1, it is set to 1 instead
                         fTempCash = 1;
                     }
-                    fTempCash = std::floor(fTempCash);
-                    currWager = fTempCash;
+                    fTempCash = std::floor(fTempCash);      //fTempCash is rounded down
+                    currWager = fTempCash;                  //CurrWager is set to the current fTempCash - this works because it would be the first bet of the game in this particular instance
                     std::cout << "\nPlayer " << playerNum << " bets $" << currWager << "\n\n";
                 }
 
-                else {                                                              //If the player bets nothing, they fold their hand
+                else {                                                              //If the player's action score isn't high enough to justify betting...
+                                                                                    //...they fold their hand.
                     fTempCash = 0;
                     std::cout << "\nPlayer " << playerNum << " has folded.\n\n";
                     Fold(dInput);
@@ -614,12 +606,12 @@
         int opponentRoll = 0;                                   //Variable to hold the value of the opponent's dice roll
         bool outOfMoney = false;
 
-        if (fCash < (callValue - currWager)) {
+        if (fCash < (callValue - currWager)) {                                          //OutOfMoney turns on if the player has not enough money to meet the call
             std::cout << "\nPlayer " << playerNum << " is out of the money.\n\n";
             outOfMoney = true;
         }
 
-        if (FoldedHand()) {
+        if (FoldedHand()) {                                                             //Returns 0 if the player has folded
             std::cout << "\nPlayer " << playerNum << " has folded.\n\n";
             return 0;
         } else {
@@ -674,10 +666,13 @@
                     }
 
                     tempRoll = randInt(seedMake);
+                    //This will take away or add to the action score based on how confident you feel about your own hand
+                    //...vs how you feel about the player tells, with a slight modifier based on raw player tell data
+                    //...added to a dice roll
                     actionScore -= ((2 * (int(yourOpinion[iter]) - int(opinions[0])) * (perceptionStat + (tempRoll / DICE_MOD)))
                                         + (int(yourOpinion[iter]) * (randInt(seedMake) / DICE_MOD)));                                     //This will take away or add to the action score based on how confident you feel about your own hand
                                                                                                                                             //...vs how you feel about the player tells, with a slight modifier based on raw player tell data
-                                                                                                                                            //...added to a dice roll
+                                                                                                                                            //...added to a dice roll.  The action score is how the CPU will make decisions
                 }
 
                 for (auto i : inOpinion) {
@@ -700,52 +695,71 @@
                         actionScore += int (opinions[0] - AVERAGE) * (randInt(seedMake) / DICE_MOD);
                     }
                 }
-                float tempForIf = actionScore;
-
-                int actionMod = 0;
-                if (actionScore > MEDIUM_ACTION) {
-                    if (actionScore >= DECISIVE_ACTION * 10) {
-                        actionMod = 10;
+                float tempForIf = actionScore;                                  //This variable takes and manipulates the action score
+                                                                                    //*****SEEMS REDUNDANT***** why not just use action score?
+                int actionMod = 0;                                              //This variable plays a part in the money selection section if the player bets
+                                                                                    //This directly represents how strong the player's hand is for bet amount
+                if (actionScore > MEDIUM_ACTION) {                              //If the player's action score is at least above the medium constant, actionMod
+                                                                                    //...is at least 1
+                    if (actionScore >= DECISIVE_ACTION * DICE_MOD) {                //If actionScore is greater than the dice modifier times the decisive constant...
+                        actionMod = DICE_MOD;                                           //actionMod becomes the dice modifier - the highest possible value it can hold
                     }
-                    else {
-                        int temp = (10 * DECISIVE_ACTION) - actionScore;
-                        if (temp < 1) {
+                    else {                                                          //otherwise...
+                        int temp = (DICE_MOD * DECISIVE_ACTION) - actionScore;          //temp is created as dicemod x decisive minus action score
+                        if (temp < 1) {                                                     //temp is rounded up to 1 if it is less than 1
                             temp = 1;
                         }
-                        actionMod = 10 / (temp);
+                        actionMod = DICE_MOD / (temp);                          //ActionMod beccomes the dice modifier divided by temp
                     }
                 }
-                if (outOfMoney && fCash == 0){
+                if (outOfMoney && fCash == 0){                                              //If the player is already all-in, this is relayed and 0 is returned
                     std::cout << "\nPlayer " << playerNum << " is already all-in.\n\n";
                     fTempCash = 0;
+
+                    //If the player is out of the money AND their tempForIf/actionScore is greater than the decisive constant over the specific mod...
+                        //... the player's cash over (their aggressiveness state times (a random number over dice modifier))...
+                    //...then they can go all in to stay in the game.
                 }else if (outOfMoney && tempForIf > DECISIVE_ACTION + (fCash / ((aggressivenessStat * (randInt(seedMake) / DICE_MOD))))) {
                     std::cout << "\nPlayer " << playerNum << " goes all-in to stay in the game.\n\n";
                     fTempCash = fCash;
                     return fTempCash;
-                } else if (!outOfMoney && tempForIf > MEDIUM_ACTION /*NEED TO MAKE THIS A CONSTANT*/ && tempForIf <= DECISIVE_ACTION) {
+
+                    //If they are NOT out of the money and their score is greater than the medium constant but is less than/equal to the decisive constant...
+                    //...then they will call the bet
+                } else if (!outOfMoney && tempForIf > MEDIUM_ACTION && tempForIf <= DECISIVE_ACTION) {
                     fTempCash = callValue;
                     std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
+
+                    //If they are NOT out of the money and their score is greater than the decisive constant...
+                    //...then they will RAISE the bet if they have the money
+
                 } else if (!outOfMoney && tempForIf > DECISIVE_ACTION) {
-                    if (fCash - MIN_CALL > (callValue - currWager)) {
+
+                    if (fCash - MIN_CALL > (callValue - currWager)) {   //If their cash minus the minimum call (10) is greater than the call value minus their currWager...
+                                                                            //...they will raise the bet using stats and random rolls
                         int testint = 0;
                         tempRoll = randInt(seedMake);
                         int tempRoll2 = randInt(seedMake);
                         int tempRoll3 = randInt(seedMake);
                         float checkCash = fCash - (callValue - currWager);
+
+                        //The cash they will raise the score by becomes equal to their cash divided by 50.  Then, this number is multiplied by 5 different elements
+                            //1)        their raw aggressiveness stat
+                            //2)        their first dice roll over the dice modifier (1-100 / 10)
+                            //3)        their aggressiveness stat over 10 times their second dice roll over the dice modifier
+                            //4)        their action modifier - a scale of 1 through 10 based on their raw hand value
+                            //5)        their perception stat over (two times dice mod [20]), and this value times their action mod plus (their 3rd roll over diceMod)
                         fTempCash = ((checkCash) / (DICE_MOD * 5)) * ((aggressivenessStat) + (tempRoll / DICE_MOD) + (aggressivenessStat / DICE_MOD * (tempRoll2 / DICE_MOD))
                                                             + (actionMod) + ((perceptionStat / (DICE_MOD * 2)) * (actionMod + (tempRoll3 / DICE_MOD))));
 
-                        fTempCash = std::floor(fTempCash);
-                        if (fTempCash < MIN_CALL) {
+                        fTempCash = std::floor(fTempCash);      //the cash they will wager is rounded down.
+                        if (fTempCash < MIN_CALL) {             //If it's less than 10, it is rounded up to 10 at the least.
                             fTempCash = MIN_CALL;
                         }
                         std::cout << "\nPlayer " << playerNum << " raises the bet by " << fTempCash << "\n\n";
                         fTempCash += callValue;
-                        /*std::cout << "\n\nCash = " << fCash << "\n"
-                                  << "checkCash = " << checkCash << "\n"
-                                  << "callValue = " << callValue << "\n"
-                                  << "currWager = " << currWager << "\n\n\n";
-                        std::cin >> testint;*/
+
+                        //If their cash minus the minimum call is NOT greater than the call value minus their currWager, they CALL the bet instead of raising it
                     } else {
                         fTempCash = callValue;
                         std::cout << "\nPlayer " << playerNum << " calls the bet.\n\n";
@@ -756,20 +770,22 @@
                     std::cout << "\nPlayer " << playerNum << " has folded.\n\n";
                     return 0;
                 }
-                fTempCash -= currWager;
+                fTempCash -= currWager;                                             //Reduces fTempCash by currWager to end the loop
             }
-            fTempCash += currWager;
+            fTempCash += currWager;                                                 //Adds currWager back for correct math after the loop
+                                                                                        //*****SEEMS A LITTLE JANKY***** ^^better way of doing this??
+
             return fTempCash;                                                       //Returns this value to the calling function    -   POT SHOULD BE CALLING OBJECT
         }
     }
 
 //******
-    int Player::GetBluffStat() {
+    int Player::GetBluffStat() {                                                    //Returns bluff stat of the player to the calling function
         return bluffStat;
     }
 
 //******
-    PlayerPerception Player::GetPlayerTells(int input) {
+    PlayerPerception Player::GetPlayerTells(int input) {                            //Returns a specific player's opinion OF a specific player to the calling function
         return opinions[input];
     }
 

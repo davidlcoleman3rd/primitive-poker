@@ -1,59 +1,34 @@
 # primitive-poker
-A simple text-based poker game WIP.
 
-**Version 0.9.4**
+Primitive Poker is a simple command-line-based poker game.  1 player can play with 3 different CPU's - each with a randomly-generated "personality" - and play Five-Card draw.  Will you be the last player standing?  Or will you walk home with your tail between your legs?
+
+***Version 1.0.0***
+   - Full release
+
+   - FUTURE GOALS
+      - Advanced bluff behavior for the CPU - detailed in version 0.9.0 documentation
+      - Statistical analysis of realistic player betting/folding/raising likelihoods
+      - Need to implement a function to allow the player to disable suit symbols
+      - Remove unneeded files from the program's source table
+---
+
+**LEGACY VERSIONS**
+
+The following is a detailed history of the development of Primitive Poker and the features that were implemented in each snapshot
+
+***Version 0.9.0***
 - *GOALS ACCOMPLISHED*
+   - Commented on every function/variable
    - Made it so the player can see what cards are being discarded by the CPU's when they discard cards
    - Created a heads up display function that shows all important information to the player whenever they must make a decision in game
    - Created a ShowSelection function that allows a selection of cards to be shown (such as discarded cards)
    - Added some functionality where player number can be seen during the discard phase - allowing the user player to know which CPU discarded what
    - Improved formatting for readability; including break lines so important sections can be isolated from the rest of the text, improving player comprehension
-
-- *GOALS TO BE ACCOMPLISHED*
-   - Comments on everything in the program/documentation
-   - Advanced bluff behavior for the CPU - detailed in version 0.9.0 documentation
-   - Statistical analysis of realistic player betting/folding/raising likelihoods
-
-
-**Version 0.9.3**
-- *GOALS ACCOMPLISHED*
-   - Begun to comment on all functions/elements of the program
    - Made printing aces for ace selection more sensical
    - Made instances where the player discards 4 cards make more sense
    - Optimized code for the scoring and discarding functions
-
-- *GOALS TO BE ACCOMPLISHED*
-   - Comments on everything in the program/documentation
-   - Advanced bluff behavior for the CPU - detailed in version 0.9.0 documentation
-   - Statistical analysis of realistic player betting/folding/raising likelihoods
-
-=============
-
-**Version 0.9.2**
-- *GOALS ACCOMPLISHED*
    - Managed to establish pot-splitting in the event of a tie with the multi-pot system
-
-- *GOALS TO BE ACCOMPLISHED*
-   - Comments on everything in the program/documentation
-   - Advanced bluff behavior for the CPU - detailed in version 0.9.0 documentation
-   - Statistical analysis of realistic player betting/folding/raising likelihoods
-
-=============
-
-**Version 0.9.1**
-- *GOALS ACCOMPLISHED*
    - Multi-pot implemented and works as intended
-
-- *GOALS TO BE ACCOMPLISHED*
-   - Comments on everything in the program/documentation
-   - Advanced bluff behavior for the CPU - detailed in version 0.9.0 documentation
-   - Statistical analysis of realistic player betting/folding/raising likelihoods
-   - Tie breaking/pot splitting in the event of a tie
-
-============
-
-**Version 0.9.0**
-- *GOALS ACCOMPLISHED*
    - Refactoring functions in main.cpp into Game.h and Game.cpp
        - This will be elaborated on further; game objects can perform the fiveCardDraw, sevenCardStud, texasHoldEm, and etc. functions for different game modes
    - Several logical errors
@@ -61,19 +36,9 @@ A simple text-based poker game WIP.
    - Multi-Pot implemented, albeit buggy
       - This serves as a vector of vectors of floats.  This allows for each player to get their money back from a tie in the future
 
-- *GOALS CURRENTLY BEING ATTEMPTED*
-   - Mutli-pot has issues with taking in and paying out the correct amount of money
-   - Need advanced bluff behavior for the CPU
-      - CPU that pretends to be upset will *at least* draw 2 cards to maintain the facade
-      - CPU that pretends to be happy will discard *no more* than 2 cards to maintain the facade
-   - Need lots of testing to get the statistical likeliness of player behavior
-      - How often do CPU's fold?  How much does aggressiveness affect this?
-      - How strict is action score?  Can it be further modified to be effective but not so strict?
-      - Player bluffs, more often than not, should be inability to read their face - this should be very common behavior.
-
-- *GOALS NOT YET ATTEMPTED*
-   - Need to add comments to all routines in the project
-   - Need to enable ties and getting money back in the event of a tie.
+- *GOALS TO BE ACCOMPLISHED*
+   - Advanced bluff behavior for the CPU - detailed in version 0.9.0 documentation
+   - Statistical analysis of realistic player betting/folding/raising likelihoods
 
 ---
 
