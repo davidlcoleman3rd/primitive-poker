@@ -49,8 +49,6 @@
 		<Unit filename="node.h" />
 		<Unit filename="player.cpp" />
 		<Unit filename="player.h" />
-		<Unit filename="pot.cpp" />
-		<Unit filename="pot.h" />
 		<Unit filename="river.cpp" />
 		<Unit filename="river.h" />
 		<Extensions>
