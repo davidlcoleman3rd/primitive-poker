@@ -2,7 +2,7 @@
 #define GAME_H
 
 #include <iostream>                 //For output to the terminal - cout, cin, getline(), setw, etc.
-#include <limits>                    //For making sure points are allocated correctly - used for int and float lims
+#include <limits>                   //For making sure points are allocated correctly - used for int and float lims
 #include "card.h"                   //Card class - These objects are the main building block of the entire game set
 #include "deck.h"                   //Deck class - The main point in which cards are drawn and distributed to each player
 #include "hand.h"                   //Hand class - The main body by which the player stores their cards

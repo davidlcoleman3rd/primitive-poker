@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 #include "game.h"
 
 void Game::FiveCardDraw(bool compatibiltyMode) {
@@ -70,24 +77,6 @@ void Game::FiveCardDraw(bool compatibiltyMode) {
         PlayAgain(turnOrder, playerPtr, myDeck,                 //Gives the player the option to play again or quit.
                   gameLoop, FIVE_CARD_DRAW_HANDSIZE);
     }
-/*
-    const double ONE = 1.0;
-
-    std::cout.precision(14);
-    std::cout << std::fixed << 1.0 / std::pow(13,0) << "\n"
-              << ONE / std::pow(13,1) << "\n"
-              << ONE / std::pow(13,2) << "\n"
-              << ONE / std::pow(13,3) << "\n"
-              << ONE / std::pow(13,4) << "\n"
-              << ONE / std::pow(13,5) << "\n"
-              << ONE / std::pow(13,6) << "\n"
-              << ONE / std::pow(13,7) << "\n"
-              << ONE / std::pow(13,8) << "\n"
-              << ONE / std::pow(13,9) << "\n"
-              << ONE / std::pow(13,10) << "\n"
-              << ONE / std::pow(13,11) << "\n"
-              << ONE / std::pow(13,12) << "\n\n";
-*/
 }
 
 //******

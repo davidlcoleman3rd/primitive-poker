@@ -2,6 +2,105 @@
 
 Primitive Poker is a simple command-line-based poker game.  1 player can play with 3 different CPU's - each with a randomly-generated "personality" - and play Five-Card draw.  Will you be the last player standing?  Or will you walk home with your tail between your legs?
 
+---
+
+****Specifications****
+
+Primitive Poker is a game that utilizes object-oriented programming in a pure C++ environment.  It uses inheritance and a small amount of polymorphism both for child class function overriding, and for overloading functions that operate similarly but with minor changes. (usually printing vs non-printing iterations of the same function)  It consists of 9 classes created in development and a plethora of standard C++ libaraies.  It also includes a developer-defined templated node class and circular linked list class that can be (with a small amount of modification) repurposed for use in other projects
+
+========
+
+***C++ libraries and technologies used***
+- Iostream, Iomanip, and String
+   - All are used for output/input and for direct communication between the player and the game
+
+- Math.h
+   - This library is used for the floor() and a pow() function
+      - floor() is used for rounding down values so absurd parenthesis aren't unrealistically used by CPU players when betting cash
+      - pow() is used in all of the scoring functions - when grading a hand's raw card value, each card is graded by 1 to the power (pow()) of -13 minus the card value.  This seems convoluted, but is done to "spread" values among the decimal instead of just whole numbers, as with hand scoring on top of raw card value scoring, using just whole numbers would quickly reach the limit of a float if not a double.  It's more efficient to use the inverse power to scale each card's value "backwards" before evaluating hand strength
+
+- Vector
+   - This templated data structure library is used in a lot of places.  It is used to build the playerbase at the table before converting it to a circular linked list, hold player scores at the table, player opinions, player hands in the hand class, store bluff-checks and opinions of other players for each player themselves, and a two-dimensional vector is used to serve as the table's pot - with the inner vectors serving as each player's contribution to a tier in the pot, and the outer vector serving as each "tier" in the pot (for side-betting, folding, etc.)
+
+- Stack
+   - This templated data structure library is used in the discard pile and the deck.  It is used as the actual "data" portion of the deck and discard class, and temp stacks are created to hold card positions when the deck is "shuffled."
+
+- Random
+   - This library is used for the MT19937 randomization algorithm, the random_device data type, and the uniform_int_distribution object class.  It is used to generate random numbers which are used for CPU decision making and shuffling the deck randomly.  This allows for variance in game and makes gameplay more realistic.
+
+- Limits
+  - This library was used to evaluate the maximum size of integers, floats, and doubles for determining problems with the hand-scoring functionality
+
+========
+
+***Developer-defined classes used***
+- Card
+   - The Card class serves as the primary "playing piece" for the game.  It is an object that contains variables of both the enumerated types "suit" (the cards suit) and "num" (the card's rank from 2 through Ace) as well as string versions of these enumerated types pre-converted. It also has a compatibility mode boolean that is used when the computer cannot use actual suit symbols and must instead resort to using the first letter for each suit (S-pade, C-lub, D-iamond, H-eart)
+   - Cards can have their values evaluated as a single card by their num, or in tandem with other cards using suit and num.  They have copy constructors for ease of creating temp stacks for reshuffling decks of cards.  All in all, they are primarily data-oriented, only with functions that make it easier to read said card's data
+
+- Hand
+   - The Hand class serves as each player's set of these card playing pieces.  It is an object that is both function and variable oriented.  Its only variable is a vector of cards that serves as the actual physical hand of cards each player has
+   - It holds functions to print the player's hand, a set of cards in that hand, a single card, sorting the hand vector, (allowing more accurate mathematical evaluations of the hand) discarding and drawing, and evaluating points earned from this hand
+   - It also has a function titled CPUDiscard which serves as a faux redefinition of the discard function, only used in the context of a CPU player
+
+- Discard
+   - The Discard class serves as the game table's discard pile.  It is an object that is primarily used to hold cards that are neither in the deck nor in a player's hand, as well as a location that cards go when a player folds or where cards are stored until the deck is reshuffled after a game
+   - This object behaves almost exactly as a stack - of which its main data structure for holding cards is.  All functions are an extension of the stack data structure, and simply refer to those function calls when invoked, allowing peeking, popping, pushing, and size returning.
+
+- Deck
+   - The Deck class serves as the game table's source of game pieces. (cards)  It has a stack data structure and a discard pile object (which is practically another stack) as variables.
+   - The Deck has the ability to perform the same operations as any stack, but also has the ability to shuffle itself, handle all function calls and data movement from the discard pile,
+   - Comes with several alternative constructors that are used for testing purposes
+
+- Player
+   - The Player class serves as the game's players; both the user and the CPU (although the CPU inherit these traits in their own class; CPU)
+   - Players have a hand of cards, (hand object) a float to represent their cash, a bool to determine if they have folded or not, ints for their current wager and their current pot tier, (for side-betting) a perception, aggressiveness, and bluff stat, (these only really have an effect on the CPU - the user player stats are always set to 5 out of 10) and a vector that holds the player's opinions on the players (how "good" they think each player's hand is, including themselves.)
+   - As the primary object used by the players of the game, these objects are highly functional; they have methods for betting, calling, folding, raising, checking player cash, returning the player hand, getting a new hand, discarding hands, assigning player opininos, manipulating the player's pot and how much money they put into the pot, and every other method that would be required for a game of poker to flow correctly
+
+- CPU
+   - The CPU class is a child class of the Player class.  The CPU inherits all of the traits of the Player, but has a few new methods and a few overloaded methods
+      - Each stat is randomly generated on a scale of 1 to 10 using the child constructor.  This allows each player to behave differently; some CPU's being more aggressive, some bluffing more, some being more perceptive, some being great at everything, and etc.
+      - GetTell has two separate definitions, allowing one to be a bluff and one to be a tell depending on how well the player bluffs that hand
+      - DiscardCards uses a complex decision tree, allowing the CPU to make a well informed decision about which cards staistically are the best to discard for their current hand
+      - BetCash and CallCash also use a complex decision tree, as well as several random numbers as "dice rolls" in combination with their stats and hand strength to decide if they will bet, call, fold, or raise and how much money of each
+      - PlayerPerception uses a score-based system based on the hands score to return their opinion to the calling function - also has an iteration of this method that prints this as a "tell" to the table
+
+- Node
+   - The Node class is a templated, developer-defined linked list node object.  It consists of a variable of data of whatever the client specifies, a pointer to the next node, and a pointer to the previous node
+   - As a linked list node, it has all the required functionality - methods include setting next, setting previous, getting next, getting previous, and getting data.
+
+- CircularList
+   - The CircularList class is a templated, developer-defined circular linked list.  It uses the previously-discussed node class and the type templated with it for its own template, and uses that to create a doubly linked list whose head points backwards to the end, and visa-versa
+   - It has all of the necessary methods of a linked list, including making a new list, adding nodes, traversal, removing nodes, and data retreival of current.
+   - Variables include pointers to the head, current, next, previous, and additionally a pointer to the last node in the list - which is the previous of the head. It also has an integer of its length and a method to determine that length via traversal and iteration
+
+- Game
+   - The Game class serves as the overall game table, and contains all other objects in the game
+   - While it has no private variables itself, the game function uses a boolean to loop and keep the game going.  It then creates a deck, a vector of players, (also dealing them hands of cards each) player perceptions, and turns this vector of players into a circular list of players, which are then used for gameplay purposes
+   - The game loop consists of resetting the pot, creating a new 2D vector for the multi-pot/tiered pot system, getting an ante from all players, (and using the antes to see if the user has won or lost the game) printing the whole pot, getting tells from each player, printing the user's hand for them to see, allowing the players to discard cards, setting the current bet "leader" to set the bet this hand, taking the bet, getting calls/raises/folds from the rest of the table, incrementing the bet leader for the next round, printing all player hands, evaluating who won (or tied) the hand, printing everyone's current cash after a winner has been determined and paid out, and offering the user to play again if they'd like to.
+   - The gameplay loop (and thus the primary gameplay function) will repeat until the user is done playing, they lose by not having enough to ante, or they win by causing all CPU's to be unable to ante
+
+---
+
+****Lessons Learned****
+
+- In creating this game, I learned that while it's easy to overlook the importance of documentation, commenting on your code and laying out how each piece works is critical, as it's easy for other developers to not understand what your code does, as well as suprisingly easy to lose track of what your own code does when features begin to balloon.
+
+- Using a notebook or other software for writing and journalling progress and ideas is great.  Being able to draw out a problem and really express what that problem is in words, drawings, and diagrams helps a lot.  Trying to "just conceptualize it in your head" is very inefficient and makes it very hard to remember the flow of the solution; like not commenting on code
+
+- In spite of functionality, working code that acts as expected and "realistic performance" that meets the expectations of the real-world concept are very different beasts.  This game is fully functional, but it needs improvement with the statistical likeliness of the CPU to perform and behave like a poker player in real life.  This will require iteration over a long period of time; it will require an observation phase, where data is observed from real poker games over X amount of games. Then it will require an implentation and testing phase - where stats and the decision tree that use them are changed to account for these real life statistical ratio.  This, in turn, will make the CPU performance and gameplay much more "realistic," in the sense that the CPU players will behave much more like a human being instead of an algorithm; at least it will APPEAR as such to the people playing the game
+
+- Understanding mathematics is crucial for a proper scoring system in a game like this.  In order to make sure scoring works correctly, no weaker hand of the highest value cards should beat a better hand of the lowest value cards; a pair of aces should never beat a two pair of two 2's and two 3's, in spite of an Ace being significantly superior in ranking. This is accomplished with some research of values that will ALWAYS multiply the values by more than is necessary to close the game.  This is why the constants for "modifiers" are seemingly arbitrarily exponentially larger as they increase in value - to prevent any hand scoring overlap.
+   - Likewise, you have to account for memory usage as well.  Using whole ints for scoring resulted in more memory than even a long int to hold the huge number.  This is because hand scoring also uses the same scoring system.  By instead using the mathematical principle that a number to the power of negative X will always be lower than the same number to the power of negative X plus 1, (by nearly a factor of 10) we can abuse this and set the variable to a double (floating point variable instead of whole num like int) and allow single-card scoring to range from a 0.0000000000004 for a Two, to 1.0 for an Ace.  This allows us to have no modifier for a pair (simply making each card worth its exact value from 1 to 13 in terms of ranking) and start our modifiers at two pair, exponentially increasing, but still staying within our double's value limit.
+
+- Decision trees are incredibly complicated and require intense documentation, aided by an easy-to-follow, easy-to-map flowchart to understand what is happening, when, and why.  Using randomlly-rolled numbers and a "personality" for the CPU (in the form of stats in this context) allows for much more realistic, harder-to-predict behavior - not having these random numbers would make the game "solved" and make it boring and unrealistic, whereas not having stats to curve the randomness of the RNG would cause the game to be arbitrary, and while not solvable, it would not be as fun or enjoyable to play; akin to playing with a child who doesn't actually know what they're doing.
+
+- Debugging skills are critical.  Using the debug function to identify the exact problem is important, but understanding what the debugger is "trying to tell you" when it cannot pinpoint the exact problem (only where it thinks the program went wrong, such as pointer pointing to nothing being the "problem" on the surface but figuring out WHY it's pointing to nothing being the actual problem) and analyzing the code leading up to that point is also important.  Using the console to create temporary "tests" to see when things go awry is an exercise in tedium, but can help a lot in figuring out which line is the problem child and follow it back to the source of the issue.
+
+---
+
+****Legacy Versions - History of development****
+
 ***Version 1.0.0***
    - Full release
 
@@ -185,17 +284,17 @@ The following is a detailed history of the development of Primitive Poker and th
 ***Version 0.1.0***
 - Created a graphical display of a player’s hand when showing hand
 - Added sorting to the hand as well as point counting
-- Created a separate point counter that allows the program to output any “winning” hands they have 
+- Created a separate point counter that allows the program to output any “winning” hands they have
    - This includes pair, 2 pair, 3 of a kind, 4 of a kind, full house, flush, straight, straight flush, and royal flush
-- Fully defined and implemented shuffle function and hand print function. Deck can be created, shuffled, and deal a full hand of cards to a player, whose hand can then be displayed on the screen correctly 
-   - This was fixed by using heap allocation of the vector vTemp instead of stack allocation, which originally caused undefined behavior 
-- Began to perform isolated tests on hand and deck. 
-- While dealing cards to a hand and displaying the hand works, shuffling the deck currently has bugs 
-- Defined and implemented a sorting algorithm for sorting hands 
-- Added files for the discard and pot class 
-- Began to implement functionality for sorting player hands to estimate the value of the player’s hand 
-- Began to layout the structure of the Game class, which connects the bulk of classes together in one single “playspace” for the gameplay 
-- Began to define and implement various functionality of the Hand class and its interactions with Deck and Card classes 
-- Fully defined and implemented the Card class with all basic features, including a copy constructor 
-- Began to define and add features to the Deck class, including shuffling and dealing 
+- Fully defined and implemented shuffle function and hand print function. Deck can be created, shuffled, and deal a full hand of cards to a player, whose hand can then be displayed on the screen correctly
+   - This was fixed by using heap allocation of the vector vTemp instead of stack allocation, which originally caused undefined behavior
+- Began to perform isolated tests on hand and deck.
+- While dealing cards to a hand and displaying the hand works, shuffling the deck currently has bugs
+- Defined and implemented a sorting algorithm for sorting hands
+- Added files for the discard and pot class
+- Began to implement functionality for sorting player hands to estimate the value of the player’s hand
+- Began to layout the structure of the Game class, which connects the bulk of classes together in one single “playspace” for the gameplay
+- Began to define and implement various functionality of the Hand class and its interactions with Deck and Card classes
+- Fully defined and implemented the Card class with all basic features, including a copy constructor
+- Began to define and add features to the Deck class, including shuffling and dealing
 - Tweaked errors and syntax issues with cod
