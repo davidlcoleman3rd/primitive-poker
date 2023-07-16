@@ -6,7 +6,7 @@ Primitive Poker is a simple command-line-based poker game.  1 player can play wi
 
 ****Specifications****
 
-Primitive Poker is a game that utilizes object-oriented programming in a pure C++ environment.  It uses inheritance and a small amount of polymorphism both for child class function overriding, and for overloading functions that operate similarly but with minor changes. (usually printing vs non-printing iterations of the same function)  It consists of 9 classes created in development and a plethora of standard C++ libaraies.  It also includes a developer-defined templated node class and circular linked list class that can be (with a small amount of modification) repurposed for use in other projects
+Primitive Poker is a game that utilizes object-oriented programming in a pure C++ environment.  It uses inheritance and a small amount of polymorphism both for child class function overriding, and for overloading functions that operate similarly but with minor changes. (usually printing vs non-printing iterations of the same function)  It consists of 9 classes created in development and a plethora of standard C++ libararies.  It also includes a developer-defined templated node class and circular linked list class that can be (with a small amount of modification) repurposed for use in other projects
 
 ========
 
